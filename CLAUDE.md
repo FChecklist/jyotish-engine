@@ -1,6 +1,6 @@
 # CLAUDE.md — read this first, every session
 
-Project: Vedic astrology software with 4 engines (event prediction, timing, do/don't, remedies). Owner: Rajat (solo founder, IST). Private repo. Family birth data NEVER goes in git.
+Project: Vedic astrology software with 4 engines (event prediction, timing, do/don't, remedies). Owner: Rajat (solo founder, IST). Family birth data NEVER goes in git.
 
 ## Session start (do in order)
 1. Read SAVE.md, then docs/STATUS.md, docs/DECISIONS.md, docs/OPEN_QUESTIONS.md.
@@ -24,5 +24,5 @@ Update SAVE.md, docs/STATUS.md, docs/RESULTS.md, docs/DECISIONS.md; commit; push
 - docs/ : why, spec, decisions, status, results, runbook, open questions
 - core/ : zodiac, houses (6 systems), config   tech/ : technique engine + specs   tune/ : backtests
 - ref/ : PyJHora comparison   engine_legacy/ : old engine (crashes above 66 deg latitude)
-- Rules DB (24,171 rules): Drive books_master_v8.part1of6..6of6.jsonl (to move to Cloudflare D1). See data_manifest/.
+- Rules DB (24,171 rules): GitHub FChecklist/jyotish-code rules/ (6 parts); full copy in Drive. D1 load still pending.
 - Cloudflare account connected (D1, R2, KV via connector). Workers deploy from this repo via Cloudflare Git integration.
