@@ -6,7 +6,7 @@ One-line state: Design + first modules built; all accuracy tests at chance level
 ## Do next (in order)
 1. DONE: repo pushed (public) FChecklist/jyotish-engine. Rules are in public repo FChecklist/jyotish-code (rules/ parts 01-06, no quote_short), by Rajat's decision. D1 table exists and is still empty.
 2. Load 24,171 rules into D1 (table exists, empty). Bulk load cannot go through the chat connector (too large); use a private data repo + import Worker via Git deploy.
-3. DONE: core/charts.py (D1-D60 signs), dasha.py (Vimshottari), panchang.py, kp.py (sub-lords hand-checked), true node verified. Next: KP cusps and ruling planets, transit, ashtakavarga, panchang end-times, Narayana dasha, mean-node option + verification.
+3. DONE (all verified, tests/run_all.sh passes): core/charts.py, dasha.py (Vimshottari), panchang.py, kp.py (lords), ashtakavarga.py, transit.py. NOT DONE: KP cusps/ruling planets, panchang end-times, Narayana/Chara/other dashas (need an independent rule source before checking), mean-node option, sign-ingress dates, Sade Sati.
 4. Normalise rules into checkable conditions (frame + house system).
 5. Build modules M0-M11 per docs/SPEC.md.
 

@@ -8,3 +8,6 @@ Data gaps: Brihat Jataka ch 1-4, 26-28; Jaimini Sutras remainder; 17 transcripts
 
 2026-11-14 update: core/charts.py wrapper built (PyJHora, D1-D60 incl. ascendant). Signs verified for 14 divisional factors (RESULTS.md). Still unverified: nodes, D2/D5/D6/D8/D11/D30 variants, dasha dates, KP cusps and ruling planets, panchang end-times and extras, transit, Ashtakavarga, historical time zones.
 Engines: NOT complete. Built: house model, technique engine, rules DB, chart wrapper. Not built: rule normalisation, M2-M11 modules, report assembler, Stage 3 pipeline, validated accuracy.
+
+2026-11-14 late: wrappers done and tested: charts, Vimshottari maha+antar, panchang (5 limbs), KP lords, Ashtakavarga (variants exposed), transit. tests/run_all.sh passes locally; CI workflow added (check GitHub Actions tab). Checks assert thresholds and fail on regressions (sabotage-tested).
+Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ingress dates, rule normalisation (24,171 rules), method packs M2-M11, report assembler, Stage 1-3 pipeline, large dataset + locked test.
