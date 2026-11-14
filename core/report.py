@@ -61,7 +61,15 @@ def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='
         'calibration': {'status': 'none', 'note': 'No technique has a validated record yet; all earlier skill tests were at chance. Probabilities are null.'},
     }
     if rules_glob:
-        fired = apply_rules.apply(apply_rules.load(rules_glob), views, {k: v[0] for k, v in d1.items() if k != 'asc'})
+        ctx = None
+        if asof:   # running Vimshottari maha and antar at the as-of date (dasha-linked rules need it)
+            ad = datetime.datetime(*asof[:3]); run_row = None
+            for a_, b_, t_, _ in md:
+                if datetime.datetime(int(t_[0]), int(t_[1]), int(t_[2])) <= ad: run_row = (a_, b_)
+            ctx = {'maha': run_row[0], 'antar': run_row[1]} if run_row else None
+        rule_stats = {}
+        fired = apply_rules.apply(apply_rules.load(rules_glob), views, {k: v[0] for k, v in d1.items() if k != 'asc'}, ctx=ctx, stats=rule_stats)
+        rep['rules_ledger'] = {**rule_stats, 'note': 'Every loaded rule is counted. unparsed and partial rules are NOT executed yet (see docs/CALCULATION_LEDGER.md). Nothing is silently skipped.'}
         def sect(roles):
             items = [{**f, 'label': 'tradition claim', 'probability': None, 'calibration': 'none'} for f in fired if f['engine_role'] in roles]
             return {'status': 'built_unvalidated', 'parsed_coverage_note': 'only rules the parser fully understands (about 15%) are applied', 'items': items}

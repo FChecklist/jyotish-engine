@@ -42,6 +42,11 @@ def month_items(natal, date, tz, lat, lon):
         t = datetime.datetime(*[int(x) for x in r['start_local'][:3]])
         if s_dt - datetime.timedelta(days=5) <= t <= e_dt + datetime.timedelta(days=5): ch.append((t.date().isoformat(), r['maha'], r['antar']))
     if ch: _add(items, 'dont', 'Avoid irreversible big decisions close to the period-change date.', 5, f'dasha change(s) in window: {ch}', 'GR-S3', 'classical (junction caution)')
+    # dasha-linked remedies and don'ts from the rules database (and Gautam transcripts), judged with the running periods (GR-S5)
+    for sec, kind in (('remedies', 'do'), ('donts', 'dont')):
+        for r in natal['rep'].get(sec, {}).get('items', []):
+            txt = (r.get('remedy') or r.get('outcome') or '').split(';')[0].strip().rstrip('.')
+            if r.get('dasha_linked') and txt: _add(items, kind, txt[0].upper() + txt[1:] + '.', 4 * r['fit'], 'dasha-linked rule ' + r['id'], 'GR-S5', r['source'])
     # sub-windows: fast planet ingresses inside the window
     sub = []
     for p in (3, 5, 2):

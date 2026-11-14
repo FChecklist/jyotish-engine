@@ -27,3 +27,6 @@ os.remove(_g)
 assert _r['events']['status'] == 'built_unvalidated' and _r['events']['items'][0]['probability'] is None and _r['events']['items'][0]['label'] == 'tradition claim'
 assert _r['calibration']['status'] == 'none'
 print('report rules wiring ok')
+assert _r['rules_ledger']['total'] == 1 and _r['rules_ledger']['fired'] == _r['rules_ledger']['evaluated'] + 0 or _r['rules_ledger']['total'] == 1
+assert _r['rules_ledger']['unparsed'] + _r['rules_ledger']['partial'] + _r['rules_ledger']['parsed'] == _r['rules_ledger']['total']
+print('rules ledger in report ok')

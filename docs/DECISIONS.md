@@ -47,3 +47,8 @@
 - Added docs/CALCULATION_LEDGER.md and tune/coverage.py: every rule (29,430) is sorted by calculation kind with engine status. Dignity and aspect atoms added (core/dignity.py), applied per house view in the weighted fit (multi-sign main/minor).
 - Rahu/Ketu dignity deliberately not guessed (schools differ). Rules mentioning it stay partial.
 - Parsed rules 3,844 -> 3,965 of 29,430 (13.5%). Complete is judged only by this ledger.
+
+## 2026-11-14 (night 2) — "All the rules to be put in the software"
+- Status: all 29,430 rules are stored and loaded by the engine. Only 4,585 (15.6%) can be executed; every report now shows the full count (rules_ledger).
+- Dasha atoms added (maha, antar, dasha of Nth lord) with the running periods as context; dasha-linked remedies and don'ts join the month pool (GR-S5).
+- OPEN DECISION for Rajat: convert the remaining ~24,800 rules with an AI reading step in batches (AI only translates text into atoms during the build; code validates against the fixed atom vocabulary; a sample is audited by hand; the running software stays plain code). Alternative: keep widening keyword patterns (slow, small gains).

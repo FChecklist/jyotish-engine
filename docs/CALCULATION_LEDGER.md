@@ -45,3 +45,17 @@ Parsed share: 13.5% (was 13.1% = 3,844 before this step; +121 rules).
 
 A rule can touch several kinds. 'other_text' = free-text rules with none of the known calculation words: they need to be read and turned into atoms, not matched by keyword.
 Honest reading: the new atoms work (tests pass) but add only 121 fully parsed rules, because most dignity/aspect rules carry extra conditions or different wording. The biggest unread blocks are the free-text rules (9,830), strength (3,825), dasha (3,287), Lal Kitab states (2,628), Jaimini (1,180).
+
+## Step 2 spec (written before code): DASHA atoms
+- ('dasha', planet, 'maha'|'antar'): the rule only holds while that planet runs that level of Vimshottari at the date asked. Phrases: "Venus dasha / mahadasha", "Saturn antardasha / bhukti / sub-period".
+- ('dasha_house_lord', n): "dasha of the 7th lord", "7th lord dasha": holds while the maha OR antar lord rules a sign of house n. The sign set of house n comes from the multi-sign house influence, so a lord counts in proportion to the share of its sign in that house (MAIN PART). Hypothesis: maha or antar either counts.
+- Needs a date. Without a running-dasha context a dasha rule is NOT evaluated (fit = None). It is never treated as true or false by guess.
+- A dasha rule combined with natal atoms ("Saturn in 8th during Saturn dasha") needs all atoms true.
+- Dasha-linked rules with a remedy or a don't feed the short-term DO / DON'T pool (weight 4 x fit). Outcome-only rules stay in the engine report.
+- NOT built: other dasha systems (Yogini, Chara, Narayana), pratyantar, dasha lord strength, dasha sandhi rules beyond the date caution.
+
+## Ledger after step 2 (dasha atoms), measured 2026-11-14
+- Parsed 4,585 of 29,430 (15.6%); partial 7,898; unparsed 16,947. (Step 1 ended at 3,965; step 2 added 620.)
+- One chart (full books + Gautam run, as of 14 Nov 2026): 4,585 rules evaluated, 419 fired, 4,166 evaluated and not fired, 0 waiting for a date. The other 24,845 are loaded but NOT executed (partial or unparsed). The report now carries this count (rules_ledger) for every person, so no rule is silently skipped.
+- Per source for that chart: parashari 11,990 loaded / 1,746 evaluated; lalkitab 6,224 / 2,290; gautam 5,259 / 245; other 3,061 / 235; prasna 1,207 / 20.
+- THE GAP: rules are all stored; only 15.6% can be executed. Executing the rest means converting each rule's text into atoms. Keyword matching is hitting its limit; the remaining rules need a reading step (see docs/DECISIONS.md 2026-11-14 night 2).

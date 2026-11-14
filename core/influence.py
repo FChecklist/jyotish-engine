@@ -55,12 +55,13 @@ def planet_house_shares(views):
         for p, h in v['planet_house'].items(): res.setdefault(p, {}).setdefault(h, 0.0); res[p][h] += v['weight']
     return res
 
-def fit(norm, views, sign_of_planet):
+def fit(norm, views, sign_of_planet, ctx=None):
     """Weighted fit (0..1) of a parsed rule (core/rules_norm.parse). None if the rule is not fully parsed.
     Each view is judged separately (so AND stays consistent inside one view), then views are averaged by weight.
     'N-th lord' counts every sign the N-th house touches, weighted by its share inside that view."""
     if norm['status'] != 'parsed': return None
-    if norm.get('frame') == 'aries_fixed': return _fit_aries(norm, sign_of_planet)
+    if ctx is None and any(a[0].startswith('dasha') for a in norm['atoms']): return None   # dasha rules need the running periods
+    if norm.get('frame') == 'aries_fixed': return _fit_aries(norm, sign_of_planet, ctx)
     GROUPS = {'kendra': (1, 4, 7, 10), 'trikona': (1, 5, 9), 'dusthana': (6, 8, 12), 'upachaya': (3, 6, 10, 11)}
     total = 0.0
     for v in views.values():
@@ -70,6 +71,9 @@ def fit(norm, views, sign_of_planet):
             elif a[0] == 'planet_in_group': pf *= 1.0 if v['planet_house'][a[1]] in GROUPS[a[2]] else 0.0
             elif a[0] == 'planet_in_sign': pf *= 1.0 if sign_of_planet[a[1]] == a[2] else 0.0
             elif a[0] == 'conj': pf *= 1.0 if sign_of_planet[a[1]] == sign_of_planet[a[2]] else 0.0
+            elif a[0] == 'dasha': pf *= 1.0 if ctx[a[2]] == a[1] else 0.0
+            elif a[0] == 'dasha_house_lord':
+                width = sum(d for _, d in v['spans'][a[1]]); pf *= sum(d / width for s, d in v['spans'][a[1]] if SIGN_LORD[s] in (ctx['maha'], ctx['antar']))
             elif a[0] == 'dignity': pf *= 1.0 if a[2] in dignity.states(a[1], sign_of_planet[a[1]]) else 0.0
             elif a[0] == 'aspects_house': pf *= 1.0 if dignity.aspects_house(a[1], v['planet_house'][a[1]]) & set(a[2]) else 0.0
             elif a[0] == 'aspects_planet': pf *= 1.0 if dignity.aspects_planet(a[1], v['planet_house'][a[1]], v['planet_house'][a[2]]) else 0.0
@@ -81,7 +85,7 @@ def fit(norm, views, sign_of_planet):
         total += v['weight'] * pf
     return round(total, 4)
 
-def _fit_aries(norm, sg):
+def _fit_aries(norm, sg, ctx=None):
     """Lal Kitab frame (decision 2026-11-14, OPEN QUESTION): house number = sign number counted from Aries. One view only, so fit is 0 or 1."""
     GROUPS = {'kendra': (1, 4, 7, 10), 'trikona': (1, 5, 9), 'dusthana': (6, 8, 12), 'upachaya': (3, 6, 10, 11)}
     for a in norm['atoms']:
@@ -90,6 +94,8 @@ def _fit_aries(norm, sg):
         if a[0] == 'planet_in_sign' and sg[a[1]] != a[2]: return 0.0
         if a[0] == 'conj' and sg[a[1]] != sg[a[2]]: return 0.0
         if a[0] == 'lord_in_house' and sg[SIGN_LORD[a[1] - 1]] + 1 not in a[2]: return 0.0
+        if a[0] == 'dasha' and ctx[a[2]] != a[1]: return 0.0
+        if a[0] == 'dasha_house_lord' and SIGN_LORD[a[1] - 1] not in (ctx['maha'], ctx['antar']): return 0.0
         if a[0] == 'dignity' and a[2] not in dignity.states(a[1], sg[a[1]]): return 0.0
         if a[0] == 'aspects_house' and not (dignity.aspects_house(a[1], sg[a[1]] + 1) & set(a[2])): return 0.0
         if a[0] == 'aspects_planet' and not dignity.aspects_planet(a[1], sg[a[1]] + 1, sg[a[2]] + 1): return 0.0

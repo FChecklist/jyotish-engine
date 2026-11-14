@@ -40,3 +40,7 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 ## 014 — Dignity and aspect atoms (2026-11-14)
 - tests/test_dignity.py: dignity tables hand-checked, aspect counts (Jupiter and Saturn aspect exactly 3 houses per view: fits over 12 houses sum to 3), nodes not silently dropped, fit equals the dignity of the sign.
 - Ledger: parsed 3,844 -> 3,965. Small gain; see docs/CALCULATION_LEDGER.md for the remaining blocks.
+
+## 015 — Dasha atoms (2026-11-14)
+- tests/test_dasha_rules.py: phrases parse, no date means no evaluation (never guessed), whole-sign sum check, combined natal+dasha rule.
+- Ledger: parsed 3,965 -> 4,585. One chart: 419 rules fired of 4,585 evaluated.

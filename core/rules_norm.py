@@ -28,7 +28,13 @@ CLAUSES += [
     (re.compile(rf'\b{P} (?:aspects|aspecting) (?:the )?{P}\b', re.I), 'aspects_planet'),
     (re.compile(rf'\b{P} (?:is |are )?aspected by {P}\b', re.I), 'aspected_by'),
 ]
-FILLER = set('lal kitab the a an in is are of and or with house houses from lagna bhava placed to'.split())
+CLAUSES += [
+    (re.compile(rf'\b{P} (?:antar ?dasha|antar ?dasa|antardasha|bhukti|sub[- ]period)\b', re.I), 'dasha_antar'),
+    (re.compile(rf'\b{P} (?:maha ?dasha|maha ?dasa|mahadasha|dasha|dasa|major period)\b', re.I), 'dasha_maha'),
+    (re.compile(rf'\bdasha (?:of|lord of) (?:the )?{H}(?: house)? lord\b', re.I), 'dasha_hl'),
+    (re.compile(rf'\b{H}(?:st|nd|rd|th)? lord (?:maha ?)?(?:dasha|dasa|period)\b', re.I), 'dasha_hl'),
+]
+FILLER = set('during running lal kitab the a an in is are of and or with house houses from lagna bhava placed to'.split())
 
 def parse(text, system=''):
     t = text.strip(); rest = t; atoms = []
@@ -51,6 +57,10 @@ def parse(text, system=''):
                 if hs: atoms.append(('aspects_house', PL[g[0].lower()], hs))
             elif kind == 'aspects_planet': atoms.append(('aspects_planet', PL[g[0].lower()], PL[g[1].lower()]))
             elif kind == 'aspected_by': atoms.append(('aspects_planet', PL[g[1].lower()], PL[g[0].lower()]))
+            elif kind in ('dasha_maha', 'dasha_antar'): atoms.append(('dasha', PL[g[0].lower()], 'maha' if kind == 'dasha_maha' else 'antar'))
+            elif kind == 'dasha_hl':
+                n = int(re.findall(r'\d{1,2}', m.group(0))[0])
+                if 1 <= n <= 12: atoms.append(('dasha_house_lord', n))
             elif kind == 'conj': atoms.append(('conj', PL[g[0].lower()], PL[g[1].lower()]))
             elif kind == 'planet_in_group': atoms.append(('planet_in_group', PL[g[0].lower()], g[1].lower()))
         rest = rx.sub(' ', rest)
@@ -66,6 +76,7 @@ def house_of(sign0, lagna0, frame='lagna'):
 def evaluate(norm, chart):
     """chart = {'asc': sign0, 'signs': {planet_id: sign0}}. Returns True/False for parsed rules, None if not evaluable."""
     if norm['status'] != 'parsed': return None
+    if any(a[0].startswith('dasha') for a in norm['atoms']): return None          # needs a date: use influence.fit(..., ctx)
     fr = norm['frame']; lag = chart['asc']; sg = chart['signs']
     SIGN_LORD = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4]
     ok = True

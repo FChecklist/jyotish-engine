@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'core'))
 import apply_rules, rules_norm as N
 KINDS = [  # (kind, regex on input+outcome+timing, engine status, module or note)
  ('transit',        r'transit|gochar|ingress|sankranti|transiting|moves? into|enters', 'partial', 'core/gochara.py (BK13 gochara rules only); free-text transit rules not parsed'),
- ('dasha',          r'dasha|dasa|bhukti|antar|mahadasha|vimshottari|yogini|chara dasha|narayana', 'partial', 'vimshottari dates only; no rule-to-period linking; no other dashas'),
+ ('dasha',          r'dasha|dasa|bhukti|antar|mahadasha|vimshottari|yogini|chara dasha|narayana', 'partial', 'Vimshottari maha and antar atoms judged with the running periods; other dashas, pratyantar and dasha strength not built'),
  ('ashtakavarga',   r'ashtakavarga|ashtakvarga|bindu|bhinna|sarva|sarvashtak|prastara', 'partial', 'core/ashtakavarga.py (tables); bindu rules only in gochara'),
  ('divisional',     r'navamsa|navamsha|d-?9\b|dashamsa|dasamsa|saptamsa|varga|amsa|vargottama|d-?\d{1,2}\b', 'partial', 'core/charts.py computes D1-D60; rules on them not applied'),
  ('aspect',         r'aspect|drishti|drishti|sees|aspected|aspecting', 'partial', 'aspect atoms in rules_norm (whole-house drishti, per house view); many phrasings and conditions unread'),

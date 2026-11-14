@@ -46,6 +46,7 @@ Everything is plain code (no AI). Each item carries a rule id and a source. Ever
 - GR-S2 Sub-windows: sign changes of Mercury, Venus, Mars inside the window, each with its quality and areas. Station (retrograde / direct) dates of Mercury, Venus, Mars, Jupiter, Saturn are listed as information only (no rule in the DB).
 - GR-S3 Antardasha / mahadasha changes inside the window are listed with dates (+- 5 days).
 - GR-S4 Combustion (GR-G9) adds don'ts.
+- GR-S5 Rules that name a running dasha (docs/CALCULATION_LEDGER.md step 2) are judged with the running maha and antar; their remedies and don'ts join the month pool.
 
 ## E. Output limits
 - USER VIEW (Rajat 2026-11-14): exactly 3 DO and 3 DONT per person per day, and 3 DO and 3 DONT for the Sun-sign month. No predictions, no reasons, no rule ids, no precautions list. Reasons and rule ids stay inside the engine report. If fewer than 3 real items exist, show fewer; never pad.
