@@ -3,6 +3,8 @@ import json, glob
 PL = {'Sun': 0, 'Moon': 1, 'Mars': 2, 'Mercury': 3, 'Jupiter': 4, 'Venus': 5, 'Saturn': 6, 'Rahu': 7, 'Ketu': 8}
 SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
 GROUPS = ('kendra', 'trikona', 'dusthana', 'upachaya'); DIG = ('exalted', 'debilitated', 'own', 'friend', 'enemy', 'neutral')
+import yogas
+NAKN = {n.lower(): i + 1 for i, n in enumerate(['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'])}
 class Bad(Exception): pass
 def _p(x, seven=False):
     if x not in PL or (seven and PL[x] > 6): raise Bad(f'planet {x}')
@@ -40,6 +42,27 @@ def atom(a, depth=0):
     if t == 'dasha_house_lord':
         if not isinstance(a['n'], int) or not 1 <= a['n'] <= 12: raise Bad('n')
         return ('dasha_house_lord', a['n'])
+    if t == 'planet_from':
+        if a['p'] == a['ref']: raise Bad('from self')
+        return ('planet_from', _p(a['p']), _p(a['ref']), _hs(a['h']))
+    if t == 'planet_in_nak':
+        ns = a['nak']
+        if not isinstance(ns, list) or not ns: raise Bad('nak')
+        out = []
+        for n in ns:
+            n = NAKN.get(n.lower()) if isinstance(n, str) else n
+            if not isinstance(n, int) or not 1 <= n <= 27: raise Bad('nak')
+            out.append(n)
+        return ('planet_in_nak', _p(a['p']), tuple(sorted(set(out))))
+    if t == 'retro':
+        if _p(a['p']) not in (2, 3, 4, 5, 6): raise Bad('retro planet')
+        return ('retro', PL[a['p']])
+    if t == 'combust':
+        if _p(a['p']) not in (1, 2, 3, 4, 5, 6): raise Bad('combust planet')
+        return ('combust', PL[a['p']])
+    if t == 'yoga':
+        if a['name'] not in yogas.NAMES: raise Bad('yoga name')
+        return ('yoga', a['name'])
     if depth >= 2: raise Bad('nesting too deep')
     if t == 'any':
         subs = a['of']

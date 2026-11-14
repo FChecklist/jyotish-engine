@@ -6,7 +6,7 @@ Status: 'parsed' = every word of the input is explained by atoms; 'partial' = so
 'aspected by', 'if ...'), NOT evaluated; 'unparsed' = nothing recognised. Unparsed/partial rules stay in the database, untouched.
 Frame: 'lagna' by default; 'aries_fixed' for Lal Kitab rules (houses numbered from Aries) -- see docs/DECISIONS.md."""
 import re
-import dignity
+import dignity, yogas
 PL = {'sun': 0, 'moon': 1, 'mars': 2, 'mercury': 3, 'jupiter': 4, 'venus': 5, 'saturn': 6, 'rahu': 7, 'ketu': 8}
 SIGNS = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces']
 P = '(sun|moon|mars|mercury|jupiter|venus|saturn|rahu|ketu)'
@@ -20,9 +20,20 @@ CLAUSES = [
     (re.compile(rf'\b{P} (?:and|with|conjunct(?:ed)?(?: with)?) {P}\b', re.I), 'conj'),
     (re.compile(rf'\b{P} in (kendra|trikona|dusthana|upachaya)s?\b', re.I), 'planet_in_group'),
 ]
+NAK_NAMES = {'ashwini': 1, 'ashvini': 1, 'aswini': 1, 'bharani': 2, 'krittika': 3, 'rohini': 4, 'mrigashira': 5, 'mrigasira': 5, 'mrigashirsha': 5, 'ardra': 6, 'punarvasu': 7, 'pushya': 8, 'ashlesha': 9, 'aslesha': 9,
+             'magha': 10, 'purva phalguni': 11, 'uttara phalguni': 12, 'hasta': 13, 'chitra': 14, 'swati': 15, 'vishakha': 16, 'visakha': 16, 'anuradha': 17, 'jyeshtha': 18, 'jyestha': 18, 'mula': 19, 'moola': 19,
+             'purva ashadha': 20, 'uttara ashadha': 21, 'shravana': 22, 'shravan': 22, 'dhanishta': 23, 'dhanishtha': 23, 'shatabhisha': 24, 'satabhisha': 24, 'purva bhadrapada': 25, 'uttara bhadrapada': 26, 'revati': 27}
+YOGA_RX = {'gajakesari': 'gajakesari|gaja kesari', 'budhaditya': 'budhaditya|budh aditya|budha aditya', 'chandra_mangala': 'chandra[- ]?mangal(?:a)?', 'guru_chandala': 'guru[- ]chandal(?:a)?', 'shrapit': 'shrapit|shrapita',
+           'angarak': 'angarak(?:a)?', 'grahan': 'grahan', 'kemadruma': 'kemadruma|kemdrum(?:a)?', 'sunapha': 'sunapha|sunaphaa', 'anapha': 'anapha', 'duradhara': 'duradhara|dhurdhara', 'vesi': 'vesi|veshi',
+           'vosi': 'vosi|voshi', 'ubhayachari': 'ubhayachari', 'ruchaka': 'ruchaka', 'bhadra': 'bhadra', 'hamsa': 'hamsa', 'malavya': 'malavya', 'sasa': 'sasa|shasha'}
 _DIG = {'exalted': 'exalted', 'exaltation': 'exalted', 'uchcha': 'exalted', 'debilitated': 'debilitated', 'debilitation': 'debilitated', 'neecha': 'debilitated',
         'own': 'own', 'swakshetra': 'own', 'friend': 'friend', 'enemy': 'enemy', 'neutral': 'neutral'}
+CLAUSES.insert(0, (re.compile(rf'\b{P} (?:is |are )?(?:placed )?in (?:the )?{H}(?: house)?(?:(?:,| or |/)\s*{H})* from (?:the )?(moon|sun|mars|mercury|jupiter|venus|saturn|rahu|ketu)\b', re.I), 'planet_from'))
 CLAUSES += [
+    (re.compile(rf"\b{P} (?:is |are )?(?:placed )?in (?:the )?(" + '|'.join(sorted(NAK_NAMES, key=len, reverse=True)) + r")(?: nakshatra)?\b", re.I), 'planet_in_nak'),
+    (re.compile(r'\b(mars|mercury|jupiter|venus|saturn) (?:is |are )?(?:retrograde|vakri|vakra)\b', re.I), 'retro'),
+    (re.compile(r'\b(moon|mars|mercury|jupiter|venus|saturn) (?:is |are )?(?:combust|asta|ast)\b', re.I), 'combust'),
+    (re.compile(r'\b(' + '|'.join(f'(?:{v})' for v in YOGA_RX.values()) + r')\s+yoga\b', re.I), 'yoga'),
     (re.compile(rf"\b(sun|moon|mars|mercury|jupiter|venus|saturn) (?:is |are )?(?:in |placed in )?(?:its |his |her |an |a |the )*(exalted|exaltation|debilitated|debilitation|own sign|own house|friend(?:ly|s|'s)? (?:sign|house)|enemy(?:'s)? (?:sign|house)|neutral sign|swakshetra|neecha|uchcha)\b", re.I), 'dignity'),
     (re.compile(rf'\b{P} (?:aspects|aspecting|casts (?:its )?(?:drishti|aspect) (?:on|to)) (?:the )?{H}(?: house)?(?:(?:,| or |/)\s*{H})*\b', re.I), 'aspects_house'),
     (re.compile(rf'\b{P} (?:aspects|aspecting) (?:the )?{P}\b', re.I), 'aspects_planet'),
@@ -63,6 +74,16 @@ def parse(text, system=''):
                 if hs: atoms.append(('aspects_house', PL[g[0].lower()], hs))
             elif kind == 'aspects_planet': atoms.append(('aspects_planet', PL[g[0].lower()], PL[g[1].lower()]))
             elif kind == 'aspected_by': atoms.append(('aspects_planet', PL[g[1].lower()], PL[g[0].lower()]))
+            elif kind == 'planet_from':
+                hs = tuple(int(x) for x in re.findall(r'\d{1,2}', m.group(0)) if 1 <= int(x) <= 12); ref = PL[g[-1].lower()]
+                if hs and PL[g[0].lower()] != ref: atoms.append(('planet_from', PL[g[0].lower()], ref, hs))
+            elif kind == 'planet_in_nak': atoms.append(('planet_in_nak', PL[g[0].lower()], (NAK_NAMES[g[1].lower()],)))
+            elif kind == 'retro': atoms.append(('retro', PL[g[0].lower()]))
+            elif kind == 'combust': atoms.append(('combust', PL[g[0].lower()]))
+            elif kind == 'yoga':
+                word = g[0].lower()
+                for nm, yrx in YOGA_RX.items():
+                    if re.fullmatch(yrx, word): atoms.append(('yoga', nm)); break
             elif kind in ('dasha_maha', 'dasha_antar'): atoms.append(('dasha', PL[g[0].lower()], 'maha' if kind == 'dasha_maha' else 'antar'))
             elif kind == 'dasha_hl':
                 n = int(re.findall(r'\d{1,2}', m.group(0))[0])
@@ -83,7 +104,7 @@ def house_of(sign0, lagna0, frame='lagna'):
 def evaluate(norm, chart):
     """chart = {'asc': sign0, 'signs': {planet_id: sign0}}. Returns True/False for parsed rules, None if not evaluable."""
     if norm['status'] != 'parsed': return None
-    if any(a[0].startswith('dasha') for a in norm['atoms']): return None          # needs a date: use influence.fit(..., ctx)
+    if any(a[0].startswith('dasha') or a[0] in ('planet_from', 'planet_in_nak', 'retro', 'combust', 'yoga') for a in norm['atoms']): return None          # needs context: use influence.fit(..., ctx)
     fr = norm['frame']; lag = chart['asc']; sg = chart['signs']
     SIGN_LORD = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4]
     ok = True

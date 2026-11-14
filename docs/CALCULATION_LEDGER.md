@@ -68,3 +68,21 @@ Principle: AI is used ONLY as a translator during the build. The running softwar
 - Code validation (core/atoms_store.py): strict schema, planets/houses/signs in range, no unknown atom. An invalid entry is rejected and counted. Only valid and complete entries are executed. They carry origin "ai_v1" so every report can separate parser-read from AI-read rules.
 - Audit before trust: (1) GOLD test: 150 rules the regex parser already reads are converted blind by the AI; exact match with the parser = measured accuracy on easy rules. (2) HARD test: 150 unread rules converted independently twice; agreement rate; plus hand audit of a sample. (3) Rule for the full run: only proceed if gold accuracy and hard agreement are high enough to be useful; otherwise stop and report. Final per-rule error rate is published in docs/RESULTS.md.
 - NOT trusted for: any rule marked complete false; any rule whose two passes disagree (full run uses two passes and keeps only agreeing entries).
+
+## Step 4 spec (written before code): more atoms, so more rules can run
+Context: the pilot showed most unread rules need things the engine could not check. New atoms (all plain code, tested):
+- ('planet_from', p, ref, houses): p is in the Nth sign counted from planet ref (Moon, Sun, any planet; counted in signs, so the house views do not change it). "Jupiter in 5th from Moon". Not used for "from lagna" (that is planet_in_house).
+- ('planet_in_nak', p, naks): p's sidereal longitude is in nakshatra n (1 Ashwini .. 27 Revati), 13 deg 20 min each. Needs longitudes (ctx lon).
+- ('retro', p): p retrograde at birth, p in Mars..Saturn. Needs the birth retro flags (ctx retro). Sun, Moon never; nodes not used.
+- ('combust', p): p within the orb of the Sun, p in Moon..Saturn. Orbs (classical, hypothesis): Moon 12, Mars 17, Mercury 14 (12 if retro), Jupiter 11, Venus 10 (8 if retro), Saturn 15.
+- ('yoga', name): position-only named yogas, defined exactly:
+  - gajakesari: Jupiter in a kendra (1, 4, 7, 10th sign) from the Moon.
+  - budhaditya: Sun and Mercury in one sign. chandra_mangala: Moon and Mars in one sign.
+  - guru_chandala: Jupiter with Rahu. shrapit: Saturn with Rahu. angarak: Mars with Rahu. grahan: Sun or Moon with Rahu or Ketu.
+  - kemadruma: none of Mars, Mercury, Jupiter, Venus, Saturn in the Moon's sign, the 2nd or the 12th from it (basic form; cancellations not applied).
+  - sunapha / anapha / duradhara: one of Mars..Saturn in the 2nd / the 12th / both from the Moon.
+  - vesi / vosi / ubhayachari: one of Mars..Saturn in the 2nd / the 12th / both from the Sun.
+  - ruchaka (Mars), bhadra (Mercury), hamsa (Jupiter), malavya (Venus), sasa (Saturn): the planet is in its own or exalted sign AND in a kendra from lagna, judged in each house view (multi-sign).
+  - NOT built: raja yoga, dhana, viparita, neecha-bhanga and any yoga that needs house lords, strength or cancellation rules.
+- Rules that still need strength (shadbala), transits, Lal Kitab states, tithi/weekday stay partial.
+- Context object passed to fit: ctx = {lon, retro, maha, antar}. An atom whose data is missing is NOT evaluated (fit None), never guessed.

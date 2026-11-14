@@ -6,7 +6,7 @@ every rule gets a FIT between 0 and 1 = weighted share of views (and, for 'lord 
 View weights and the minor-sign cutoff are HYPOTHESES (config below) to be tuned on validation data, not facts."""
 import swisseph as swe
 import houses as H
-import dignity
+import dignity, yogas
 SIGN_LORD = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4]
 SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
 SYSTEM_VIEWS = ('whole', 'equal_asc', 'equal_mid', 'sripati', 'porphyry', 'placidus')
@@ -71,16 +71,32 @@ def _atom_val(a, v, sg, ctx):
     if k == 'aspects_planet': return 1.0 if dignity.aspects_planet(a[1], v['planet_house'][a[1]], v['planet_house'][a[2]]) else 0.0
     if k == 'lord_in_house':
         width = sum(d for _, d in v['spans'][a[1]]); return sum(d / width for s, d in v['spans'][a[1]] if v['planet_house'][SIGN_LORD[s]] in a[2])
+    if k == 'planet_from': return 1.0 if yogas.planet_from(a[1], a[2], sg, a[3]) else 0.0
+    if k == 'planet_in_nak': return 1.0 if yogas.nak_of(ctx['lon'][a[1]]) in a[2] else 0.0
+    if k == 'retro': return 1.0 if a[1] in ctx['retro'] else 0.0
+    if k == 'combust': return 1.0 if yogas.combust(a[1], ctx['lon'], ctx['retro']) else 0.0
+    if k == 'yoga': return 1.0 if yogas.yoga(a[1], sg, v['planet_house']) else 0.0
     if k == 'any': return max(_atom_val(x, v, sg, ctx) for x in a[1])
     if k == 'not': return 1.0 - _atom_val(a[1], v, sg, ctx)
     raise ValueError(k)
-def _needs_date(atoms): return any(a[0].startswith('dasha') or (a[0] in ('any', 'not') and _needs_date(a[1] if a[0] == 'any' else (a[1],))) for a in atoms)
+def _needs(atoms):
+    """What data an atom needs beyond the chart: 'maha' (running dasha), 'lon' (longitudes), 'retro' (birth retro flags)."""
+    out = set()
+    for a in atoms:
+        k = a[0]
+        if k.startswith('dasha'): out.add('maha')
+        elif k == 'planet_in_nak': out.add('lon')
+        elif k == 'retro': out.add('retro')
+        elif k == 'combust': out |= {'lon', 'retro'}
+        elif k == 'any': out |= _needs(a[1])
+        elif k == 'not': out |= _needs((a[1],))
+    return out
 def fit(norm, views, sign_of_planet, ctx=None):
     """Weighted fit (0..1) of a parsed rule (core/rules_norm.parse, or validated AI atoms). None if not fully parsed or if a dasha is needed and no ctx is given.
     Each view is judged separately (so AND stays consistent inside one view), then views are averaged by weight.
     'N-th lord' counts every sign the N-th house touches, weighted by its share inside that view."""
     if norm['status'] != 'parsed': return None
-    if ctx is None and _needs_date(norm['atoms']): return None
+    if _needs(norm['atoms']) - set(ctx or {}): return None            # missing data: never guess
     if norm.get('frame') == 'aries_fixed': return _fit_aries(norm, sign_of_planet, ctx)
     total = 0.0
     for v in views.values():
@@ -101,6 +117,11 @@ def _aries_ok(a, sg, ctx):
     if k == 'dignity': return a[2] in dignity.states(a[1], sg[a[1]])
     if k == 'aspects_house': return bool(dignity.aspects_house(a[1], sg[a[1]] + 1) & set(a[2]))
     if k == 'aspects_planet': return dignity.aspects_planet(a[1], sg[a[1]] + 1, sg[a[2]] + 1)
+    if k == 'planet_from': return yogas.planet_from(a[1], a[2], sg, a[3])
+    if k == 'planet_in_nak': return yogas.nak_of(ctx['lon'][a[1]]) in a[2]
+    if k == 'retro': return a[1] in ctx['retro']
+    if k == 'combust': return yogas.combust(a[1], ctx['lon'], ctx['retro'])
+    if k == 'yoga': return yogas.yoga(a[1], sg, {p: sg[p] + 1 for p in sg})
     if k == 'any': return any(_aries_ok(x, sg, ctx) for x in a[1])
     if k == 'not': return not _aries_ok(a[1], sg, ctx)
     raise ValueError(k)
