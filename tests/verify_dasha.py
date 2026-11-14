@@ -23,8 +23,9 @@ for name, y, m, d, H, M, S, tz, lat, lon in CASES:
     jd = r['settings']['jd_birth']
     mm = mine(jd - tz / 24, jd)
     theirs = r['maha'][:9]
-    ok = all(a[0] == b[0] for a, b in zip(mm, theirs))
+    ok = all(a[0] == b[0] for a, b in zip(mm, theirs)); allok = globals().get('allok', True) and ok
     diffs = [abs(a[1] - b[1]) for a, b in zip(mm, theirs)]
     worst = max(worst, max(diffs))
     print(f'{name}: lords_match={ok} max_start_diff_days={max(diffs):.2f}')
 print('worst diff days', round(worst, 2))
+if worst > 4 or not allok: sys.exit(1)

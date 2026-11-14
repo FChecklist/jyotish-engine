@@ -35,3 +35,4 @@ for (tz, lat, lon) in PLACES:
         worst_sr = max(worst_sr, min(dsr, 1440 - dsr)); worst_ss = max(worst_ss, min(dss, 1440 - dss))
 print('cases', tot, 'mismatches', bad)
 print('worst sunrise diff minutes', round(worst_sr, 2), 'worst sunset diff minutes', round(worst_ss, 2))
+if sum(bad.values()) or worst_sr > 6 or worst_ss > 6: sys.exit(1)

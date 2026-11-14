@@ -21,3 +21,4 @@ for i in range(N):
     if r['bav'][0] != mine(SUN, r['signs']): bad_sun += 1
     if r['bav'][1] != mine(MOON, r['signs']): bad_moon += 1
 print(f'{N} random charts: bad_row_totals={bad_tot} bad_SAV={bad_sav} sun_BAV_mismatch={bad_sun} moon_BAV_mismatch={bad_moon}')
+if bad_tot or bad_sav or bad_sun or bad_moon: sys.exit(1)

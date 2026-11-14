@@ -71,3 +71,4 @@ if __name__ == '__main__':
                     bad.setdefault(f, []).append((name, k, round(L, 3), mine, theirs))
     for f in sorted(tot):
         print(f'D{f}: {tot[f]-len(bad.get(f, []))}/{tot[f]} signs agree', ('; e.g. ' + str(bad[f][:2])) if f in bad else '')
+    if bad: sys.exit(1)
