@@ -29,7 +29,7 @@ def bundle(jd_ut, lat, lon, positions, ayan='lahiri', weights=None):
         views[sy] = {'weight': w[sy], 'spans': {h['h']: h['spans'] for h in ch['houses']}, 'planet_house': {p: H.house_of(L, ch) for p, L in pos.items()}}
     if w['d9'] > 0:
         asc = H.build(jd_ut, lat, lon, 'whole', ayan)['asc']; d9l = navamsha_sign(asc)
-        views['d9'] = {'weight': w['d9'], 'spans': {h: [((d9l + h - 1) % 12, 30.0)] for h in range(1, 13)},
+        views['d9'] = {'weight': w['d9'], 'lagna_spans': [(int(asc // 30) % 12, 30.0)], 'spans': {h: [((d9l + h - 1) % 12, 30.0)] for h in range(1, 13)},
                        'planet_house': {p: (navamsha_sign(L) - d9l) % 12 + 1 for p, L in positions.items()}}
     tot = sum(v['weight'] for v in views.values())
     for v in views.values(): v['weight'] /= tot
@@ -73,6 +73,8 @@ def _atom_val(a, v, sg, ctx):
         width = sum(d for _, d in v['spans'][a[1]]); return sum(d / width for s, d in v['spans'][a[1]] if v['planet_house'][SIGN_LORD[s]] in a[2])
     if k == 'planet_from': return 1.0 if yogas.planet_from(a[1], a[2], sg, a[3]) else 0.0
     if k == 'planet_in_nak': return 1.0 if yogas.nak_of(ctx['lon'][a[1]]) in a[2] else 0.0
+    if k == 'lagna_sign':
+        sp = v.get('lagna_spans', v['spans'][1]); width = sum(d for _, d in sp); return sum(d / width for s, d in sp if s in a[1])
     if k == 'retro': return 1.0 if a[1] in ctx['retro'] else 0.0
     if k == 'combust': return 1.0 if yogas.combust(a[1], ctx['lon'], ctx['retro']) else 0.0
     if k == 'yoga': return 1.0 if yogas.yoga(a[1], sg, v['planet_house']) else 0.0
@@ -119,6 +121,7 @@ def _aries_ok(a, sg, ctx):
     if k == 'aspects_planet': return dignity.aspects_planet(a[1], sg[a[1]] + 1, sg[a[2]] + 1)
     if k == 'planet_from': return yogas.planet_from(a[1], a[2], sg, a[3])
     if k == 'planet_in_nak': return yogas.nak_of(ctx['lon'][a[1]]) in a[2]
+    if k == 'lagna_sign': return 0 in a[1]          # Lal Kitab fixed frame: house 1 is Aries
     if k == 'retro': return a[1] in ctx['retro']
     if k == 'combust': return yogas.combust(a[1], ctx['lon'], ctx['retro'])
     if k == 'yoga': return yogas.yoga(a[1], sg, {p: sg[p] + 1 for p in sg})

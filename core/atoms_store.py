@@ -54,6 +54,10 @@ def atom(a, depth=0):
             if not isinstance(n, int) or not 1 <= n <= 27: raise Bad('nak')
             out.append(n)
         return ('planet_in_nak', _p(a['p']), tuple(sorted(set(out))))
+    if t == 'lagna_sign':
+        v = a['sign']; v = [v] if isinstance(v, str) else v
+        if not isinstance(v, list) or not v or any(x not in SIGNS for x in v): raise Bad('lagna sign')
+        return ('lagna_sign', tuple(sorted({SIGNS.index(x) for x in v})))
     if t == 'retro':
         if _p(a['p']) not in (2, 3, 4, 5, 6): raise Bad('retro planet')
         return ('retro', PL[a['p']])
