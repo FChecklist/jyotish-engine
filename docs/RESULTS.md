@@ -29,3 +29,10 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - Tests: tara counts, Rahu Kaal for all 7 weekdays, gochara hand cases (BK13_0019, 0021, 0007, 0006, 0005), vedha table equals DB text, Sun ingress moments checked against Swiss Ephemeris (within 0.02 deg of a sign border), end-to-end 3+3 with no reasons in the user view, diary scorer detects a planted link and ignores noise.
 - Window for 14 Nov 2026: Sun in Libra, 17 Oct to 16 Nov. Not yet measured against any outcome.
 - Known limits: Rajat's lagna has two candidates, so area wording from lagna houses is less certain for him; the Moon-based daily checks are not affected.
+
+## 013 — Event backtest of the daily and Sun-sign signals (2026-11-14)
+- tune/event_backtest.py. Data: only Rajat has dated events (20 with exact day, births excluded). Pallavi, Eshani, Pehu have none beyond marriage and births, so nothing can be tested for them yet.
+- Each event day scored on his chart (daily net score, Chandra Bala, Tara good/bad, gochara score), versus random days within +-400 days (120 per event), 5000 permutations.
+- Result: net p=0.74, Chandra p=0.43, Tara good p=0.96 (events fall on good-Tara days LESS than chance), Tara bad p=0.09, gochara p=0.30. Five tests, so p=0.09 is not significant after correction.
+- Meaning: no measured signal. The do/dont lists stay unvalidated tradition claims. Consistent with the earlier chance-level tests.
+- Caveats: event dates may be rounded (some on 1st or 15th); event cities differ (Delhi used for panchang); many events are job changes, which are not clearly "auspicious start" days. Small sample (20).

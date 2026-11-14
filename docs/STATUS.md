@@ -18,3 +18,7 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 ## 2026-11-14 update
 - DONE: core/apply_rules.py, Lal Kitab frame in influence.fit, report events/dos/donts/remedies filled (status built_unvalidated) when rules_glob is passed.
 - NEXT: extend parser beyond 15% (aspects, dignity, yogas, Jaimini terms); wire KP ayanamsa; load rules to D1; check CI.
+
+## 2026-11-14 late
+- DONE: daily and Sun-sign 3+3 guidance for four people (core/guide.py); event backtest (tune/event_backtest.py); diary scorer.
+- NOT COMPLETE (honest list): rule parser covers 15%, transit-condition parser missing for ~850 DB transit rules, no dasha-to-rule linking, KP ayanamsa not wired, no Jaimini dashas, Yamaganda/Gulika/Choghadiya/hora not built, birth time of Rajat unresolved (two lagna candidates), no measured accuracy above chance.

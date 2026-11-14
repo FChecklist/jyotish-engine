@@ -38,3 +38,7 @@
 - Gautam transcript rules are loaded with the books (weekday remedies and don'ts). Birth data comes from a private path, never git.
 - Daily classical tables (Tara, tithi, nakshatra class, yoga, Rahu Kaal, Abhijit) are NOT in the rules DB. Source unverified: open question.
 - Measurement: tune/diary_score.py (permutation test against a day diary). No percentages until it passes.
+
+## 2026-11-14 (later) — Delivery and scope
+- Daily message lands in the Claude chat, 06:00 IST, via a send_later chain (each run schedules the next). It works only while this session and its files exist. If the container is reset, restore from the two GitHub repos and the Drive family file.
+- User scope: no predictions or reasons shown. Event analysis is for the engine's own calibration. Only Rajat's events are dated; others' events are needed to test the other three.
