@@ -19,3 +19,5 @@ Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd: books_master_v8 parts, EN
 
 ## Latest (2026-11-14)
 - apply_rules + weighted fit wired into report (build(..., rules_glob=...)). 369 rules fired on Rajat's chart, all unvalidated. Next: parser coverage (15%), KP ayanamsa wiring, D1 load.
+
+- 2026-11-14: guidance view built (do/dont/precautions only). Next: tie windows to rule timing + transits.

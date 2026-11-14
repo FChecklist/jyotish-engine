@@ -21,6 +21,8 @@ Update SAVE.md, docs/STATUS.md, docs/RESULTS.md, docs/DECISIONS.md; commit; push
 - Rajat's style: direct senior advisor, simple English, bullets, no flattery, point out errors and weak reasoning.
 - Rajat works from a phone; no laptop. JHora desktop is not used.
 
+- OUTPUT SHAPE: the user-facing result is only DO, DON'T, PRECAUTIONS for the current window (umbrella rule), see core/guidance.py and DECISIONS 2026-11-14. Probability only when measured.
+
 ## Where things are
 - docs/ : why, spec, decisions, status, results, runbook, open questions
 - core/ : zodiac, houses (6 systems), config   tech/ : technique engine + specs   tune/ : backtests

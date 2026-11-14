@@ -16,3 +16,10 @@
 - 2026-11-14 CORRECTION: Rajat decided rules may be public for now ("nothing is copyright issue"). Second repo is FChecklist/jyotish-code (not jyotish-data). Rules pushed there: 24,171 rows in 6 parts (rules/), quote_short column dropped (only 1 row had it). Full original file stays in Drive. Rajat may make it private later.
 - 2026-11-14 Rajat confirmed two separate steps: (1) software gives probabilities of events, dates, timing, do, don't, precautions; (2) AI inference on that report, acting like an astrologer. Contract in docs/REPORT_CONTRACT.md. Software probabilities must be calibrated from measured past cases; otherwise null.
 - 2026-11-14 MAIN PART OF THE SOFTWARE (Rajat, from Brajesh Gautam's teaching): every house is influenced by 2-3 zodiac signs. For each native the engine computes per house a share for each sign from several views (D1 whole-sign, equal, equal-from-middle, Sripati, Porphyry, KP Placidus with Krishnamurti ayanamsa, and D9). Biggest share = main influence, others = minor; both count in proportion. Rules are judged by a weighted FIT (0-1) over views and over the signs of a house (core/influence.py), not true/false on one sign. Weights (equal) and the 8 percent minor cutoff are hypotheses to be tuned on validation data.
+
+## 2026-11-14 — Guidance view: only do / don't / precautions (umbrella rule)
+- Rajat: the astrologer's output should be do, don't and precautions, like a forecaster who says "chance of rain, take an umbrella". No long predictions.
+- Built core/guidance.py: remedy rules -> DO, donot rules -> DON'T, event rules with a harmful outcome -> PRECAUTION. Window = running Vimshottari antardasha.
+- Condition (advisor note): a rain forecast works because its percentages are measured. Ours are not, so probability stays null and every item is a labelled tradition claim until a locked test set gives a measured rate.
+- Safety filter drops death, disease and investment items. Word-list matching for harmful outcomes is a v1 hypothesis.
+- Known weakness: the window is the running dasha, not yet tied to each rule's own timing or to transits. Next step.

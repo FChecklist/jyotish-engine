@@ -20,3 +20,7 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - Most are generic per-planet-in-sign or Lal Kitab statements. They are tradition claims, NOT validated. Probability stays null, calibration none.
 - Lal Kitab uses the Aries-fixed frame (open question): fit is 0 or 1, one view only.
 - Tests: tests/test_apply_rules.py, and a report wiring check in tests/test_report.py. Full suite passes.
+
+## 011 — Guidance view (2026-11-14)
+- On Rajat's chart as of 2026-11-14 (Venus-Moon period): 93 dos, 4 donts, about 5 precautions, 11 dropped by safety filter. Unvalidated.
+- Test caught a bug: remedy text was not checked by the safety filter. Fixed.

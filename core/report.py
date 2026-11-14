@@ -67,6 +67,9 @@ def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='
             return {'status': 'built_unvalidated', 'parsed_coverage_note': 'only rules the parser fully understands (about 15%) are applied', 'items': items}
         rep['events'] = sect(('event',)); rep['dos'] = sect(('do',)); rep['donts'] = sect(('donot',)); rep['remedies'] = sect(('remedy',))
         rep['rules_other'] = sect(('rule', 'foundation', 'yoga'))
+        if asof:
+            import guidance
+            rep['guidance'] = guidance.guidance(rep, datetime.datetime(*asof[:3]))
     if asof:
         ay, am, ad, ah = asof
         rep['transit'] = transit.transit(ay, am, ad, ah, 0, 0, tz, lat, lon, ayanamsa=ayanamsa)
