@@ -21,8 +21,8 @@ print('report tests passed; size bytes', len(js), '; D60 planets that flip with 
 # rules wiring: items are tradition claims with null probability
 import glob
 _g = os.path.join(os.path.dirname(__file__), 'fixture_rules.jsonl')
-open(_g, 'w').write('{"id":"t1","system":"parashari","engine_role":"event","life_area":"x","input":"Saturn in Cancer","outcome":"o","timing":"","remedy":"","source":"s","confidence":""}\n')
-_r = report.build(1975, 8, 24, 5, 39, 4, 5.5, 25.1833, 75.8333, rules_glob=_g)
+open(_g, 'w').write('{"id":"t1","system":"parashari","engine_role":"event","life_area":"x","input":"Saturn in Sagittarius","outcome":"o","timing":"","remedy":"","source":"s","confidence":""}\n')
+_r = report.build(1990, 1, 1, 6, 0, 0, 5.5, 28.6139, 77.209, rules_glob=_g)
 os.remove(_g)
 assert _r['events']['status'] == 'built_unvalidated' and _r['events']['items'][0]['probability'] is None and _r['events']['items'][0]['label'] == 'tradition claim'
 assert _r['calibration']['status'] == 'none'

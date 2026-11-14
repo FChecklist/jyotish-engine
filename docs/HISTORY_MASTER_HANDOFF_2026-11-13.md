@@ -3,7 +3,7 @@
 READ THIS FIRST. The cloud workspace (/home/claude/astro) is temporary and can disappear between sessions. Drive is the permanent copy. Everything below says where it lives in Drive and how to continue.
 
 ## 0. The user and how to talk to him
-- Rajat Agarwal, solo founder, Indirapuram (Delhi NCR), IST. Born 24 Aug 1975, Kota.
+- Rajat, solo founder, Indirapuram (Delhi NCR), IST. Birth data is in the private Drive family folder, NOT in git.
 - Style he wants: senior-advisor tone. Direct, honest, analytical. No flattery or emotional validation. Simple English. Bullets. Challenge his assumptions. Correct my own mistakes openly.
 - He says "You do it end to end". He wants parallel work and complete files in Google Drive.
 - I have failed twice by forgetting what already exists (13 Nov: he asked for daily do/don't and I did not look in Drive first). RULE: before answering any astrology request, check section 3 (Drive map) and the scheduled task in section 5.
@@ -58,7 +58,7 @@ Engine (folder engine/):
 - Upgrade path: (1) raise parse coverage from 24% by handling more phrasings in cond.py (look at unparsed.tsv by frequency), (2) better area/polarity labelling, (3) frozen train/test weight fitting, (4) day-level layer using the panchang flags, (5) combine with transcripts rules when available.
 
 ## 5. Daily panchang for Rajat and the scheduled daily message
-- TWO CHARTS are kept because birth time is uncertain by ~2 minutes: Chart A 05:39:04 lagna Leo 0 deg 25 min; Chart B 05:37:04 lagna Cancer 29 deg 59 min. Moon (Pisces 0 deg 37 min, Purva Bhadrapada-4) is the same in both. Tests could not separate A from B. Tag items [both], [Leo], [Cancer].
+- TWO CHARTS are kept because birth time is uncertain by about 2 minutes (two lagna candidates). Details are in the private Drive family folder.
 - Data: Drive folder panchang_daily 1qnKb0Cee6DRzcCjSEZ8_vZnNiZmHCJel. File ids: 2026-11 1IY9bp2Ll0_2O_FDRwYtWVS8ysBtqo7m4; 2026-12 1GIHHIb27UQDORp0x0BQTmzoYKt03VUQT; 2027-01 1x94X0z_KSokQdNAz8I9hJvrgDXzMqcXN; 2027-02 1pvtBx6j5VPzAKRx-vxkkTpJqM2DCdeCZ; 2027-03 1hBPKDOhwvvcg2ZMmiebjTAKzoii16BY3; 2027-04 1VsHX6BRhWazItUVyTjpDqAFCdtMgOEFm; 2027-05 1SzrnFIcsBhR0eLboz-dU0DGtLLKZdftJ; 2027-06 1JaHiiDsVRZdZXR_n8VOasJ5PyAkPHUfy; 2027-07 1KvSFWpBqbJ-A9gpEXUEOWhiq33-i4vRZ; 2027-08 1ybCmTDiVynx7LquO4QcoR_sqMgojKCIj; 2027-09 1chC3QlXuwyxdm6BvndZpCwyBxlSySeyx; 2027-10 1MdMi67-dWF7dqFM2RdrH5ECF2XfWTF6T; 2027-11 12k0C0fJCGLr7sAOR6C6pNqpwQWtBbw1b; 2027-12 1CD9AX0zRYaJBZ80ETBG16Tc95pgEQqim. Block per day starts "## YYYY-MM-DD". Checked against a web panchang for 12 Nov 2026 (within 2 min).
 - Scheduled task: name "Daily plan for tomorrow (panchang)", id trig_01LURE7g3fGh64hBJYEHbXLt, runs every day 17:42 IST (message lands ~18:00), sends 3 DO + 3 AVOID + 3 MIGHT HAPPEN for TOMORROW, then logs plan_<date>.txt in the log folder. The user can reply hit/miss; save as score_<date>.txt. After 30 days compare hit rate of [both] vs [Leo] vs [Cancer]. Its full prompt is stored in the task (view with list_triggers).
 - For "today" requests: open today's block in the month file (or pan/ locally), do NOT use the 10-day engine. Translate flags: avoid new starts in Rikta / Vishti / Rahu Kaal / Yamaganda / bad tara-bala / bad yoga; do important calls in Abhijit; finishing work in Ketu nakshatras.
@@ -116,7 +116,7 @@ Per person: 1_rules_applied, 2_monthly_plan (12 months), 3_do_dont_predictions (
 ## 12. How to resume in a fresh session
 1. Read this file (Drive: Family Vedic Analysis folder > MASTER_HANDOFF_2026-11-13.md).
 2. If /home/claude/astro is missing, download astro_workspace_backup_2026-11-13.zip from the same folder and unzip into /home/claude. Needs `pip install pyswisseph` (2.10.03) and numpy.
-3. Quick test: `cd /home/claude/astro/engine && python engines.py --name Rajat --dob 1975-08-24 --tob 05:39:04 --tz 5.5 --lat 25.1833 --lon 75.8333 --start 2026-11-13 --end 2027-11-13`.
+3. Quick test: run engines.py with Rajat's birth data read from the private Drive file astro_family_data.json (not stored here).
 4. Check the scheduled task with list_triggers, and the log folder for plan_/score_ files.
 5. Update this file whenever something big changes (trash the old Drive file and create the new one, or add a dated change-log below).
 

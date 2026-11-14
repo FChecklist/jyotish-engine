@@ -1,15 +1,15 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'core'))
 import swisseph as swe, influence as I, apply_rules as A, rules_norm as N, charts
-inp = (1975, 8, 24, 5, 39, 4, 5.5, 25.1833, 75.8333)
+inp = (1990, 1, 1, 6, 0, 0, 5.5, 28.6139, 77.209)
 c = charts.natal(*inp, factors=(1,))['charts'][1]
 pos = {k: v[0] * 30 + v[1] for k, v in c.items() if k != 'asc'}
 sg = {k: v[0] for k, v in c.items() if k != 'asc'}
-jd = swe.julday(1975, 8, 24, 5 + 39 / 60 + 4 / 3600 - 5.5)
-V = I.bundle(jd, 25.1833, 75.8333, pos)
+jd = swe.julday(1990, 1, 1, 6 - 5.5)
+V = I.bundle(jd, 28.6139, 77.209, pos)
 def row(i, text, system='parashari'):
     return dict(id=i, system=system, engine_role='rule', life_area='x', input=text, outcome='o', timing='', remedy='', source='s', confidence='')
-rows = [row('a', 'Saturn in Cancer'), row('b', 'Saturn in Leo'), row('c', 'Rahu in example'), row('d', 'Mars in 2nd / Mercury in 2nd / Jupiter in 2nd')]
+rows = [row('a', 'Saturn in Sagittarius'), row('b', 'Saturn in Leo'), row('c', 'Rahu in example'), row('d', 'Mars in 2nd / Mercury in 2nd / Jupiter in 2nd')]
 out = A.apply(rows, V, sg)
 ids = [r['id'] for r in out]
 assert ids == ['a'], ids                       # fires only the true parsed rule; unparsed/partial/false ones stay out

@@ -1,14 +1,14 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'core'))
 import swisseph as swe, house_signs as HS, houses as H
-# Rajat (Drive time): the user's statement: both Cancer and Leo influence the 1st house
-jd = swe.julday(1975, 8, 24, 5 + 39 / 60 + 4 / 3600 - 5.5)
-r = HS.house_signs(jd, 25.1833, 75.8333)
+# Neutral test chart (1990-01-01 06:00 IST Delhi). Family birth data must never be in git.
+jd = swe.julday(1990, 1, 1, 6 - 5.5)
+r = HS.house_signs(jd, 28.6139, 77.209)
 h1 = r['houses'][1]
-assert 'Leo' in h1['main'] and 'Cancer' in h1['also'] and 'Virgo' not in h1['also'], h1
+assert h1['main'] and set(h1['main']) <= {'Sagittarius', 'Scorpio'} and 'Scorpio' in h1['main'] + h1['also'], h1   # neutral chart: lagna in Scorpio near its start
 # invariants for every system: 12 houses, widths sum to 360, spans cover width exactly
 for sy in HS.SYSTEMS:
-    ch = H.build(jd, 25.1833, 75.8333, sy, 'kp' if sy == 'placidus' else 'lahiri')
+    ch = H.build(jd, 28.6139, 77.209, sy, 'kp' if sy == 'placidus' else 'lahiri')
     assert abs(sum(h['width'] for h in ch['houses']) - 360) < 1e-6, sy
     for h in ch['houses']: assert abs(sum(d for _, d in h['spans']) - h['width']) < 1e-4, (sy, h['h'])
 # each house has at least one sign; whole-sign houses have exactly one

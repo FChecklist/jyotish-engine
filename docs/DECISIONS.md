@@ -23,3 +23,8 @@
 - Condition (advisor note): a rain forecast works because its percentages are measured. Ours are not, so probability stays null and every item is a labelled tradition claim until a locked test set gives a measured rate.
 - Safety filter drops death, disease and investment items. Word-list matching for harmful outcomes is a v1 hypothesis.
 - Known weakness: the window is the running dasha, not yet tied to each rule's own timing or to transits. Next step.
+
+## 2026-11-14 — Family data leak found and fixed
+- Rajat's birth date, time and place were in tests and one handoff doc in this PUBLIC repo. Removed; tests now use a neutral chart (1990-01-01 06:00 IST Delhi).
+- Git history still holds the old values. Removing them needs a history rewrite and force-push: waiting for Rajat's decision.
+- Rule: tests and docs must never contain family birth data. Per-person output goes to Drive, not git.
