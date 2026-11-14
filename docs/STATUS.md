@@ -26,3 +26,5 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 ## Update 2026-11-14 (late)
 - AI conversion run finished. 3,717 AI atoms loaded (`jyotish-code/rules/atoms_ai_v2.jsonl`). Executable rules: 8,325 / 29,430. Run `tune/coverage.py`.
 - Next: strength/shadbala, Lal Kitab, Jaimini, other dashas, transit-condition parser, the ~17,000 not-yet-expressible rules (need new atoms: lagna-sign, strength, transit, divisional).
+
+- Executable rules: 9,655 of 29,430 (32.8%) after lagna_sign. NOT complete.

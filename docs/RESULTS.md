@@ -60,3 +60,7 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - Audit: 150 random kept rules re-converted blind. 132 had a complete second answer (18 the second pass left incomplete). By meaning (conj groups and same-house placement treated as equal), 130/132 agree (98.5%). The 2 differences: any-of vs all-of (BK8_1279, removed) and an extra dignity atom.
 - Gold check on the parser's own rules in the pilot: 98% precision (RESULTS 016). Not measured: whether the atoms are right against what the classical authors meant.
 - Ledger now: executable rules 8,325 of 29,430 (28.3%): 4,591 by parser + 3,734 by AI atoms. The other 21,105 are partial or unread. NOT complete.
+
+## 018 (2026-11-14) lagna_sign atom + re-conversion
+- New atom lagna_sign (validator, multi-view fit, Lal Kitab frame, test tests/test_lagna_atom.py). 1,609 rules blocked by lagna were re-converted (41 batches, single pass); 1,330 valid and complete (83%) -> atoms_ai_v3.jsonl.
+- Ledger: executable 9,655 of 29,430 = 32.8% (was 8,325 = 28.3%). Parser 4,591 parsed / 8,118 partial / 16,721 unparsed (unchanged). Not audited blind yet; most are simple "Lagna X, planet P in house N" lines. This is self-consistency, not accuracy vs real life.

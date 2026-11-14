@@ -34,3 +34,5 @@ Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd: books_master_v8 parts, EN
 
 ## Save 2026-11-14 late
 Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`), `coverage.py` now counts executable rules (8,325). Daily conflict fix. Pending: purge birth data from git history (user decision), diary ratings, events for Pallavi/Eshani/Pehu, Drive backup of docs, D1 load, daily 06:00 chain (check it is alive).
+
+2026-11-14 late: lagna_sign atom done, 1,330 rules added (atoms_ai_v3). Ledger 9,655/29,430. Next: blind audit of v3 sample, then aspect/malefic/benefic/lord/afflict atoms. Chain 06:00 IST alive.
