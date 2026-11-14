@@ -6,7 +6,7 @@ One-line state: Design + first modules built; all accuracy tests at chance level
 ## Do next (in order)
 1. DONE: repo pushed (public) FChecklist/jyotish-engine. jyotish-data repo exists, public, EMPTY on purpose: do not push rules there (copyright, permanent history); ask Rajat to set it private.
 2. Load 24,171 rules into D1 (table exists, empty). Bulk load cannot go through the chat connector (too large); use a private data repo + import Worker via Git deploy.
-3. Wrapper core/charts.py DONE for D1-D60 (signs verified). Next: nodes, dasha (Vimshottari etc.), KP, panchang, transit, ashtakavarga wrappers + verification.
+3. DONE: core/charts.py (D1-D60 signs verified), core/dasha.py (Vimshottari mahadasa verified +-3 days). Next: antardasha, nodes, KP, panchang, transit, ashtakavarga wrappers + verification.
 4. Normalise rules into checkable conditions (frame + house system).
 5. Build modules M0-M11 per docs/SPEC.md.
 
