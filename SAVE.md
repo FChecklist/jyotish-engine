@@ -4,9 +4,9 @@ Last saved: 2026-11-14 (IST)
 One-line state: Design + first modules built; all accuracy tests at chance level; repo just created; Cloudflare connected; D1 jyotish-rules created (id c944c961-83f4-4035-882b-170072748b1f) with empty rules table; nothing deployed.
 
 ## Do next (in order)
-1. Push this repo to GitHub (FChecklist/jyotish-engine, private) if not yet pushed.
+1. DONE: repo pushed (public) FChecklist/jyotish-engine. jyotish-data repo exists, public, EMPTY on purpose: do not push rules there (copyright, permanent history); ask Rajat to set it private.
 2. Load 24,171 rules into D1 (table exists, empty). Bulk load cannot go through the chat connector (too large); use a private data repo + import Worker via Git deploy.
-3. Wrapper around PyJHora: one function per chart type; verify against Swiss Ephemeris + published charts.
+3. Wrapper core/charts.py DONE for D1-D60 (signs verified). Next: nodes, dasha (Vimshottari etc.), KP, panchang, transit, ashtakavarga wrappers + verification.
 4. Normalise rules into checkable conditions (frame + house system).
 5. Build modules M0-M11 per docs/SPEC.md.
 

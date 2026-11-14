@@ -11,3 +11,5 @@
 - 2026-11-14 Hosting: Cloudflare (paid $5 plan). D1 rules, R2 files; Python in Containers via Git deploy. Connector is deprecated and cannot deploy Workers.
 - 2026-11-14 Single source of truth = this repo.
 - 2026-11-14 Cloudflare D1 database `jyotish-rules` created (id c944c961-83f4-4035-882b-170072748b1f, APAC). Tables: rules, meta. Empty: rules not loaded yet. R2 not enabled on the account (needs dashboard enable by Rajat).
+- 2026-11-14 Rajat approved option 1 for rules: rules stay out of public GitHub. jyotish-data repo stays empty; Rajat to set private. Rules load into D1 by another route.
+- 2026-11-14 Both repos created by Rajat as public; engine repo stays public (AGPL-3.0). GitHub connector "GithubMobile" can push but cannot create repos.
