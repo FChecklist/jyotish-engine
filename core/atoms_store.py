@@ -5,6 +5,7 @@ SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sag
 GROUPS = ('kendra', 'trikona', 'dusthana', 'upachaya'); DIG = ('exalted', 'debilitated', 'own', 'friend', 'enemy', 'neutral')
 import yogas
 NAKN = {n.lower(): i + 1 for i, n in enumerate(['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'])}
+BEN = ('benefic', 'malefic')
 class Bad(Exception): pass
 def _p(x, seven=False):
     if x not in PL or (seven and PL[x] > 6): raise Bad(f'planet {x}')
@@ -58,6 +59,28 @@ def atom(a, depth=0):
         v = a['sign']; v = [v] if isinstance(v, str) else v
         if not isinstance(v, list) or not v or any(x not in SIGNS for x in v): raise Bad('lagna sign')
         return ('lagna_sign', tuple(sorted({SIGNS.index(x) for x in v})))
+    if t == 'group_in_house':
+        if a['g'] not in BEN: raise Bad('group')
+        return ('group_in_house', a['g'], _hs(a['h']))
+    if t == 'planet_with_group':
+        if a['g'] not in BEN: raise Bad('group')
+        return ('planet_with_group', _p(a['p']), a['g'])
+    if t in ('planet_aspected_by', 'lord_aspected_by'):
+        by = a['by']
+        if isinstance(by, str):
+            if by not in BEN: raise Bad('by group')
+            by = ('group', by)
+        else:
+            if not isinstance(by, list) or not by: raise Bad('by planets')
+            by = ('planets', tuple(sorted({_p(x) for x in by})))
+        if t == 'planet_aspected_by':
+            if by[0] == 'planets' and _p(a['p']) in by[1] and len(by[1]) == 1: raise Bad('aspect self')
+            return (t, _p(a['p']), by)
+        if not isinstance(a['n'], int) or not 1 <= a['n'] <= 12: raise Bad('n')
+        return (t, a['n'], by)
+    if t == 'lord_with_group':
+        if a['g'] not in BEN or not isinstance(a['n'], int) or not 1 <= a['n'] <= 12: raise Bad('lord group')
+        return ('lord_with_group', a['n'], a['g'])
     if t == 'retro':
         if _p(a['p']) not in (2, 3, 4, 5, 6): raise Bad('retro planet')
         return ('retro', PL[a['p']])

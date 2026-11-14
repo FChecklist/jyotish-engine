@@ -76,6 +76,7 @@ Context: the pilot showed most unread rules need things the engine could not che
 - ('retro', p): p retrograde at birth, p in Mars..Saturn. Needs the birth retro flags (ctx retro). Sun, Moon never; nodes not used.
 - ('combust', p): p within the orb of the Sun, p in Moon..Saturn. Orbs (classical, hypothesis): Moon 12, Mars 17, Mercury 14 (12 if retro), Jupiter 11, Venus 10 (8 if retro), Saturn 15.
 - ('lagna_sign', signs): the lagna (ascendant) lies in any of the listed signs. Value per view = share of the lagna house-1 span inside those signs (D9 view uses the D1 lagna sign). Lal Kitab frame: lagna is Aries. Test: tests/test_lagna_atom.py.
+- ('group_in_house', g, houses): any natural benefic/malefic in those houses. ('planet_with_group', p, g): p shares the house with a group planet other than p. ('planet_aspected_by', p, by) and ('lord_aspected_by', n, by): by = planets list or group; uses dignity.ASPECT_OFFSETS (Mars 4/7/8, Jupiter 5/7/9, Saturn 3/7/10, nodes 5/7/9, rest 7). ('lord_with_group', n, g). Lord atoms weight every sign of the house by its share in the view. Natural nature (HYPOTHESIS, fixed): benefic Jupiter, Venus, Mercury, waxing Moon; malefic Sun, Mars, Saturn, Rahu, Ketu, waning Moon. Need ctx lon. Test: tests/test_group_atoms.py.
 - ('yoga', name): position-only named yogas, defined exactly:
   - gajakesari: Jupiter in a kendra (1, 4, 7, 10th sign) from the Moon.
   - budhaditya: Sun and Mercury in one sign. chandra_mangala: Moon and Mars in one sign.

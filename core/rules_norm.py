@@ -104,7 +104,7 @@ def house_of(sign0, lagna0, frame='lagna'):
 def evaluate(norm, chart):
     """chart = {'asc': sign0, 'signs': {planet_id: sign0}}. Returns True/False for parsed rules, None if not evaluable."""
     if norm['status'] != 'parsed': return None
-    if any(a[0].startswith('dasha') or a[0] in ('planet_from', 'planet_in_nak', 'retro', 'combust', 'yoga', 'lagna_sign') for a in norm['atoms']): return None          # needs context: use influence.fit(..., ctx)
+    if any(a[0].startswith('dasha') or a[0] in ('planet_from', 'planet_in_nak', 'retro', 'combust', 'yoga', 'lagna_sign', 'group_in_house', 'planet_with_group', 'planet_aspected_by', 'lord_with_group', 'lord_aspected_by') for a in norm['atoms']): return None          # needs context: use influence.fit(..., ctx)
     fr = norm['frame']; lag = chart['asc']; sg = chart['signs']
     SIGN_LORD = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4]
     ok = True

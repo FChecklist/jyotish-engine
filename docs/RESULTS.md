@@ -64,3 +64,8 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 ## 018 (2026-11-14) lagna_sign atom + re-conversion
 - New atom lagna_sign (validator, multi-view fit, Lal Kitab frame, test tests/test_lagna_atom.py). 1,609 rules blocked by lagna were re-converted (41 batches, single pass); 1,330 valid and complete (83%) -> atoms_ai_v3.jsonl.
 - Ledger: executable 9,655 of 29,430 = 32.8% (was 8,325 = 28.3%). Parser 4,591 parsed / 8,118 partial / 16,721 unparsed (unchanged). Not audited blind yet; most are simple "Lagna X, planet P in house N" lines. This is self-consistency, not accuracy vs real life.
+
+## 019 (2026-11-14) blind audit v3 + group atoms
+- Blind audit of 60 random lagna conversions (v3): 60/60 agree with an independent second conversion (same model, so this is self-consistency only).
+- New atoms group_in_house, planet_with_group, planet_aspected_by, lord_with_group, lord_aspected_by (natural benefic/malefic is a fixed HYPOTHESIS in the ledger). 966 rules re-converted; only 194 (20%) became complete, because most also need strength/shadbala or other qualifiers. atoms_ai_v4.jsonl.
+- Ledger: executable 9,849 of 29,430 = 33.5%. Still NOT complete. Biggest remaining: 16,721 unparsed (mostly free-text predictions), strength/shadbala, other dashas, divisional rules.

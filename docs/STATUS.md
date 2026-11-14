@@ -28,3 +28,5 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 - Next: strength/shadbala, Lal Kitab, Jaimini, other dashas, transit-condition parser, the ~17,000 not-yet-expressible rules (need new atoms: lagna-sign, strength, transit, divisional).
 
 - Executable rules: 9,655 of 29,430 (32.8%) after lagna_sign. NOT complete.
+
+- Executable rules: 9,849 of 29,430 (33.5%) after group atoms. NOT complete.

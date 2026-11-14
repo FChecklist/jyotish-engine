@@ -55,6 +55,17 @@ def planet_house_shares(views):
         for p, h in v['planet_house'].items(): res.setdefault(p, {}).setdefault(h, 0.0); res[p][h] += v['weight']
     return res
 
+NAT_BEN = (4, 5, 3); NAT_MAL = (0, 2, 6, 7, 8)     # HYPOTHESIS (classical natural nature): Mercury counted benefic; Moon benefic if waxing (Moon-Sun elongation under 180), else malefic
+def group_members(g, ctx):
+    waxing = ((ctx['lon'][1] - ctx['lon'][0]) % 360) < 180
+    m = set(NAT_BEN if g == 'benefic' else NAT_MAL)
+    if (g == 'benefic') == waxing: m.add(1)
+    return m
+def _lord_signs(v, n): 
+    sp = v['spans'][n]; w = sum(d for _, d in sp); return [(SIGN_LORD[s], d / w) for s, d in sp]
+def _aspected(ph, h, by, ctx, skip=None):
+    members = group_members(by[1], ctx) if by[0] == 'group' else set(by[1])
+    return any(q != skip and q in members and dignity.aspects_planet(q, ph[q], h) for q in ph)
 GROUPS = {'kendra': (1, 4, 7, 10), 'trikona': (1, 5, 9), 'dusthana': (6, 8, 12), 'upachaya': (3, 6, 10, 11)}
 def _atom_val(a, v, sg, ctx):
     """Value 0..1 of one atom inside ONE house view. 'any' = OR (max), 'not' = 1 - value."""
@@ -75,19 +86,25 @@ def _atom_val(a, v, sg, ctx):
     if k == 'planet_in_nak': return 1.0 if yogas.nak_of(ctx['lon'][a[1]]) in a[2] else 0.0
     if k == 'lagna_sign':
         sp = v.get('lagna_spans', v['spans'][1]); width = sum(d for _, d in sp); return sum(d / width for s, d in sp if s in a[1])
+    if k == 'group_in_house': return 1.0 if any(v['planet_house'][q] in a[2] for q in group_members(a[1], ctx)) else 0.0
+    if k == 'planet_with_group': return 1.0 if any(q != a[1] and v['planet_house'][q] == v['planet_house'][a[1]] for q in group_members(a[2], ctx)) else 0.0
+    if k == 'planet_aspected_by': return 1.0 if _aspected(v['planet_house'], v['planet_house'][a[1]], a[2], ctx, a[1]) else 0.0
+    if k == 'lord_with_group': return sum(w for l, w in _lord_signs(v, a[1]) if any(q != l and v['planet_house'][q] == v['planet_house'][l] for q in group_members(a[2], ctx)))
+    if k == 'lord_aspected_by': return sum(w for l, w in _lord_signs(v, a[1]) if _aspected(v['planet_house'], v['planet_house'][l], a[2], ctx, l))
     if k == 'retro': return 1.0 if a[1] in ctx['retro'] else 0.0
     if k == 'combust': return 1.0 if yogas.combust(a[1], ctx['lon'], ctx['retro']) else 0.0
     if k == 'yoga': return 1.0 if yogas.yoga(a[1], sg, v['planet_house']) else 0.0
     if k == 'any': return max(_atom_val(x, v, sg, ctx) for x in a[1])
     if k == 'not': return 1.0 - _atom_val(a[1], v, sg, ctx)
     raise ValueError(k)
+NEED_LON = ('group_in_house', 'planet_with_group', 'planet_aspected_by', 'lord_with_group', 'lord_aspected_by')
 def _needs(atoms):
     """What data an atom needs beyond the chart: 'maha' (running dasha), 'lon' (longitudes), 'retro' (birth retro flags)."""
     out = set()
     for a in atoms:
         k = a[0]
         if k.startswith('dasha'): out.add('maha')
-        elif k == 'planet_in_nak': out.add('lon')
+        elif k == 'planet_in_nak' or k in NEED_LON: out.add('lon')
         elif k == 'retro': out.add('retro')
         elif k == 'combust': out |= {'lon', 'retro'}
         elif k == 'any': out |= _needs(a[1])
@@ -122,6 +139,11 @@ def _aries_ok(a, sg, ctx):
     if k == 'planet_from': return yogas.planet_from(a[1], a[2], sg, a[3])
     if k == 'planet_in_nak': return yogas.nak_of(ctx['lon'][a[1]]) in a[2]
     if k == 'lagna_sign': return 0 in a[1]          # Lal Kitab fixed frame: house 1 is Aries
+    if k == 'group_in_house': return any(sg[q] + 1 in a[2] for q in group_members(a[1], ctx))
+    if k == 'planet_with_group': return any(q != a[1] and sg[q] == sg[a[1]] for q in group_members(a[2], ctx))
+    if k == 'planet_aspected_by': return _aspected({p: sg[p] + 1 for p in sg}, sg[a[1]] + 1, a[2], ctx, a[1])
+    if k == 'lord_with_group': l = SIGN_LORD[a[1] - 1]; return any(q != l and sg[q] == sg[l] for q in group_members(a[2], ctx))
+    if k == 'lord_aspected_by': l = SIGN_LORD[a[1] - 1]; return _aspected({p: sg[p] + 1 for p in sg}, sg[l] + 1, a[2], ctx, l)
     if k == 'retro': return a[1] in ctx['retro']
     if k == 'combust': return yogas.combust(a[1], ctx['lon'], ctx['retro'])
     if k == 'yoga': return yogas.yoga(a[1], sg, {p: sg[p] + 1 for p in sg})
