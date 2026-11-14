@@ -10,3 +10,4 @@
 - 2026-11-14 Public-data policy: public self-posted birth data may tune the engine, then delete. Reddit blocked, not collected.
 - 2026-11-14 Hosting: Cloudflare (paid $5 plan). D1 rules, R2 files; Python in Containers via Git deploy. Connector is deprecated and cannot deploy Workers.
 - 2026-11-14 Single source of truth = this repo.
+- 2026-11-14 Cloudflare D1 database `jyotish-rules` created (id c944c961-83f4-4035-882b-170072748b1f, APAC). Tables: rules, meta. Empty: rules not loaded yet. R2 not enabled on the account (needs dashboard enable by Rajat).
