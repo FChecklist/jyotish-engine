@@ -5,7 +5,7 @@ No death dates, no medical diagnosis, no investment advice: such items are dropp
 import datetime
 NEG = ('loss', 'death', 'disease', 'illness', 'accident', 'danger', 'poor', 'quarrel', 'separat', 'sorrow', 'grief', 'theft', 'debt', 'trouble', 'failure', 'injur', 'obstacle', 'litigation', 'cheat')
 POS = ('destroy', 'fearless', 'good', 'wealthy', 'rich', 'happy', 'famous', 'king', 'victor', 'success', 'gain', 'learned', 'excellent', 'prosper')
-BLOCK = ('death', 'die', 'dies', 'cancer', 'tumour', 'tumor', 'disease', 'diabetes', 'heart', 'invest', 'shares', 'stock', 'speculat', 'lottery')
+BLOCK = ('short life', 'short-lived', 'longevity', 'early danger', 'danger to father', 'danger to mother', 'childless', 'no sons', 'no children', 'limb def', 'killed', 'death', 'die', 'dies', 'cancer', 'tumour', 'tumor', 'disease', 'diabetes', 'heart', 'invest', 'shares', 'stock', 'speculat', 'lottery')
 def _now_window(report, asof):
     rows = report['timing']['vimshottari']; cur = None
     for r in rows:
