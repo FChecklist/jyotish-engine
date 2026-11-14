@@ -42,3 +42,8 @@
 ## 2026-11-14 (later) — Delivery and scope
 - Daily message lands in the Claude chat, 06:00 IST, via a send_later chain (each run schedules the next). It works only while this session and its files exist. If the container is reset, restore from the two GitHub repos and the Drive family file.
 - User scope: no predictions or reasons shown. Event analysis is for the engine's own calibration. Only Rajat's events are dated; others' events are needed to test the other three.
+
+## 2026-11-14 (night) — "Leave nothing out" handled by a ledger
+- Added docs/CALCULATION_LEDGER.md and tune/coverage.py: every rule (29,430) is sorted by calculation kind with engine status. Dignity and aspect atoms added (core/dignity.py), applied per house view in the weighted fit (multi-sign main/minor).
+- Rahu/Ketu dignity deliberately not guessed (schools differ). Rules mentioning it stay partial.
+- Parsed rules 3,844 -> 3,965 of 29,430 (13.5%). Complete is judged only by this ledger.

@@ -25,3 +25,5 @@ Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd: books_master_v8 parts, EN
 - 2026-11-14: guide.py gives 3 do + 3 dont daily and per Sun-sign month for each person. Next: scheduled daily delivery, diary sheet, transit-condition parser for the remaining DB rules.
 
 - 2026-11-14 night: event backtest = chance. Daily send_later chain set for 06:00 IST. Need dated events for Pallavi, Eshani, Pehu.
+
+- 2026-11-14 night: ledger + dignity/aspect atoms done. Parsed 13.5%. Biggest blocks left: free-text 9,830, strength, dasha, Lal Kitab states, Jaimini.

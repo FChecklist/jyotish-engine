@@ -6,6 +6,7 @@ every rule gets a FIT between 0 and 1 = weighted share of views (and, for 'lord 
 View weights and the minor-sign cutoff are HYPOTHESES (config below) to be tuned on validation data, not facts."""
 import swisseph as swe
 import houses as H
+import dignity
 SIGN_LORD = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4]
 SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
 SYSTEM_VIEWS = ('whole', 'equal_asc', 'equal_mid', 'sripati', 'porphyry', 'placidus')
@@ -69,6 +70,9 @@ def fit(norm, views, sign_of_planet):
             elif a[0] == 'planet_in_group': pf *= 1.0 if v['planet_house'][a[1]] in GROUPS[a[2]] else 0.0
             elif a[0] == 'planet_in_sign': pf *= 1.0 if sign_of_planet[a[1]] == a[2] else 0.0
             elif a[0] == 'conj': pf *= 1.0 if sign_of_planet[a[1]] == sign_of_planet[a[2]] else 0.0
+            elif a[0] == 'dignity': pf *= 1.0 if a[2] in dignity.states(a[1], sign_of_planet[a[1]]) else 0.0
+            elif a[0] == 'aspects_house': pf *= 1.0 if dignity.aspects_house(a[1], v['planet_house'][a[1]]) & set(a[2]) else 0.0
+            elif a[0] == 'aspects_planet': pf *= 1.0 if dignity.aspects_planet(a[1], v['planet_house'][a[1]], v['planet_house'][a[2]]) else 0.0
             elif a[0] == 'lord_in_house':
                 width = sum(d for _, d in v['spans'][a[1]]); x = 0.0
                 for s, d in v['spans'][a[1]]:
@@ -86,4 +90,7 @@ def _fit_aries(norm, sg):
         if a[0] == 'planet_in_sign' and sg[a[1]] != a[2]: return 0.0
         if a[0] == 'conj' and sg[a[1]] != sg[a[2]]: return 0.0
         if a[0] == 'lord_in_house' and sg[SIGN_LORD[a[1] - 1]] + 1 not in a[2]: return 0.0
+        if a[0] == 'dignity' and a[2] not in dignity.states(a[1], sg[a[1]]): return 0.0
+        if a[0] == 'aspects_house' and not (dignity.aspects_house(a[1], sg[a[1]] + 1) & set(a[2])): return 0.0
+        if a[0] == 'aspects_planet' and not dignity.aspects_planet(a[1], sg[a[1]] + 1, sg[a[2]] + 1): return 0.0
     return 1.0

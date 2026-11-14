@@ -36,3 +36,7 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - Result: net p=0.74, Chandra p=0.43, Tara good p=0.96 (events fall on good-Tara days LESS than chance), Tara bad p=0.09, gochara p=0.30. Five tests, so p=0.09 is not significant after correction.
 - Meaning: no measured signal. The do/dont lists stay unvalidated tradition claims. Consistent with the earlier chance-level tests.
 - Caveats: event dates may be rounded (some on 1st or 15th); event cities differ (Delhi used for panchang); many events are job changes, which are not clearly "auspicious start" days. Small sample (20).
+
+## 014 — Dignity and aspect atoms (2026-11-14)
+- tests/test_dignity.py: dignity tables hand-checked, aspect counts (Jupiter and Saturn aspect exactly 3 houses per view: fits over 12 houses sum to 3), nodes not silently dropped, fit equals the dignity of the sign.
+- Ledger: parsed 3,844 -> 3,965. Small gain; see docs/CALCULATION_LEDGER.md for the remaining blocks.
