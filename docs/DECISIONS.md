@@ -14,3 +14,4 @@
 - 2026-11-14 Rajat approved option 1 for rules: rules stay out of public GitHub. jyotish-data repo stays empty; Rajat to set private. Rules load into D1 by another route.
 - 2026-11-14 Both repos created by Rajat as public; engine repo stays public (AGPL-3.0). GitHub connector "GithubMobile" can push but cannot create repos.
 - 2026-11-14 CORRECTION: Rajat decided rules may be public for now ("nothing is copyright issue"). Second repo is FChecklist/jyotish-code (not jyotish-data). Rules pushed there: 24,171 rows in 6 parts (rules/), quote_short column dropped (only 1 row had it). Full original file stays in Drive. Rajat may make it private later.
+- 2026-11-14 Rajat confirmed two separate steps: (1) software gives probabilities of events, dates, timing, do, don't, precautions; (2) AI inference on that report, acting like an astrologer. Contract in docs/REPORT_CONTRACT.md. Software probabilities must be calibrated from measured past cases; otherwise null.
