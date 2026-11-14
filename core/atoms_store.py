@@ -1,0 +1,70 @@
+"""Validator and loader for AI-converted rule atoms (docs/CALCULATION_LEDGER.md step 3). Strict: anything not in the vocabulary is rejected."""
+import json, glob
+PL = {'Sun': 0, 'Moon': 1, 'Mars': 2, 'Mercury': 3, 'Jupiter': 4, 'Venus': 5, 'Saturn': 6, 'Rahu': 7, 'Ketu': 8}
+SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
+GROUPS = ('kendra', 'trikona', 'dusthana', 'upachaya'); DIG = ('exalted', 'debilitated', 'own', 'friend', 'enemy', 'neutral')
+class Bad(Exception): pass
+def _p(x, seven=False):
+    if x not in PL or (seven and PL[x] > 6): raise Bad(f'planet {x}')
+    return PL[x]
+def _hs(x):
+    if not isinstance(x, list) or not x or any(not isinstance(i, int) or not 1 <= i <= 12 for i in x): raise Bad(f'houses {x}')
+    return tuple(sorted(set(x)))
+def atom(a, depth=0):
+    """JSON atom -> engine atom tuple. Raises Bad."""
+    if not isinstance(a, dict) or 't' not in a: raise Bad('not an atom')
+    t = a['t']
+    if t == 'planet_in_house': return ('planet_in_house', _p(a['p']), _hs(a['h']))
+    if t == 'planet_in_sign':
+        if a['sign'] not in SIGNS: raise Bad('sign')
+        return ('planet_in_sign', _p(a['p']), SIGNS.index(a['sign']))
+    if t == 'lord_in_house':
+        if not isinstance(a['n'], int) or not 1 <= a['n'] <= 12: raise Bad('n')
+        return ('lord_in_house', a['n'], _hs(a['h']))
+    if t == 'conj':
+        if a['p'] == a['q']: raise Bad('conj self')
+        return ('conj', _p(a['p']), _p(a['q']))
+    if t == 'planet_in_group':
+        if a['g'] not in GROUPS: raise Bad('group')
+        return ('planet_in_group', _p(a['p']), a['g'])
+    if t == 'dignity':
+        if a['s'] not in DIG: raise Bad('dignity')
+        return ('dignity', _p(a['p'], True), a['s'])
+    if t == 'aspects_house': return ('aspects_house', _p(a['p']), _hs(a['h']))
+    if t == 'aspects_planet':
+        if a['p'] == a['q']: raise Bad('aspect self')
+        return ('aspects_planet', _p(a['p']), _p(a['q']))
+    if t == 'dasha':
+        if a['level'] not in ('maha', 'antar'): raise Bad('level')
+        return ('dasha', _p(a['p']), a['level'])
+    if t == 'dasha_house_lord':
+        if not isinstance(a['n'], int) or not 1 <= a['n'] <= 12: raise Bad('n')
+        return ('dasha_house_lord', a['n'])
+    if depth >= 2: raise Bad('nesting too deep')
+    if t == 'any':
+        subs = a['of']
+        if not isinstance(subs, list) or len(subs) < 2: raise Bad('any needs 2+')
+        return ('any', tuple(atom(x, depth + 1) for x in subs))
+    if t == 'not': return ('not', atom(a['of'], depth + 1))
+    raise Bad(f'unknown atom {t}')
+def entry(e):
+    """One JSONL entry -> (id, atoms tuple) if valid and complete, else raises Bad."""
+    if not e.get('complete'): raise Bad('incomplete')
+    atoms = e.get('atoms')
+    if not isinstance(atoms, list) or not atoms: raise Bad('no atoms')
+    return e['id'], tuple(atom(a) for a in atoms)
+def load(globs):
+    """{rule_id: atoms} for all valid complete entries; plus counts. Duplicate ids with different atoms are dropped (disagreement)."""
+    out, seen, cnt = {}, {}, {'valid': 0, 'rejected': 0, 'incomplete': 0, 'conflict': 0}
+    for g in ([globs] if isinstance(globs, str) else globs):
+        for pth in sorted(glob.glob(g)):
+            for l in open(pth):
+                e = json.loads(l)
+                try: i, at = entry(e)
+                except Bad as x:
+                    cnt['incomplete' if str(x) in ('incomplete', 'no atoms') else 'rejected'] += 1; continue
+                except (KeyError, TypeError): cnt['rejected'] += 1; continue
+                if i in seen and seen[i] != at: out.pop(i, None); cnt['conflict'] += 1; seen[i] = None; continue
+                if seen.get(i, 0) is None: continue
+                seen[i] = at; out[i] = at; cnt['valid'] += 1
+    return out, cnt
