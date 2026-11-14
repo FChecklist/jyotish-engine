@@ -1,5 +1,5 @@
 # Runbook
-- Tests: python3 -I tests/test_houses.py (expects exit 0).
+- Tests: cd core && python3 test_houses.py (expects exit 0).
 - PyJHora venv (not in git): python3 -m venv ref/venv; ref/venv/bin/pip install PyJHora numpy pandas pytz geocoder timezonefinder geopy pyswisseph
 - pip needs --break-system-packages on the cloud box.
 - Backtest: tune/fit.py, tune/people_loader.py (people data not in git; in Drive tgz).
