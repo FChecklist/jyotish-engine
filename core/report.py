@@ -3,7 +3,7 @@ Sections that need the rule engine (events, dos, donts, precautions, remedies) a
 the report never invents content. Every section lists the settings it used."""
 import json, datetime
 import swisseph as swe
-import charts, dasha, panchang, kp, ashtakavarga, transit, influence, apply_rules
+import charts, dasha, panchang, kp, ashtakavarga, transit, influence, apply_rules, atoms_store
 SCHEMA_VERSION = 1
 SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
 PLANETS = {0:'Sun',1:'Moon',2:'Mars',3:'Mercury',4:'Jupiter',5:'Venus',6:'Saturn',7:'Rahu',8:'Ketu','asc':'Lagna'}
@@ -21,7 +21,7 @@ def _sens(inp, factors=(1, 9, 10, 12, 60), minutes=(-4, 4)):
             out.setdefault(f'D{f}', {})[f'{dm:+d}min'] = ch
     return out
 
-def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='LAHIRI', asof=None, rules_glob=None):
+def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='LAHIRI', asof=None, rules_glob=None, ai_atoms_glob=None):
     inp = (y, m, d, H, M, S, tz, lat, lon)
     c = charts.natal(*inp, ayanamsa=ayanamsa)
     p = panchang.panchang(*inp, ayanamsa=ayanamsa)
@@ -68,7 +68,7 @@ def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='
                 if datetime.datetime(int(t_[0]), int(t_[1]), int(t_[2])) <= ad: run_row = (a_, b_)
             ctx = {'maha': run_row[0], 'antar': run_row[1]} if run_row else None
         rule_stats = {}
-        fired = apply_rules.apply(apply_rules.load(rules_glob), views, {k: v[0] for k, v in d1.items() if k != 'asc'}, ctx=ctx, stats=rule_stats)
+        fired = apply_rules.apply(apply_rules.load(rules_glob), views, {k: v[0] for k, v in d1.items() if k != 'asc'}, ctx=ctx, stats=rule_stats, ai_atoms=(atoms_store.load(ai_atoms_glob)[0] if ai_atoms_glob else None))
         rep['rules_ledger'] = {**rule_stats, 'note': 'Every loaded rule is counted. unparsed and partial rules are NOT executed yet (see docs/CALCULATION_LEDGER.md). Nothing is silently skipped.'}
         def sect(roles):
             items = [{**f, 'label': 'tradition claim', 'probability': None, 'calibration': 'none'} for f in fired if f['engine_role'] in roles]

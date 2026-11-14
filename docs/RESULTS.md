@@ -44,3 +44,12 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 ## 015 — Dasha atoms (2026-11-14)
 - tests/test_dasha_rules.py: phrases parse, no date means no evaluation (never guessed), whole-sign sum check, combined natal+dasha rule.
 - Ledger: parsed 3,965 -> 4,585. One chart: 419 rules fired of 4,585 evaluated.
+
+## 016 — AI conversion pilot (2026-11-14), 300 rules, 9 agents
+- GOLD (150 rules the parser already reads; AI converted blind): 145 exact, 3 different, 2 marked incomplete. Precision when marked complete 98.0%, recall 96.7%.
+  - The 3 "different" were PARSER errors, not AI errors: "Mercury in 1-6" was read as house 1 only, "Saturn in Cancer (house 4)" lost the house, "Mercury in Leo (house 5)" lost the house. The AI kept both. Parser fixed (ranges expand; a leftover number makes a rule partial). 77 rules that were wrongly "parsed" moved to partial: parsed 4,585 -> 4,508. Correctness up, count down.
+- HARD (150 rules the parser cannot read; two independent AI passes): 17 identical and complete, 0 conflicting, 1 complete in one pass only (rejected), 132 incomplete in both. Hand check of the first 12 agreed: all 12 correct.
+- Yield: about 11% of unread rules become executable (17 of 150; roughly 7% to 17% allowing for sample size). Of about 24,900 unread rules that means roughly 1,800 to 4,300 more rules, centre about 2,800.
+- The rest (about 89%) are not chart conditions (methods, descriptions, palmistry, advice) or need things the engine has no atoms for yet (strength, nakshatra, yogas, Moon-based houses, transits). The AI correctly refuses them.
+- Cost note: each 50-rule agent used about 88k tokens. A full two-pass run at 50 per agent is about 1,000 agents. A pre-filter plus larger batches cuts that a lot.
+- Saved: 17 validated pilot atoms in jyotish-code/rules/atoms_ai_v1.jsonl (origin ai_v1_pilot_two_pass_agreed).

@@ -29,3 +29,5 @@ Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd: books_master_v8 parts, EN
 - 2026-11-14 night: ledger + dignity/aspect atoms done. Parsed 13.5%. Biggest blocks left: free-text 9,830, strength, dasha, Lal Kitab states, Jaimini.
 
 - 2026-11-14 night 2: dasha atoms done; parsed 15.6%. Rules are all loaded; 84% not executable yet. Waiting for Rajat on AI-assisted conversion of the rest.
+
+- 2026-11-14 night 3: AI conversion pilot done (98% precision, 11% yield). Parser silent-drop bug fixed (parsed 4,508). Full run awaiting Rajat go/no-go.

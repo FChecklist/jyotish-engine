@@ -36,8 +36,14 @@ CLAUSES += [
 ]
 FILLER = set('during running lal kitab the a an in is are of and or with house houses from lagna bhava placed to'.split())
 
+def _expand_ranges(t):
+    """'in 1-6' -> 'in 1,2,3,4,5,6' (house ranges). Before 2026-11-14 the range was read as its first number only."""
+    def f(m):
+        a, b = int(m.group(1)), int(m.group(2))
+        return ','.join(str(i) for i in range(a, b + 1)) if 1 <= a < b <= 12 else m.group(0)
+    return re.sub(r'(?<![\d.])(\d{1,2})\s*-\s*(\d{1,2})(?![\d.])', f, t)
 def parse(text, system=''):
-    t = text.strip(); rest = t; atoms = []
+    t = _expand_ranges(text.strip()); rest = t; atoms = []
     for rx, kind in CLAUSES:
         for m in list(rx.finditer(rest)):
             g = m.groups()
@@ -65,6 +71,7 @@ def parse(text, system=''):
             elif kind == 'planet_in_group': atoms.append(('planet_in_group', PL[g[0].lower()], g[1].lower()))
         rest = rx.sub(' ', rest)
     words = [w for w in re.findall(r"[a-z']+", rest.lower()) if w not in FILLER]
+    if re.search(r'\d', rest): words.append('<leftover-number>')      # a number the atoms did not use: never drop it silently
     alt = len(atoms) > 1 and re.search(r'\s/\s|\bor\b|\beither\b|\bany\b|\bif\b|\bnot\b|\bunless\b', t, re.I)
     if alt: words = words + ['<alternation-or-condition>']
     status = 'unparsed' if not atoms else ('parsed' if not words else 'partial')

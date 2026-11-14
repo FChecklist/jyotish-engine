@@ -52,3 +52,7 @@
 - Status: all 29,430 rules are stored and loaded by the engine. Only 4,585 (15.6%) can be executed; every report now shows the full count (rules_ledger).
 - Dasha atoms added (maha, antar, dasha of Nth lord) with the running periods as context; dasha-linked remedies and don'ts join the month pool (GR-S5).
 - OPEN DECISION for Rajat: convert the remaining ~24,800 rules with an AI reading step in batches (AI only translates text into atoms during the build; code validates against the fixed atom vocabulary; a sample is audited by hand; the running software stays plain code). Alternative: keep widening keyword patterns (slow, small gains).
+
+## 2026-11-14 (night 3) — AI conversion: pilot done, full run waits for Rajat
+- Pilot result: converter is accurate (98% precision on a known-answer set, 0 conflicts between passes on the hard set) but the yield is low (about 11% of unread rules). Most unread rules are not chart conditions or need atoms not built yet.
+- Better path than converting everything now: (1) pre-filter to rules that mention planets/houses/signs/dasha, (2) use bigger batches, (3) add the missing atoms the refusals point to (strength, nakshatra, Moon-based houses, named yogas, transit conditions), (4) then run the AI again on the refused set.

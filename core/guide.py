@@ -23,7 +23,7 @@ def run(family_json, date, outdir, rules_globs):
     people = json.load(open(family_json))['people']; os.makedirs(outdir, exist_ok=True); text = []; eng = {}
     for name, p in people.items():
         dt = datetime.datetime.strptime(p['birth'], '%Y-%m-%d %H:%M:%S')
-        rep = report.build(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, 5.5, p['lat'], p['lon'], asof=(date.year, date.month, date.day, 12), rules_glob=rules_globs)
+        rep = report.build(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, 5.5, p['lat'], p['lon'], asof=(date.year, date.month, date.day, 12), rules_glob=rules_globs, ai_atoms_glob='/home/claude/jyotish-code/rules/atoms_ai_v*.jsonl')
         g = person_guidance(rep, date, 5.5, 28.6139, 77.209)   # today's panchang for the family home (Indirapuram, Delhi NCR); change when travelling
         text.append(text_view(name, g, date)); eng[name] = g['engine']
     open(os.path.join(outdir, f'guidance_{date}.txt'), 'w').write('\n\n'.join(text) + '\n')

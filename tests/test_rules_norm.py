@@ -18,3 +18,9 @@ c2 = chart(1, moon=9); assert N.evaluate(N.parse('Moon in 9th house'), c2) is Tr
 p = N.parse('Mars in 2nd / Mercury in 2nd / Jupiter in 2nd'); assert p['status'] == 'partial'   # slash = alternatives, not AND
 p = N.parse('Sun in 3rd house and Moon in 4th house'); assert p['status'] == 'parsed' and len(p['atoms']) == 2
 print('rules_norm tests passed')
+
+# silent-drop fixes (2026-11-14): ranges expand, leftover numbers make a rule partial
+q = N.parse('Ketu in 8th with Mercury in 1-6'); assert q['status'] == 'parsed' and ('planet_in_house', 3, (1, 2, 3, 4, 5, 6)) in q['atoms'], q
+assert N.parse('Saturn in Cancer (house 4)')['status'] == 'partial'
+assert N.parse('Moon in 4th house')['status'] == 'parsed'
+print('rules_norm silent-drop tests passed')
