@@ -22,3 +22,7 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 ## 2026-11-14 late
 - DONE: daily and Sun-sign 3+3 guidance for four people (core/guide.py); event backtest (tune/event_backtest.py); diary scorer.
 - NOT COMPLETE (honest list): rule parser covers 15%, transit-condition parser missing for ~850 DB transit rules, no dasha-to-rule linking, KP ayanamsa not wired, no Jaimini dashas, Yamaganda/Gulika/Choghadiya/hora not built, birth time of Rajat unresolved (two lagna candidates), no measured accuracy above chance.
+
+## Update 2026-11-14 (late)
+- AI conversion run finished. 3,717 AI atoms loaded (`jyotish-code/rules/atoms_ai_v2.jsonl`). Executable rules: 8,325 / 29,430. Run `tune/coverage.py`.
+- Next: strength/shadbala, Lal Kitab, Jaimini, other dashas, transit-condition parser, the ~17,000 not-yet-expressible rules (need new atoms: lagna-sign, strength, transit, divisional).

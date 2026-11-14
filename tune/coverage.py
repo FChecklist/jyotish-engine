@@ -32,7 +32,10 @@ def run(globs, out):
         for k in ks: cnt[k] += 1
         if len(ks) == 1: only[ks[0]] += 1
         parsed[N.parse(r['input'], r['system'])['status']] += 1
-    res = {'total_rules': len(rows), 'by_system_top': sysc.most_common(8), 'parser_status': dict(parsed), 'kinds': {}}
+    import atoms_store
+    ai, aicnt = atoms_store.load('/home/claude/jyotish-code/rules/atoms_ai_v*.jsonl'); ids = {r['id'] for r in rows}
+    executable = sum(1 for r in rows if N.parse(r['input'], r['system'])['status'] == 'parsed' or r['id'] in ai)
+    res = {'executable_rules': executable, 'ai_atoms_loaded': len(ai), 'ai_atoms_counts': aicnt, 'total_rules': len(rows), 'by_system_top': sysc.most_common(8), 'parser_status': dict(parsed), 'kinds': {}}
     for k, rx, st, note in KINDS: res['kinds'][k] = {'rules_touching': cnt[k], 'only_this_kind': only[k], 'engine_status': st, 'engine_note': note}
     res['kinds']['other_text'] = {'rules_touching': cnt['other_text'], 'only_this_kind': only['other_text'], 'engine_status': 'not_built', 'engine_note': 'free text; needs reading, not keyword'}
     json.dump(res, open(out, 'w'), indent=1); return res

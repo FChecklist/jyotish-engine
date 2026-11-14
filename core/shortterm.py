@@ -46,7 +46,7 @@ def month_items(natal, date, tz, lat, lon):
     for sec, kind in (('remedies', 'do'), ('donts', 'dont')):
         for r in natal['rep'].get(sec, {}).get('items', []):
             txt = (r.get('remedy') or r.get('outcome') or '').split(';')[0].strip().rstrip('.')
-            if r.get('dasha_linked') and txt: _add(items, kind, txt[0].upper() + txt[1:] + '.', 4 * r['fit'], 'dasha-linked rule ' + r['id'], 'GR-S5', r['source'])
+            if r.get('dasha_linked') and len(txt.split()) >= 3: _add(items, kind, txt[0].upper() + txt[1:] + '.', 4 * r['fit'], 'dasha-linked rule ' + r['id'], 'GR-S5', r['source'])
     # sub-windows: fast planet ingresses inside the window
     sub = []
     for p in (3, 5, 2):

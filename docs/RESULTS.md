@@ -53,3 +53,10 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - The rest (about 89%) are not chart conditions (methods, descriptions, palmistry, advice) or need things the engine has no atoms for yet (strength, nakshatra, yogas, Moon-based houses, transits). The AI correctly refuses them.
 - Cost note: each 50-rule agent used about 88k tokens. A full two-pass run at 50 per agent is about 1,000 agents. A pre-filter plus larger batches cuts that a lot.
 - Saved: 17 validated pilot atoms in jyotish-code/rules/atoms_ai_v1.jsonl (origin ai_v1_pilot_two_pass_agreed).
+
+## 017 — AI conversion, full run (2026-11-14)
+- 20,868 pre-filtered rules in 140 batches, one pass each (sonnet). Marked complete: 3,729; valid under the strict validator: 3,718 (about 18%). One ambiguous rule removed (BK8_1279, any-of vs all-of). Saved 3,717 as `atoms_ai_v2.jsonl` (origin ai_v2_single_pass).
+- Two-pass check on batches 1–3: 40/45 identical atoms when both complete (89%); most differences were equal-meaning forms (conj chain vs star).
+- Audit: 150 random kept rules re-converted blind. 132 had a complete second answer (18 the second pass left incomplete). By meaning (conj groups and same-house placement treated as equal), 130/132 agree (98.5%). The 2 differences: any-of vs all-of (BK8_1279, removed) and an extra dignity atom.
+- Gold check on the parser's own rules in the pilot: 98% precision (RESULTS 016). Not measured: whether the atoms are right against what the classical authors meant.
+- Ledger now: executable rules 8,325 of 29,430 (28.3%): 4,591 by parser + 3,734 by AI atoms. The other 21,105 are partial or unread. NOT complete.
