@@ -11,6 +11,7 @@ Project: Vedic astrology software with 4 engines (event prediction, timing, do/d
 Update SAVE.md, docs/STATUS.md, docs/RESULTS.md, docs/DECISIONS.md; commit; push. Back up docs to Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd.
 
 ## Hard rules
+- MAIN PART: houses are multi-sign. Never judge a rule on one house-sign only. Use core/influence.py (shares per house, weighted fit). See docs/DECISIONS.md 2026-11-14.
 - The software is NOT AI: plain code, maths, if/then. It outputs a detailed per-method report. AI only infers from that report.
 - 3 stages: (1) evaluate every technique per method/astrologer, (2) apply techniques stepwise to a chart, (3) AI inference using 1+2 (events, age, timing, probability, do/don't, remedies, precautions).
 - Stage 3 uses ONLY fired techniques and MEASURED numbers. No validated signal => say so. No death dates, medical diagnoses, investment advice. Remedies/do-don'ts are labelled tradition claims.

@@ -2,7 +2,8 @@
 Sections that need the rule engine (events, dos, donts, precautions, remedies) are present but EMPTY with status 'not_built' --
 the report never invents content. Every section lists the settings it used."""
 import json, datetime
-import charts, dasha, panchang, kp, ashtakavarga, transit
+import swisseph as swe
+import charts, dasha, panchang, kp, ashtakavarga, transit, influence
 SCHEMA_VERSION = 1
 SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
 PLANETS = {0:'Sun',1:'Moon',2:'Mars',3:'Mercury',4:'Jupiter',5:'Venus',6:'Saturn',7:'Rahu',8:'Ketu','asc':'Lagna'}
@@ -32,11 +33,19 @@ def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='
     for k, (sg, dg) in d1.items():
         lords = kp.lords(sg * 30 + dg)   # NOTE: uses the chart ayanamsa; KP-ayanamsa variant is a separate call (not yet wired)
         kp_rows[PLANETS[k]] = lords
+    pos = {k: v[0] * 30 + v[1] for k, v in d1.items() if k != 'asc'}
+    jd_ut = swe.julday(y, m, d, H + M / 60 + S / 3600 - tz)
+    views = influence.bundle(jd_ut, lat, lon, pos, ayan=ayanamsa.lower())
     rep = {
         'schema_version': SCHEMA_VERSION,
         'input': {'date': f'{y:04d}-{m:02d}-{d:02d}', 'time': f'{H:02d}:{M:02d}:{S:02d}', 'tz_hours': tz, 'lat': lat, 'lon': lon, 'birth_time_grade': birth_time_grade},
         'settings': {'ayanamsa': ayanamsa, 'node': 'true', 'positions': 'PyJHora default', 'house_system_for_rules': 'declared per rule (not yet applied)',
                      'dasha_year': 'PyJHora calendar-style year; start dates +-5 days'},
+        'house_influence': {'note': 'MAIN PART: each house is touched by 2-3 signs. shares sum to 1 per house; main = biggest share, minor = the rest. Rules are judged with a weighted fit over these views, never on one sign alone.',
+                            'views_and_weights': {k: round(v['weight'], 4) for k, v in views.items()}, 'minor_cutoff': influence.MINOR_CUTOFF,
+                            'weights_status': 'hypothesis: equal weights, to be tuned on validation data',
+                            'houses': influence.house_sign_shares(views),
+                            'planet_house_shares': {PLANETS[p]: {str(h): round(x, 3) for h, x in sorted(d_.items())} for p, d_ in influence.planet_house_shares(views).items()}},
         'chart': {'divisional': {f'D{f}': {PLANETS[k]: {'sign': SIGNS[v[0]], 'sign0': v[0], 'deg': round(v[1], 3)} for k, v in ch.items()} for f, ch in c['charts'].items()}},
         'panchang': p,
         'kp': {'ayanamsa_used': ayanamsa, 'lords_by_planet': kp_rows,

@@ -11,6 +11,8 @@ for k in ('schema_version', 'input', 'settings', 'chart', 'panchang', 'kp', 'tim
 for k in ('events', 'dos', 'donts', 'precautions', 'remedies'):
     assert r1[k]['status'] == 'not_built' and r1[k]['items'] == [], k            # never invent content
 assert r1['calibration']['status'] == 'none'
+hi = r1['house_influence']['houses']; assert len(hi) == 12 and all(abs(sum(v['shares'].values()) - 1) < 2e-3 for v in hi.values())
+assert all(v['main'] in v['shares'] and 1 <= len(v['shares']) <= 4 for v in hi.values())
 assert len(r1['timing']['vimshottari']) == 81 and len(r1['chart']['divisional']) == 20
 assert all(len(v) == 10 for v in r1['chart']['divisional'].values())
 assert sum(r1['ashtakavarga']['bphs_plain']['sav']) == 337
