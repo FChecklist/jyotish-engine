@@ -1,0 +1,8 @@
+# Technique-first 4-engine design (2026-11-13)
+Flow: birth data -> chart -> TECHNIQUE ENGINE (software) -> list of techniques that FIRE (with step evidence + measured reliability) -> AI INFERENCE -> 4 outputs.
+1. Technique = JSON spec in tech/specs/*.json: `steps` (calls to ~40 fixed primitives in engine.py, each named result) + `fire` conditions. Areas expand into one technique per area. Specs are DATA, not code.
+2. Software (engine.py): `fired(chart, time)` runs every spec, returns fired list with evidence. Deterministic, testable.
+3. Validation (validate.py): each technique is scored on real events: fire rate at events vs the same person's base fire rate; z, p, BH-FDR q. Writes validation.json. A technique with no validation is labelled 'untested'.
+4. AI inference (INFERENCE_PROMPT.md): AI reads only fired techniques + their validation record and writes the 4 engine outputs: (1) events (2) timing (3) do/don't (4) remedies. It must not use techniques that did not fire, must show conflicts, and must say 'no tested technique supports this' when true.
+5. Pipeline to scale to thousands of techniques: agents convert book/transcript techniques into specs using only existing primitives (new primitive = reviewed code change); each spec gets a unit test (a known chart where it must fire / not fire) before entering the library.
+Finding #1 (first 24 techniques, 50 people): base fire rates are 50-76% for several techniques (double transit fires 76% of the time for status), so they cannot discriminate. Techniques must be strict (fire in <=15% of time) to carry information. Nothing survives FDR yet (best p=0.057).

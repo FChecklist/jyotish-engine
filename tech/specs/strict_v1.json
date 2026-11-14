@@ -1,0 +1,311 @@
+[
+ {
+  "id": "STRICT_VIM_DT",
+  "source": "Pre-registered composite: dasha lords link AND double transit",
+  "polarity": 1,
+  "areas": [
+   "career",
+   "status",
+   "marriage",
+   "children",
+   "foreign"
+  ],
+  "text": "MD and AD lords link to area houses AND Jupiter and Saturn both touch an area house",
+  "steps": [
+   {
+    "as": "hs",
+    "op": "area_houses"
+   },
+   {
+    "as": "md",
+    "op": "vim_lords",
+    "args": {
+     "level": 1
+    }
+   },
+   {
+    "as": "adl",
+    "op": "vim_lords",
+    "args": {
+     "level": 2
+    }
+   },
+   {
+    "as": "a",
+    "op": "lords_link",
+    "args": {
+     "planets": "$md",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "b",
+    "op": "lords_link",
+    "args": {
+     "planets": "$adl",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "vl",
+    "op": "both",
+    "args": {
+     "a": "$a",
+     "b": "$b"
+    }
+   },
+   {
+    "as": "j",
+    "op": "transit_touches",
+    "args": {
+     "planet": "Jupiter",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "s",
+    "op": "transit_touches",
+    "args": {
+     "planet": "Saturn",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "dt",
+    "op": "both",
+    "args": {
+     "a": "$j",
+     "b": "$s"
+    }
+   },
+   {
+    "as": "hit",
+    "op": "both",
+    "args": {
+     "a": "$vl",
+     "b": "$dt"
+    }
+   }
+  ],
+  "fire": [
+   {
+    "ref": "hit"
+   }
+  ]
+ },
+ {
+  "id": "STRICT_BCP_JUP",
+  "source": "Pre-registered composite: BCP age house in area AND Jupiter touches area house",
+  "polarity": 1,
+  "areas": [
+   "career",
+   "status",
+   "marriage",
+   "children",
+   "foreign"
+  ],
+  "text": "Age-activated house is an area house AND Jupiter occupies or aspects an area house",
+  "steps": [
+   {
+    "as": "hs",
+    "op": "area_houses"
+   },
+   {
+    "as": "age",
+    "op": "age"
+   },
+   {
+    "as": "ah",
+    "op": "age_house",
+    "args": {
+     "age": "$age"
+    }
+   },
+   {
+    "as": "b",
+    "op": "contains",
+    "args": {
+     "value": "$ah",
+     "items": "$hs"
+    }
+   },
+   {
+    "as": "j",
+    "op": "transit_touches",
+    "args": {
+     "planet": "Jupiter",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "hit",
+    "op": "both",
+    "args": {
+     "a": "$b",
+     "b": "$j"
+    }
+   }
+  ],
+  "fire": [
+   {
+    "ref": "hit"
+   }
+  ]
+ },
+ {
+  "id": "STRICT_MD_AD_OWN",
+  "source": "Pre-registered: both dasha lords OWN an area house (ownership only, no occupation)",
+  "polarity": 1,
+  "areas": [
+   "career",
+   "status",
+   "marriage",
+   "children",
+   "foreign"
+  ],
+  "text": "Mahadasha lord and antardasha lord each own an area house",
+  "steps": [
+   {
+    "as": "hs",
+    "op": "area_houses"
+   },
+   {
+    "as": "md",
+    "op": "vim_lords",
+    "args": {
+     "level": 1
+    }
+   },
+   {
+    "as": "adl",
+    "op": "vim_lords",
+    "args": {
+     "level": 2
+    }
+   },
+   {
+    "as": "a",
+    "op": "lords_own",
+    "args": {
+     "planets": "$md",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "b",
+    "op": "lords_own",
+    "args": {
+     "planets": "$adl",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "hit",
+    "op": "both",
+    "args": {
+     "a": "$a",
+     "b": "$b"
+    }
+   }
+  ],
+  "fire": [
+   {
+    "ref": "hit"
+   }
+  ]
+ },
+ {
+  "id": "STRICT_AD_OWN_DT_BAV",
+  "source": "Pre-registered: AD lord owns area house, double transit, Jupiter bindus>=5",
+  "polarity": 1,
+  "areas": [
+   "career",
+   "status",
+   "marriage",
+   "children",
+   "foreign"
+  ],
+  "text": "Antardasha lord owns an area house AND double transit AND Jupiter in a sign with 5+ bindus",
+  "steps": [
+   {
+    "as": "hs",
+    "op": "area_houses"
+   },
+   {
+    "as": "adl",
+    "op": "vim_lords",
+    "args": {
+     "level": 2
+    }
+   },
+   {
+    "as": "o",
+    "op": "lords_own",
+    "args": {
+     "planets": "$adl",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "j",
+    "op": "transit_touches",
+    "args": {
+     "planet": "Jupiter",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "s",
+    "op": "transit_touches",
+    "args": {
+     "planet": "Saturn",
+     "houses": "$hs"
+    }
+   },
+   {
+    "as": "dt",
+    "op": "both",
+    "args": {
+     "a": "$j",
+     "b": "$s"
+    }
+   },
+   {
+    "as": "bj",
+    "op": "bav_transit",
+    "args": {
+     "planet": "Jupiter"
+    }
+   },
+   {
+    "as": "bh",
+    "op": "at_least",
+    "args": {
+     "value": "$bj",
+     "n": 5
+    }
+   },
+   {
+    "as": "x1",
+    "op": "both",
+    "args": {
+     "a": "$o",
+     "b": "$dt"
+    }
+   },
+   {
+    "as": "hit",
+    "op": "both",
+    "args": {
+     "a": "$x1",
+     "b": "$bh"
+    }
+   }
+  ],
+  "fire": [
+   {
+    "ref": "hit"
+   }
+  ]
+ }
+]

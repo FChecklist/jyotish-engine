@@ -1,0 +1,12 @@
+# Decisions (date, choice, reason)
+- 2026-11-13 Lahiri ayanamsa default (Rajat approved). KP: run Lahiri and Krishnamurti, label output.
+- 2026-11-13 Software is not AI; AI only infers from software reports (Rajat).
+- 2026-11-13 3-stage verification (Rajat).
+- 2026-11-14 Use existing calculator, do not recalculate (Rajat). PyJHora (Sundar Sundaresan, AGPL-3.0) installed as stand-in; Swiss Ephemeris for independent check.
+- 2026-11-14 Rajat uses phone only. JHora desktop dropped as answer key. Verify by two calculators + published charts + hand-checkable astronomy.
+- 2026-11-14 Defaults pending Rajat's veto: true node, geometric positions, Narayana = Jaimini Narayana dasha, sayan = tropical chart.
+- 2026-11-14 House model: natural zodiac house N <-> sign N; six house systems; rules evaluated in the system their source uses.
+- 2026-11-14 Stage 3 uses only fired techniques and measured numbers.
+- 2026-11-14 Public-data policy: public self-posted birth data may tune the engine, then delete. Reddit blocked, not collected.
+- 2026-11-14 Hosting: Cloudflare (paid $5 plan). D1 rules, R2 files; Python in Containers via Git deploy. Connector is deprecated and cannot deploy Workers.
+- 2026-11-14 Single source of truth = this repo.
