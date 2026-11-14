@@ -28,3 +28,13 @@
 - Rajat's birth date, time and place were in tests and one handoff doc in this PUBLIC repo. Removed; tests now use a neutral chart (1990-01-01 06:00 IST Delhi).
 - Git history still holds the old values. Removing them needs a history rewrite and force-push: waiting for Rajat's decision.
 - Rule: tests and docs must never contain family birth data. Per-person output goes to Drive, not git.
+
+## 2026-11-14 — User view is exactly 3 DO + 3 DONT (daily and Sun-sign month), per person
+- Rajat: no predictions, no reasons, no precautions list. Only 3 do and 3 dont per day, and 3 and 3 for the Sun-sign period, for Rajat, Pallavi, Eshani, Pehu separately.
+- Rules written first in docs/GUIDANCE_RULES.md (ids GR-*), tables in core/guidance_rules.py, code in core/gochara.py, daily.py, shortterm.py, guide.py.
+- Daily = birth panchang (nakshatra for Tara Bala, Moon sign for Chandra Bala) against the day's panchang and transits. Month = Sun sign window with transit quality (rules DB BK13 gochara incl. vedha, bindus, moorthi, combustion) and areas weighted by main/minor house-sign influence (MAIN PART).
+- Reasons, rule ids and all candidates stay in the engine JSON (internal) for AI inference and audit. User view never shows them.
+- If fewer than 3 real items exist, fewer are shown; no padding.
+- Gautam transcript rules are loaded with the books (weekday remedies and don'ts). Birth data comes from a private path, never git.
+- Daily classical tables (Tara, tithi, nakshatra class, yoga, Rahu Kaal, Abhijit) are NOT in the rules DB. Source unverified: open question.
+- Measurement: tune/diary_score.py (permutation test against a day diary). No percentages until it passes.

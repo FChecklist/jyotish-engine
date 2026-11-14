@@ -3,10 +3,18 @@ computes the weighted fit (core/influence) and returns fired rules grouped by en
 with its source; no probability is attached (calibration none)."""
 import glob, json
 import rules_norm as N, influence as I
+def _norm_row(r):
+    """Books rows already have the shape. Gautam transcript rows (system 'gautam') lack some fields: fill defaults."""
+    r.setdefault('engine_role', 'remedy' if r.get('remedy') else 'rule'); r.setdefault('life_area', r.get('category', ''))
+    r.setdefault('timing', ''); r.setdefault('remedy', ''); r.setdefault('confidence', ''); r.setdefault('outcome', '')
+    r.setdefault('source', r.get('source_file', '') + ' ' + str(r.get('timestamp', '')))
+    return r
 def load(paths):
+    """paths: one glob or a list of globs (books rules, Gautam transcript rules)."""
     rows = []
-    for pth in sorted(glob.glob(paths)):
-        rows += [json.loads(l) for l in open(pth)]
+    for g in ([paths] if isinstance(paths, str) else paths):
+        for pth in sorted(glob.glob(g)):
+            rows += [_norm_row(json.loads(l)) for l in open(pth)]
     return rows
 def apply(rows, views, sign_of_planet, min_fit=0.5):
     fired = []

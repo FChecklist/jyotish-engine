@@ -24,3 +24,8 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 ## 011 — Guidance view (2026-11-14)
 - On Rajat's chart as of 2026-11-14 (Venus-Moon period): 93 dos, 4 donts, about 5 precautions, 11 dropped by safety filter. Unvalidated.
 - Test caught a bug: remedy text was not checked by the safety filter. Fixed.
+
+## 012 — Daily and Sun-sign guidance (2026-11-14)
+- Tests: tara counts, Rahu Kaal for all 7 weekdays, gochara hand cases (BK13_0019, 0021, 0007, 0006, 0005), vedha table equals DB text, Sun ingress moments checked against Swiss Ephemeris (within 0.02 deg of a sign border), end-to-end 3+3 with no reasons in the user view, diary scorer detects a planted link and ignores noise.
+- Window for 14 Nov 2026: Sun in Libra, 17 Oct to 16 Nov. Not yet measured against any outcome.
+- Known limits: Rajat's lagna has two candidates, so area wording from lagna houses is less certain for him; the Moon-based daily checks are not affected.

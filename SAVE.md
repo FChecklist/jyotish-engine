@@ -21,3 +21,5 @@ Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd: books_master_v8 parts, EN
 - apply_rules + weighted fit wired into report (build(..., rules_glob=...)). 369 rules fired on Rajat's chart, all unvalidated. Next: parser coverage (15%), KP ayanamsa wiring, D1 load.
 
 - 2026-11-14: guidance view built (do/dont/precautions only). Next: tie windows to rule timing + transits.
+
+- 2026-11-14: guide.py gives 3 do + 3 dont daily and per Sun-sign month for each person. Next: scheduled daily delivery, diary sheet, transit-condition parser for the remaining DB rules.
