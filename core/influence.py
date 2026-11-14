@@ -59,6 +59,7 @@ def fit(norm, views, sign_of_planet):
     Each view is judged separately (so AND stays consistent inside one view), then views are averaged by weight.
     'N-th lord' counts every sign the N-th house touches, weighted by its share inside that view."""
     if norm['status'] != 'parsed': return None
+    if norm.get('frame') == 'aries_fixed': return _fit_aries(norm, sign_of_planet)
     GROUPS = {'kendra': (1, 4, 7, 10), 'trikona': (1, 5, 9), 'dusthana': (6, 8, 12), 'upachaya': (3, 6, 10, 11)}
     total = 0.0
     for v in views.values():
@@ -75,3 +76,14 @@ def fit(norm, views, sign_of_planet):
                 pf *= x
         total += v['weight'] * pf
     return round(total, 4)
+
+def _fit_aries(norm, sg):
+    """Lal Kitab frame (decision 2026-11-14, OPEN QUESTION): house number = sign number counted from Aries. One view only, so fit is 0 or 1."""
+    GROUPS = {'kendra': (1, 4, 7, 10), 'trikona': (1, 5, 9), 'dusthana': (6, 8, 12), 'upachaya': (3, 6, 10, 11)}
+    for a in norm['atoms']:
+        if a[0] == 'planet_in_house' and sg[a[1]] + 1 not in a[2]: return 0.0
+        if a[0] == 'planet_in_group' and sg[a[1]] + 1 not in GROUPS[a[2]]: return 0.0
+        if a[0] == 'planet_in_sign' and sg[a[1]] != a[2]: return 0.0
+        if a[0] == 'conj' and sg[a[1]] != sg[a[2]]: return 0.0
+        if a[0] == 'lord_in_house' and sg[SIGN_LORD[a[1] - 1]] + 1 not in a[2]: return 0.0
+    return 1.0

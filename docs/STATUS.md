@@ -14,3 +14,7 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 2026-11-14 later: core/report.py builds the Step 1 report (chart D1-D60, panchang, KP lords, dasha, ashtakavarga both variants, transit, birth-time sensitivity). events/dos/donts/precautions/remedies are empty 'not_built' sections; calibration 'none'. Known limitation: KP block uses report ayanamsa, not Krishnamurti, until wired.
 2026-11-14 rule normalisation v1: 15.0% of rules parsed. Next: aspects ('aspecting', 'drishti'), lord-of-X-in-Y with qualifiers, own/exalted/debilitated sign states, yogas by name (Ruchaka etc.), Jaimini (Atmakaraka, karakamsa), Lal Kitab sleeping/awake states; then re-measure.
 2026-11-14: core/house_signs.py built: per house, signs under whole/equal/equal-mid/sripati/porphyry/KP-placidus with votes, plus D9 layer and planet-house shifts across systems. Rajat test: H1 = Leo main, Cancer secondary (about 4.9 deg avg); only Mercury changes house (1 vs 2). Rule engine does not use it yet.
+
+## 2026-11-14 update
+- DONE: core/apply_rules.py, Lal Kitab frame in influence.fit, report events/dos/donts/remedies filled (status built_unvalidated) when rules_glob is passed.
+- NEXT: extend parser beyond 15% (aspects, dignity, yogas, Jaimini terms); wire KP ayanamsa; load rules to D1; check CI.

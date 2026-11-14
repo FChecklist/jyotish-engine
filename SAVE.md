@@ -15,3 +15,7 @@ See docs/OPEN_QUESTIONS.md.
 
 ## Where the big files are (not in git)
 Drive family folder 1KdxtA9DlH5rR2HLnF-qV60vQd8tLKjwd: books_master_v8 parts, ENGINE_SPEC, code tgz, handoffs.
+
+
+## Latest (2026-11-14)
+- apply_rules + weighted fit wired into report (build(..., rules_glob=...)). 369 rules fired on Rajat's chart, all unvalidated. Next: parser coverage (15%), KP ayanamsa wiring, D1 load.

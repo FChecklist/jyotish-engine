@@ -18,3 +18,12 @@ assert all(len(v) == 10 for v in r1['chart']['divisional'].values())
 assert sum(r1['ashtakavarga']['bphs_plain']['sav']) == 337
 assert r1['quality']['sensitivity_minutes_4']['D60']['+4min'] is not None
 print('report tests passed; size bytes', len(js), '; D60 planets that flip with +4 min:', r1['quality']['sensitivity_minutes_4']['D60']['+4min'])
+# rules wiring: items are tradition claims with null probability
+import glob
+_g = os.path.join(os.path.dirname(__file__), 'fixture_rules.jsonl')
+open(_g, 'w').write('{"id":"t1","system":"parashari","engine_role":"event","life_area":"x","input":"Saturn in Cancer","outcome":"o","timing":"","remedy":"","source":"s","confidence":""}\n')
+_r = report.build(1975, 8, 24, 5, 39, 4, 5.5, 25.1833, 75.8333, rules_glob=_g)
+os.remove(_g)
+assert _r['events']['status'] == 'built_unvalidated' and _r['events']['items'][0]['probability'] is None and _r['events']['items'][0]['label'] == 'tradition claim'
+assert _r['calibration']['status'] == 'none'
+print('report rules wiring ok')
