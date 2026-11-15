@@ -88,3 +88,6 @@ Context: the pilot showed most unread rules need things the engine could not che
   - NOT built: raja yoga, dhana, viparita, neecha-bhanga and any yoga that needs house lords, strength or cancellation rules.
 - Rules that still need strength (shadbala), transits, Lal Kitab states, tithi/weekday stay partial.
 - Context object passed to fit: ctx = {lon, retro, maha, antar}. An atom whose data is missing is NOT evaluated (fit None), never guessed.
+
+## Reference tables (data, not rules)
+- core/planet_colors.py: planet to colour (12 rows) from Rajat's image, 2026-11-15. Tradition claim. Stored as data only; not yet used by guide.py (output shape is 3 DO + 3 DON'T). Uranus, Neptune, Pluto are not computed by the engine. Test: tests/test_planet_colors.py. Possible use: colour-based DO items when a planet is the dasha lord or the weekday lord (labelled tradition).
