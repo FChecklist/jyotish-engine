@@ -4,14 +4,14 @@ Birth data is read from a private JSON path given on the command line. It is nev
 Usage: python guide.py FAMILY.json YYYY-MM-DD OUTDIR [rules_glob ...]"""
 import datetime, sys, json, datetime, os
 import report, daily, shortterm, nakshatra as NK
-from guidance_rules import SIGNS
+from guidance_rules import SIGNS, NAKS as GNAKS
 def person_guidance(rep, date, tz, lat, lon):
     natal = daily.natal_of(rep)
     pool = [r for sec in ('remedies', 'donts') for r in rep.get(sec, {}).get('items', [])]
     d_items, d_facts = daily.day_items(natal, date, tz, lat, lon, pool)
     m_items, m_facts = shortterm.month_items(natal, date, tz, lat, lon)
     dt, mt = daily.top(d_items), daily.top(m_items)
-    ns = NK.natal_signals(rep); dn = NK.NAMES.index(d_facts['nakshatra'] if d_facts['nakshatra'] in NK.NAMES else {'P.Phalguni': 'Purva Phalguni'}.get(d_facts['nakshatra'], d_facts['nakshatra'])) + 1
+    ns = NK.natal_signals(rep); dn = GNAKS.index(d_facts['nakshatra']) + 1
     nk = {'natal': {'janma': ns['janma'], 'lagna': ns['lagna'], 'anu_janma': ns['anu_janma'], 'trijanma': ns['trijanma'], 'planets': ns['planets'], 'taras': ns['taras']},
           'day': NK.day_signals(ns['janma']['n'], ns['janma']['sign0'], dn, SIGNS.index(d_facts['moon_sign']))}
     plain = lambda t: {k: [i['text'] for i in v] for k, v in t.items()}
