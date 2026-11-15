@@ -30,3 +30,8 @@ Rules are paraphrased, never copied. Each rule keeps book + position.
 - tune/nak_facts_check.py: book facts vs table. Result: 250 agree, 4 differ only in animal names (goat/sheep, leopard/tiger).
 - Merlin not run: its URL was not found. BN refused by fetch allowlist.
 - Known limit: lagna nakshatra depends on exact birth time (a few minutes can change the pada, near sign start the nakshatra).
+
+## Activation ages (2026-11-15)
+- core/activation.py. Planet maturity ages: two web schemes kept apart (they conflict, e.g. Jupiter 16 vs 33-34). Both from secondary pages (panchangbodh calculator; Sanjay Rath's table as quoted on a blog). No primary verse found. Ptolemy's life-stage table is a different idea and is not used.
+- Nakshatra ages: 31 statements for 22 of 27 nakshatras, taken from the three nakshatra books (rules/nakshatra_ages_v1.jsonl, tune/make_nak_ages.py). 5 nakshatras have none. No book was found that gives a per-nakshatra activation age as a system; these are scattered "struggle until / golden period" claims.
+- Output: engine JSON 'activation' per person. Not used in the 3 DO + 3 DONT.

@@ -3,9 +3,9 @@ No predictions, no reasons in the user view. Reasons and rule ids stay in the 'e
 Birth data is read from a private JSON path given on the command line. It is never stored in git.
 Usage: python guide.py FAMILY.json YYYY-MM-DD OUTDIR [rules_glob ...]"""
 import datetime, sys, json, datetime, os
-import report, daily, shortterm, nakshatra as NK
+import report, daily, shortterm, nakshatra as NK, activation as ACT
 from guidance_rules import SIGNS, NAKS as GNAKS
-def person_guidance(rep, date, tz, lat, lon):
+def person_guidance(rep, date, tz, lat, lon, birth=None):
     natal = daily.natal_of(rep)
     pool = [r for sec in ('remedies', 'donts') for r in rep.get(sec, {}).get('items', [])]
     d_items, d_facts = daily.day_items(natal, date, tz, lat, lon, pool)
@@ -16,7 +16,7 @@ def person_guidance(rep, date, tz, lat, lon):
           'day': NK.day_signals(ns['janma']['n'], ns['janma']['sign0'], dn, SIGNS.index(d_facts['moon_sign']))}
     plain = lambda t: {k: [i['text'] for i in v] for k, v in t.items()}
     return {'user': {'daily': plain(dt), 'month': plain(mt), 'month_window': [m_facts['window_start'][:10], (datetime.date.fromisoformat(m_facts['window_end'][:10]) - datetime.timedelta(days=1)).isoformat()]},
-            'engine': {'nakshatra': nk, 'daily_facts': d_facts, 'month_facts': m_facts, 'daily_chosen': dt, 'month_chosen': mt,
+            'engine': {'nakshatra': nk, 'activation': (ACT.person_activation(birth, date, ns['janma']['name']) if birth else None), 'daily_facts': d_facts, 'month_facts': m_facts, 'daily_chosen': dt, 'month_chosen': mt,
                        'daily_candidates': sorted(d_items, key=lambda x: -x['weight']), 'month_candidates': sorted(m_items, key=lambda x: -x['weight']),
                        'label': 'tradition claims, unmeasured; probability none'}}
 def text_view(name, g, date):
@@ -28,7 +28,7 @@ def run(family_json, date, outdir, rules_globs):
     for name, p in people.items():
         dt = datetime.datetime.strptime(p['birth'], '%Y-%m-%d %H:%M:%S')
         rep = report.build(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, 5.5, p['lat'], p['lon'], asof=(date.year, date.month, date.day, 12), rules_glob=rules_globs, ai_atoms_glob='/home/claude/jyotish-code/rules/atoms_ai_v*.jsonl')
-        g = person_guidance(rep, date, 5.5, 28.6139, 77.209)   # today's panchang for the family home (Indirapuram, Delhi NCR); change when travelling
+        g = person_guidance(rep, date, 5.5, 28.6139, 77.209, birth=dt.date())   # today's panchang for the family home (Indirapuram, Delhi NCR); change when travelling
         text.append(text_view(name, g, date)); eng[name] = g['engine']
     open(os.path.join(outdir, f'guidance_{date}.txt'), 'w').write('\n\n'.join(text) + '\n')
     json.dump(eng, open(os.path.join(outdir, f'engine_{date}.json'), 'w'), indent=1, default=str)
