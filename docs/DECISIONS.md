@@ -71,3 +71,8 @@
 - AI conversion: 500 of 1,835 valid (atoms_ai_v5). The rest are names, letters, vedha, tara, pairs, remedies, or need strength. Single pass, no second-pass check yet.
 - Ledger: runnable 9,849 -> 10,349 of 31,265. Not complete.
 - Most nakshatra rules are character statements, so they do not change the 3 DO + 3 DONT yet. Method in docs/NAKSHATRA_METHOD.md.
+
+## 2026-11-15 Outer planets (Indra/Uranus, Varuna/Neptune, Yama/Pluto)
+- Archive.org search: Kedaar 0 statements, Raman 1 (stance: Hindu astrology does not use them), Frawley 45 (33 rules, labelled tentative, modern author). Levacy says traditional Jyotish does not use them. "Vedic Astrology and the tran-Saturnian Planets" (38 KB .doc) could not be fetched (not on the allowlist).
+- Rules: jyotish-code/rules/outer_planets_v1.jsonl (system outer, author-view). Not run as rules: no atoms for them.
+- core/outer.py: positions (Lahiri, Swiss Ephemeris), whole-sign house, conjunction/opposition within 10 degrees (Frawley), tentative house links (Pluto 8, Neptune 12, Uranus 6). Engine JSON 'outer_planets' only. NOT used in the 3 DO + 3 DONT.
