@@ -46,3 +46,10 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 2026-11-15: numerology calculation layer added (core/numerology.py), not yet wired into daily output; inputs for name/house/vehicle/office/roll/exam needed.
 
 2026-11-15: Sun-sign period now date-based (start = sankranti date, end = day before next). Tested.
+
+
+## 2026-11-15 night
+- Added: core/nakshatra.py, activation.py, outer.py, strength.py; tests for each; rules files nakshatra_books_v1, nakshatra_ages_v1, outer_planets_v1, lalkitab_web_v1, atoms_ai_v5 (nakshatra 500), v6 (strength 90).
+- Ledger 10,957 / 31,830 runnable (34.4%). NOT complete.
+- Private (not in git): /home/claude/astro/private/ (agent reports, Rajat final report, events from email).
+- Open: birth-time rectification for Rajat; merge new rule files into daily globs; build Jaimini, Lal Kitab states, other dashas, divisional rules; history purge of birth data; R2.

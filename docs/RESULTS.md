@@ -79,3 +79,8 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 
 ## 022 (2026-11-15) strength atom (Shadbala)
 - New atom strength (strong = Shadbala ratio >= 1, weak < 1) from PyJHora shad_bala (core/strength.py, tests/test_strength.py). Threshold is a reading choice. Conversion of 1,869 strength-text rules in progress; ledger not re-measured yet.
+
+## 023 (2026-11-15) strength conversion + web rules, ledger
+- 1,869 strength-text rules converted (38 batches, single pass): only 90 complete and valid (4.8%), 80 use the strength atom. Most such rules talk about house strength, benefic strength or "strong in own sign", which the atom does not cover. Not audited blind.
+- New rule files counted: nakshatra_books_v1 (1,835), lalkitab_web_v1 (519, 518 parse natively), outer_planets_v1 (46, not runnable).
+- Ledger: executable 10,957 of 31,830 = 34.4% (was 10,349 of 31,265 = 33.1%). Parser 5,175 parsed / 8,203 partial / 18,452 unparsed. NOT complete.

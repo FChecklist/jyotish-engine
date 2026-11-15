@@ -34,3 +34,9 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 ## 2026-11-15 night: nakshatra books
 - Added 1,835 rules (3 books), 500 runnable. BN and Merlin pending. Facts files in astro/nk (local), not yet in the identity table.
 - Next: nakshatra identity table, tara/chandra bala per person, second-pass check of v5, Merlin.
+
+## 2026-11-15 late: engine status
+- Built today: nakshatra module, activation ages, outer planets, strength atom (Shadbala), 8-agent astrologer review process, event test on 10 email events (no signal).
+- Ledger 34.4% runnable. Still not built: Jaimini engine (1,473 rules touching), Lal Kitab states/debts (2,764), dasha systems beyond Vimshottari (3,325 partial), divisional-chart rules (2,275), Tajika (358), doshas/Sade Sati helper (256), upagrahas (353), free text (10,052 rules, need reading).
+- New rule files are NOT yet in the daily guide globs (lalkitab_web_v1, nakshatra_books_v1, outer_planets_v1, atoms_ai_v6 loads automatically). Decide before adding: they change daily output.
+- Biggest accuracy risk: birth time unknown for Rajat (lagna 0 deg 25 min Leo). Rectification needed. No accuracy measured.
