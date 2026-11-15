@@ -30,3 +30,7 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 - Executable rules: 9,655 of 29,430 (32.8%) after lagna_sign. NOT complete.
 
 - Executable rules: 9,849 of 29,430 (33.5%) after group atoms. NOT complete.
+
+## 2026-11-15 night: nakshatra books
+- Added 1,835 rules (3 books), 500 runnable. BN and Merlin pending. Facts files in astro/nk (local), not yet in the identity table.
+- Next: nakshatra identity table, tara/chandra bala per person, second-pass check of v5, Merlin.

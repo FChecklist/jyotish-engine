@@ -1,0 +1,25 @@
+# Nakshatra method (spec, written before code) - 2026-11-15
+
+Goal: turn the English nakshatra books into checkable rules and apply them step by step to Rajat, Pallavi, Eshani, Pehu.
+
+## Sources (English, archive.org)
+- RK: Raj Kumar, Role of Nakshatra in Astrology (5 chunks)
+- HN: Dennis Harness, The Nakshatras (3 chunks)
+- SB: S.P. Bhagat, Significance of Stellar Astrology
+- BN: The Book of Nakshatras (fetch was refused by the tool allowlist on chunk 2; see status)
+- Merlin: Lunar Mansions in Vedic Astrology (not yet run)
+Rules are paraphrased, never copied. Each rule keeps book + position.
+
+## Step-wise method
+1. Identity table (data, no book needed): 27 nakshatras x lord, deity, gana, yoni, nadi, varna, vashya, guna, pada navamsa signs. Facts from books are compared with it; any mismatch goes to notes, not silently resolved.
+2. Extraction: agents write rules.jsonl (id NK<book>_<chunk>_<seq>) and facts.jsonl per chunk into astro/nk/.
+3. Conversion: same AI atom pipeline as other rules (PROMPT.md vocabulary, strict validator). Only complete + valid atoms run. Others stay in the ledger as not runnable.
+4. Chart facts per person: Moon nakshatra and pada, lagna nakshatra, nakshatra of each planet, dasha lord's nakshatra, janma/anu-janma/trijanma nakshatras.
+5. Fire rules: planet_in_nak and related atoms against the chart, with the multi-view fit.
+6. Day level: Tara bala and Chandra bala of the day's Moon nakshatra against the person's birth nakshatra (counted from janma nakshatra, 9 taras).
+7. Output: feeds the same 3 DO + 3 DON'T. No reasons shown. Reasons stay in engine JSON.
+8. Ledger: re-run tune/coverage.py. Do not say complete unless the ledger says so.
+
+## Limits
+- Accuracy not measured. Book claims are tradition claims.
+- Books disagree (e.g. RK itself lists two lords for Ashwini in different places). Disagreements are kept as notes.
