@@ -7,4 +7,5 @@ for t in test_kp.py test_report.py test_rules_norm.py test_house_signs.py test_i
   echo "== $t"; out=$($PY $t 2>&1); rc=$?; echo "$out" | grep -v "added to system" | tail -8; [ $rc -eq 0 ] || { echo "FAILED: $t"; fail=1; }
 done
 (cd ../core && $PY test_houses.py >/dev/null 2>&1) && echo "== test_houses.py ok" || { echo "== test_houses.py FAILED"; fail=1; }
+$PY tests/test_nakshatra.py >/dev/null 2>&1 && echo "== test_nakshatra.py ok" || { echo "== test_nakshatra.py FAILED"; fail=1; }
 exit $fail

@@ -23,3 +23,10 @@ Rules are paraphrased, never copied. Each rule keeps book + position.
 ## Limits
 - Accuracy not measured. Book claims are tradition claims.
 - Books disagree (e.g. RK itself lists two lords for Ashwini in different places). Disagreements are kept as notes.
+
+## Built 2026-11-15
+- core/nakshatra.py: table (lord, gana, yoni, nadi), of_lon, natal_signals (janma, lagna, every planet's nakshatra+pada, anu-janma, trijanma, 9 taras), day_signals (tara, chandra bala, janma/anu/tri days).
+- guide.py puts it in the engine JSON per person under 'nakshatra'. The user view (3+3) is unchanged.
+- tune/nak_facts_check.py: book facts vs table. Result: 250 agree, 4 differ only in animal names (goat/sheep, leopard/tiger).
+- Merlin not run: its URL was not found. BN refused by fetch allowlist.
+- Known limit: lagna nakshatra depends on exact birth time (a few minutes can change the pada, near sign start the nakshatra).

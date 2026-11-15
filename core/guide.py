@@ -3,16 +3,20 @@ No predictions, no reasons in the user view. Reasons and rule ids stay in the 'e
 Birth data is read from a private JSON path given on the command line. It is never stored in git.
 Usage: python guide.py FAMILY.json YYYY-MM-DD OUTDIR [rules_glob ...]"""
 import datetime, sys, json, datetime, os
-import report, daily, shortterm
+import report, daily, shortterm, nakshatra as NK
+from guidance_rules import SIGNS
 def person_guidance(rep, date, tz, lat, lon):
     natal = daily.natal_of(rep)
     pool = [r for sec in ('remedies', 'donts') for r in rep.get(sec, {}).get('items', [])]
     d_items, d_facts = daily.day_items(natal, date, tz, lat, lon, pool)
     m_items, m_facts = shortterm.month_items(natal, date, tz, lat, lon)
     dt, mt = daily.top(d_items), daily.top(m_items)
+    ns = NK.natal_signals(rep); dn = NK.NAMES.index(d_facts['nakshatra'] if d_facts['nakshatra'] in NK.NAMES else {'P.Phalguni': 'Purva Phalguni'}.get(d_facts['nakshatra'], d_facts['nakshatra'])) + 1
+    nk = {'natal': {'janma': ns['janma'], 'lagna': ns['lagna'], 'anu_janma': ns['anu_janma'], 'trijanma': ns['trijanma'], 'planets': ns['planets'], 'taras': ns['taras']},
+          'day': NK.day_signals(ns['janma']['n'], ns['janma']['sign0'], dn, SIGNS.index(d_facts['moon_sign']))}
     plain = lambda t: {k: [i['text'] for i in v] for k, v in t.items()}
     return {'user': {'daily': plain(dt), 'month': plain(mt), 'month_window': [m_facts['window_start'][:10], (datetime.date.fromisoformat(m_facts['window_end'][:10]) - datetime.timedelta(days=1)).isoformat()]},
-            'engine': {'daily_facts': d_facts, 'month_facts': m_facts, 'daily_chosen': dt, 'month_chosen': mt,
+            'engine': {'nakshatra': nk, 'daily_facts': d_facts, 'month_facts': m_facts, 'daily_chosen': dt, 'month_chosen': mt,
                        'daily_candidates': sorted(d_items, key=lambda x: -x['weight']), 'month_candidates': sorted(m_items, key=lambda x: -x['weight']),
                        'label': 'tradition claims, unmeasured; probability none'}}
 def text_view(name, g, date):
