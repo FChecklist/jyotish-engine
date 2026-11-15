@@ -78,7 +78,7 @@ def day_items(natal, date, tz, lat, lon, rules=None):
             if first: _add(items, 'do' if r['engine_role'] == 'remedy' else 'dont', f'On {WEEKDAYS[wd]}: {first}.', 4 * r.get('fit', 1), 'weekday rule ' + r['id'], 'GR-D10', r['source'])
     # conflict check: a strong "do not start" signal removes "start" advice (no self-contradicting lines)
     if any(i['kind'] == 'dont' and i['weight'] >= 4 and ('new' in i['text'] or 'begin' in i['text']) and 'between' not in i['text'] for i in items):
-        items = [i for i in items if not (i['kind'] == 'do' and (i['text'].startswith('Start') or i['text'].startswith('Take up important')))]
+        items = [i for i in items if not (i['kind'] == 'do' and (i['text'].startswith('Start') or i['text'].startswith('Take up important') or i['text'].startswith('Good for lasting starts')))]
     grade = 'favourable' if net >= 2 else 'careful' if net <= -2 else 'mixed'
     facts = {'date': date.isoformat(), 'weekday': WEEKDAYS[wd], 'tithi': p['tithi'], 'nakshatra': NAKS[p['nakshatra'] - 1], 'yoga': p['yoga'], 'karana_half': p['karana_half_tithi'],
              'chandra_house': chandra_h, 'tara': tn, 'net': net, 'grade': grade, 'moon_sign': SIGNS[signs[1]], 'sunrise': hm(sr), 'sunset': hm(ss)}
