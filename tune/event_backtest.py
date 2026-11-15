@@ -13,12 +13,15 @@ def metrics(natal, date):
     return {'net': f['net'], 'chandra': int(f['chandra_house'] in CHANDRA_GOOD), 'tara_good': int(TARA_Q[f['tara']] == 'good'), 'tara_bad': int(TARA_Q[f['tara']] == 'bad'), 'gochara': gscore(natal, date)}
 from guidance_rules import CHANDRA_GOOD, TARA
 TARA_Q = {v[0]: v[1] for v in TARA.values()}
-def run(family_json, who, n_null=120, draws=5000, seed=7, skip_types=('birth',), min_day=0):
+def run(family_json, who, n_null=120, draws=5000, seed=7, skip_types=('birth',), min_day=0, events_jsonl=None):
     d = json.load(open(family_json)); p = d['people'][who]
     dt = datetime.datetime.strptime(p['birth'], '%Y-%m-%d %H:%M:%S')
     natal = daily.natal_of(report.build(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, 5.5, p['lat'], p['lon']))
     ev = []
-    for e in d['breadcrumbs_rajat']:
+    if events_jsonl:   # private dated events file (one JSON per line with ISO 'date'); never committed
+        for l in open(events_jsonl):
+            e = json.loads(l); ev.append((datetime.date.fromisoformat(e['date']), e))
+    for e in ([] if events_jsonl else d['breadcrumbs_rajat']):
         if e['precision'] != 'd' or 'born' in e['label'].lower(): continue
         ev.append((datetime.datetime.strptime(e['date'], '%d %b %Y').date(), e))
     rnd = random.Random(seed); obs = []; nul = []
@@ -36,4 +39,4 @@ def run(family_json, who, n_null=120, draws=5000, seed=7, skip_types=('birth',),
         out[k] = {'observed_mean': round(o, 3), 'null_mean': round(statistics.mean(x[k] for pool in nul for x in pool), 3), 'p_one_sided_higher': round((ge + 1) / (draws + 1), 4)}
     return out
 if __name__ == '__main__':
-    print(json.dumps(run(sys.argv[1], sys.argv[2]), indent=1))
+    print(json.dumps(run(sys.argv[1], sys.argv[2], events_jsonl=(sys.argv[3] if len(sys.argv) > 3 else None)), indent=1))

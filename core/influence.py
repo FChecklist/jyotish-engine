@@ -118,6 +118,7 @@ def _atom_val(a, v, sg, ctx):
     if k == 'planet_aspected_by': return 1.0 if _aspected(v['planet_house'], v['planet_house'][a[1]], a[2], ctx, a[1]) else 0.0
     if k == 'lord_with_group': return sum(w for l, w in _lord_signs(v, a[1]) if any(q != l and v['planet_house'][q] == v['planet_house'][l] for q in group_members(a[2], ctx)))
     if k == 'lord_aspected_by': return sum(w for l, w in _lord_signs(v, a[1]) if _aspected(v['planet_house'], v['planet_house'][l], a[2], ctx, l))
+    if k == 'strength': return 1.0 if (ctx['strength'][a[1]] >= 1.0) == (a[2] == 'strong') else 0.0
     if k == 'retro': return 1.0 if a[1] in ctx['retro'] else 0.0
     if k == 'combust': return 1.0 if yogas.combust(a[1], ctx['lon'], ctx['retro']) else 0.0
     if k == 'yoga': return 1.0 if yogas.yoga(a[1], sg, v['planet_house']) else 0.0
@@ -132,6 +133,7 @@ def _needs(atoms):
         k = a[0]
         if k.startswith('dasha'): out.add('maha')
         elif k == 'planet_in_nak' or k in NEED_LON: out.add('lon')
+        elif k == 'strength': out.add('strength')
         elif k == 'retro': out.add('retro')
         elif k == 'combust': out |= {'lon', 'retro'}
         elif k == 'any': out |= _needs(a[1])
@@ -171,6 +173,7 @@ def _aries_ok(a, sg, ctx):
     if k == 'planet_aspected_by': return _aspected({p: sg[p] + 1 for p in sg}, sg[a[1]] + 1, a[2], ctx, a[1])
     if k == 'lord_with_group': l = SIGN_LORD[a[1] - 1]; return any(q != l and sg[q] == sg[l] for q in group_members(a[2], ctx))
     if k == 'lord_aspected_by': l = SIGN_LORD[a[1] - 1]; return _aspected({p: sg[p] + 1 for p in sg}, sg[l] + 1, a[2], ctx, l)
+    if k == 'strength': return (ctx['strength'][a[1]] >= 1.0) == (a[2] == 'strong')
     if k == 'retro': return a[1] in ctx['retro']
     if k == 'combust': return yogas.combust(a[1], ctx['lon'], ctx['retro'])
     if k == 'yoga': return yogas.yoga(a[1], sg, {p: sg[p] + 1 for p in sg})

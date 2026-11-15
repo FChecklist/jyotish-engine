@@ -81,6 +81,9 @@ def atom(a, depth=0):
     if t == 'lord_with_group':
         if a['g'] not in BEN or not isinstance(a['n'], int) or not 1 <= a['n'] <= 12: raise Bad('lord group')
         return ('lord_with_group', a['n'], a['g'])
+    if t == 'strength':
+        if _p(a['p']) not in (0, 1, 2, 3, 4, 5, 6) or a.get('s') not in ('strong', 'weak'): raise Bad('strength')
+        return ('strength', PL[a['p']], a['s'])
     if t == 'retro':
         if _p(a['p']) not in (2, 3, 4, 5, 6): raise Bad('retro planet')
         return ('retro', PL[a['p']])

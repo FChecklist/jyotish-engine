@@ -72,3 +72,10 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 
 ## 020 (2026-11-15) multi-sign houses in every chart
 - tests/test_chart_views.py added; all tests pass; verify_divisional still 40/40 for D45, D60.
+
+## 021 (2026-11-15) event test on 10 dated email events (Rajat)
+- tune/event_backtest.py now accepts a private events file. 10 documented events (jobs, company, registrations, travel, education). Daily net score, Chandra, tara and gochara versus random days within +-400 days.
+- Result: no signal. net observed -1.0 vs null -0.30 (p higher 0.89); tara good 0.40 vs 0.57; gochara -2.7 vs -3.1 (p 0.34). All at or below chance. n=10 is too small to show a modest effect and some events are weak (flight, domain). This gives no support to the daily-quality score.
+
+## 022 (2026-11-15) strength atom (Shadbala)
+- New atom strength (strong = Shadbala ratio >= 1, weak < 1) from PyJHora shad_bala (core/strength.py, tests/test_strength.py). Threshold is a reading choice. Conversion of 1,869 strength-text rules in progress; ledger not re-measured yet.

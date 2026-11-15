@@ -23,6 +23,7 @@ ATOMS (the ONLY allowed ones). Planets: Sun Moon Mars Mercury Jupiter Venus Satu
 - {"t":"lord_with_group","n":9,"g":"malefic"}              lord of the n-th house is with a natural malefic/benefic
 - {"t":"lord_aspected_by","n":9,"by":"malefic"}            lord of the n-th house is aspected by any listed planets or by the group "benefic"/"malefic"
   Natural nature used by the engine (fixed): benefic = Jupiter, Venus, Mercury, waxing Moon; malefic = Sun, Mars, Saturn, Rahu, Ketu, waning Moon. If the rule says a different set (e.g. Mercury malefic) or "strong/weak" planets, complete is false.
+- {"t":"strength","p":"Venus","s":"strong"}      planet is strong (s "strong") or weak (s "weak"); only Sun..Saturn. Use ONLY when the rule says the planet is strong/powerful/well-endowed or weak/powerless/feeble in general (Shadbala). NOT for "strong in own sign" (use dignity), "aspected/afflicted by malefics" (not expressible), or house strength.
 - {"t":"retro","p":"Saturn"}                              planet retrograde at birth (only Mars Mercury Jupiter Venus Saturn)
 - {"t":"combust","p":"Venus"}                            planet combust (near the Sun) (only Moon Mars Mercury Jupiter Venus Saturn)
 - {"t":"yoga","name":"gajakesari"}                     ONLY these names: gajakesari budhaditya chandra_mangala guru_chandala shrapit angarak grahan kemadruma sunapha anapha duradhara vesi vosi ubhayachari ruchaka bhadra hamsa malavya sasa. Use it only when the rule is exactly that named yoga with no extra qualifier. Any other yoga name (raja yoga, dhana yoga, etc.) is NOT expressible.
@@ -32,7 +33,7 @@ ATOMS (the ONLY allowed ones). Planets: Sun Moon Mars Mercury Jupiter Venus Satu
 
 RULES FOR `complete`:
 - complete=true ONLY when the atoms express the WHOLE condition. No qualifier may be left out.
-- complete=false (and say what is missing in `missing`, a few words) when the condition also needs anything outside the atoms: planet strength/weakness/affliction, degrees, tithi, weekday, named yogas not in the list above, navamsha or other divisional charts, transit, age, gender, Ashtakavarga bindus, relationships between persons, "lord of X sign" in text other than houses, etc.
+- complete=false (and say what is missing in `missing`, a few words) when the condition also needs anything outside the atoms: affliction/benefic influence beyond the atoms, degrees, tithi, weekday, named yogas not in the list above, navamsha or other divisional charts, transit, age, gender, Ashtakavarga bindus, relationships between persons, "lord of X sign" in text other than houses, etc.
 - complete=false with atoms [] when the text is not a chart condition (a definition, a description, advice, a list, a method). 
 - Ordinals: "seventh/7th/VII" = 7. "Lagna" = house 1. "Kendra" etc use planet_in_group. "in the 3rd or 10th" = h [3,10]. A planet "in Cancer" = planet_in_sign. "Sun with Mars" / "conjunct" = conj. "Moon in own sign" = dignity own.
 - Houses counted from the Moon, Sun or another planet use planet_from. "From the Nth house" (a house from lagna) is not a planet reference: use the house itself.

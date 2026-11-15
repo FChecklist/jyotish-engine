@@ -76,3 +76,6 @@
 - Archive.org search: Kedaar 0 statements, Raman 1 (stance: Hindu astrology does not use them), Frawley 45 (33 rules, labelled tentative, modern author). Levacy says traditional Jyotish does not use them. "Vedic Astrology and the tran-Saturnian Planets" (38 KB .doc) could not be fetched (not on the allowlist).
 - Rules: jyotish-code/rules/outer_planets_v1.jsonl (system outer, author-view). Not run as rules: no atoms for them.
 - core/outer.py: positions (Lahiri, Swiss Ephemeris), whole-sign house, conjunction/opposition within 10 degrees (Frawley), tentative house links (Pluto 8, Neptune 12, Uranus 6). Engine JSON 'outer_planets' only. NOT used in the 3 DO + 3 DONT.
+
+## 2026-11-15 strength atom and Lal Kitab web rules
+- strength atom added (validator, evaluation, report ctx, prompt vocab). Lal Kitab web rules (519) normalised into jyotish-code/rules/lalkitab_web_v1.jsonl; 518 parse natively. Add this file to the rules globs of the daily guide once reviewed.
