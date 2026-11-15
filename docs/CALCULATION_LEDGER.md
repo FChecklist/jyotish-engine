@@ -92,3 +92,7 @@ Context: the pilot showed most unread rules need things the engine could not che
 ## Reference tables (data, not rules)
 - core/planet_colors.py: planet to colour (12 rows) from Rajat's image, 2026-11-15. Tradition claim. Stored as data only; not yet used by guide.py (output shape is 3 DO + 3 DON'T). Uranus, Neptune, Pluto are not computed by the engine. Test: tests/test_planet_colors.py. Possible use: colour-based DO items when a planet is the dasha lord or the weekday lord (labelled tradition).
 - core/colour.py: personal colour scoring from chart. Hypothesis weights; annual chart and other divisional charts not yet included.
+
+## Numerology energies (core/numerology.py, from Rajat's image 2026-11-15)
+- Items: DOB, month of birth, sum of DOB, name, house no., self age, year no., vehicle no., office no., student roll no., exam date. Each reduced to 1-9 (11/22/33 flagged master). Plus personal year (day+month+current year). Linked to a planet by number (HYPOTHESIS: 1 Sun, 2 Moon, 3 Jupiter, 4 Rahu, 5 Mercury, 6 Venus, 7 Ketu, 8 Saturn, 9 Mars). Letters: Chaldean (HYPOTHESIS). Self age = completed years. Test tests/test_numerology.py.
+- NOT done: the image gives no meaning per number; no rule uses these numbers yet; inputs for name, house, vehicle, office, roll no. and exam date are not in our data (never invented).
