@@ -42,6 +42,9 @@ for dt in (s, e):
     jd = swe.julday(dt.year, dt.month, dt.day, dt.hour + dt.minute / 60 - tz); x = swe.calc_ut(jd, 0, swe.FLG_SIDEREAL)[0][0]
     assert min(x % 30, 30 - x % 30) < 0.02, (dt, x)
 assert (e - s).days in (29, 30, 31) and s.date() <= datetime.date(2026, 11, 14) < e.date()
+# date-based periods (Rajat 2026-11-15): start on the sankranti date, end the day before the next one
+for day, a, b in ((datetime.date(2026, 4, 14), (2026, 4, 14), (2026, 5, 15)), (datetime.date(2026, 5, 14), (2026, 4, 14), (2026, 5, 15)), (datetime.date(2026, 5, 15), (2026, 5, 15), (2026, 6, 15)), (datetime.date(2026, 11, 16), (2026, 11, 16), (2026, 12, 16))):
+    (s2, _), (e2, _) = shortterm.sun_window(day, tz, lat, lon); assert (s2.date(), e2.date()) == (datetime.date(*a), datetime.date(*b)), (day, s2, e2)
 # end to end on a neutral chart: exactly <=3 and <=3, no reasons or probabilities in the user view
 rep = report.build(1990, 1, 1, 6, 0, 0, 5.5, 28.6139, 77.209)
 g = guide.person_guidance(rep, datetime.date(2026, 11, 14), tz, lat, lon)

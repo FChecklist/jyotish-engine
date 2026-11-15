@@ -2,7 +2,7 @@
 No predictions, no reasons in the user view. Reasons and rule ids stay in the 'engine' part (internal, for AI inference and audit).
 Birth data is read from a private JSON path given on the command line. It is never stored in git.
 Usage: python guide.py FAMILY.json YYYY-MM-DD OUTDIR [rules_glob ...]"""
-import sys, json, datetime, os
+import datetime, sys, json, datetime, os
 import report, daily, shortterm
 def person_guidance(rep, date, tz, lat, lon):
     natal = daily.natal_of(rep)
@@ -11,7 +11,7 @@ def person_guidance(rep, date, tz, lat, lon):
     m_items, m_facts = shortterm.month_items(natal, date, tz, lat, lon)
     dt, mt = daily.top(d_items), daily.top(m_items)
     plain = lambda t: {k: [i['text'] for i in v] for k, v in t.items()}
-    return {'user': {'daily': plain(dt), 'month': plain(mt), 'month_window': [m_facts['window_start'][:10], m_facts['window_end'][:10]]},
+    return {'user': {'daily': plain(dt), 'month': plain(mt), 'month_window': [m_facts['window_start'][:10], (datetime.date.fromisoformat(m_facts['window_end'][:10]) - datetime.timedelta(days=1)).isoformat()]},
             'engine': {'daily_facts': d_facts, 'month_facts': m_facts, 'daily_chosen': dt, 'month_chosen': mt,
                        'daily_candidates': sorted(d_items, key=lambda x: -x['weight']), 'month_candidates': sorted(m_items, key=lambda x: -x['weight']),
                        'label': 'tradition claims, unmeasured; probability none'}}

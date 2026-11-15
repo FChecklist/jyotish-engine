@@ -22,11 +22,13 @@ def ingresses(p, start, days, tz, lat, lon, step_h=6):
 def sun_window(date, tz, lat, lon):
     t0 = datetime.datetime(date.year, date.month, date.day, 12) - datetime.timedelta(days=35)
     ing = ingresses(0, t0, 75, tz, lat, lon, step_h=12); now = datetime.datetime(date.year, date.month, date.day, 12)
-    s = max(x for x in ing if x[0] <= now); e = min(x for x in ing if x[0] > now)
+    # Rajat 2026-11-15: a Sun-sign period runs by CALENDAR DATE: it starts on the date of the sankranti (sidereal ingress) and ends the day before the next one
+    # (Mesha 14 Apr - 14 May, Vrishabha 15 May - 14 Jun). Ingress moments are exact (Swiss Ephemeris, Lahiri) and are kept in the facts.
+    s = max(x for x in ing if x[0].date() <= date); e = min(x for x in ing if x[0].date() > date)
     return s, e
 def month_items(natal, date, tz, lat, lon):
     (s_dt, s_sign), (e_dt, e_sign) = sun_window(date, tz, lat, lon)
-    snap = datetime.datetime(date.year, date.month, date.day, 12); tr = _at(snap, tz, lat, lon)
+    snap = max(datetime.datetime(date.year, date.month, date.day, 12), s_dt); tr = _at(snap, tz, lat, lon)
     gm = G.assess(natal['moon_sign0'], tr['sign'], natal['bav'], natal['sav']); items = []
     for p, scale in ((6, 4), (4, 4), (7, 3), (8, 3), (0, 3), (2, 2), (3, 1.5), (5, 1.5)):
         _quality_items(items, natal, p, gm[p], scale, 'month')

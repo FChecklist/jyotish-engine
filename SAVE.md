@@ -44,3 +44,5 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 2026-11-15: major+minor principle extended to D9 and all divisional charts (report.divisional_house_influence). Open: confirm "samvibhajan"; divisional charts into rule fit; Sripati/KP for divisional charts.
 
 2026-11-15: numerology calculation layer added (core/numerology.py), not yet wired into daily output; inputs for name/house/vehicle/office/roll/exam needed.
+
+2026-11-15: Sun-sign period now date-based (start = sankranti date, end = day before next). Tested.
