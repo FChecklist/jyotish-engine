@@ -69,3 +69,6 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - Blind audit of 60 random lagna conversions (v3): 60/60 agree with an independent second conversion (same model, so this is self-consistency only).
 - New atoms group_in_house, planet_with_group, planet_aspected_by, lord_with_group, lord_aspected_by (natural benefic/malefic is a fixed HYPOTHESIS in the ledger). 966 rules re-converted; only 194 (20%) became complete, because most also need strength/shadbala or other qualifiers. atoms_ai_v4.jsonl.
 - Ledger: executable 9,849 of 29,430 = 33.5%. Still NOT complete. Biggest remaining: 16,721 unparsed (mostly free-text predictions), strength/shadbala, other dashas, divisional rules.
+
+## 020 (2026-11-15) multi-sign houses in every chart
+- tests/test_chart_views.py added; all tests pass; verify_divisional still 40/40 for D45, D60.

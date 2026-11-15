@@ -12,6 +12,7 @@ Update SAVE.md, docs/STATUS.md, docs/RESULTS.md, docs/DECISIONS.md; commit; push
 
 ## Hard rules
 - MAIN PART: houses are multi-sign. Never judge a rule on one house-sign only. Use core/influence.py (shares per house, weighted fit). See docs/DECISIONS.md 2026-11-14.
+- MAIN PART applies to EVERY chart (Rajat 2026-11-15): D1, D9, bhava chalit, Sripati, equal-house (samvibhajan, assumed = equal division), KP, and all divisional charts. Each house in each chart is touched by 2+ signs (major + minor) and both carry impact. Code: core/influence.py (bundle, chart_views, divisional_shares). Sripati/KP/porphyry views exist only for D1 (need a real midheaven).
 - The software is NOT AI: plain code, maths, if/then. It outputs a detailed per-method report. AI only infers from that report.
 - 3 stages: (1) evaluate every technique per method/astrologer, (2) apply techniques stepwise to a chart, (3) AI inference using 1+2 (events, age, timing, probability, do/don't, remedies, precautions).
 - Stage 3 uses ONLY fired techniques and MEASURED numbers. No validated signal => say so. No death dates, medical diagnoses, investment advice. Remedies/do-don'ts are labelled tradition claims.

@@ -46,6 +46,7 @@ def build(y, m, d, H, M, S, tz, lat, lon, birth_time_grade='unknown', ayanamsa='
                             'weights_status': 'hypothesis: equal weights, to be tuned on validation data',
                             'houses': influence.house_sign_shares(views),
                             'planet_house_shares': {PLANETS[p]: {str(h): round(x, 3) for h, x in sorted(d_.items())} for p, d_ in influence.planet_house_shares(views).items()}},
+        'divisional_house_influence': {'note': 'Same principle for every chart: each house of D9 and of every divisional chart is touched by 2+ signs (whole-sign view + equal-from-lagna-degree view). D9 exact; others use PyJHora degrees, unverified. Sripati/KP views exist only for D1 (need a real midheaven).', 'charts': influence.divisional_shares(c['charts'])},
         'chart': {'divisional': {f'D{f}': {PLANETS[k]: {'sign': SIGNS[v[0]], 'sign0': v[0], 'deg': round(v[1], 3)} for k, v in ch.items()} for f, ch in c['charts'].items()}},
         'panchang': p,
         'kp': {'ayanamsa_used': ayanamsa, 'lords_by_planet': kp_rows,

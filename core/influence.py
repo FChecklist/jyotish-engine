@@ -13,8 +13,33 @@ SYSTEM_VIEWS = ('whole', 'equal_asc', 'equal_mid', 'sripati', 'porphyry', 'placi
 DEFAULT_WEIGHTS = {'whole': 1, 'equal_asc': 1, 'equal_mid': 1, 'sripati': 1, 'porphyry': 1, 'placidus': 1, 'd9': 1}   # hypothesis: equal
 MINOR_CUTOFF = 0.08      # a sign with under 8 percent share of a house is dropped from the report (about 2.4 deg of 30). Hypothesis.
 def navamsha_sign(lon):
-    s = int(lon % 360 // 30); n = int((lon % 30) // (30 / 9)); return ([0, 9, 6, 3][s % 4] + n) % 12
+    return int(((lon % 360) * 9 % 360) // 30)      # Navamsha longitude = 9 x longitude (exact; avoids float error at navamsha borders)
 
+def chart_views(lag_lon, pos_lon, weight, name, systems=('whole', 'equal_asc')):
+    """House views for ANY chart (D9, other divisional charts) from its own lagna longitude and planet longitudes: the principle of the engine
+    (every house touched by 2+ signs, main and minor) applies to every chart. 'whole' = one sign per house; 'equal_asc' = 30 deg houses from the chart's lagna degree.
+    Weight is split equally between the systems. Sripati/Porphyry/KP need a real midheaven, which a divisional chart does not have, so they are not used here."""
+    out = {}
+    for sy in systems:
+        start = (int(lag_lon // 30) * 30) if sy == 'whole' else lag_lon
+        cus = [(start + 30 * i) % 360 for i in range(12)]
+        sp = {i + 1: H.spans(cus[i], cus[(i + 1) % 12]) for i in range(12)}
+        ph = {p: int(((L - start) % 360) // 30) + 1 for p, L in pos_lon.items()}
+        out[name if sy == 'whole' else f'{name}_{sy}'] = {'weight': weight / len(systems), 'spans': sp, 'planet_house': ph}
+    return out
+def divisional_shares(charts, factors=None):
+    """Main/minor house-sign shares for every divisional chart that has sign + degree for lagna and planets (core/charts.natal output).
+    D9 is exact (checked against 9 x longitude). Other charts use the PyJHora degree inside the sign, which is NOT independently verified (status 'degree_unverified')."""
+    res = {}
+    for f, ch in charts.items():
+        if factors and f not in factors: continue
+        lag = ch['asc'][0] * 30 + ch['asc'][1]; pos = {p: ch[p][0] * 30 + ch[p][1] for p in range(9)}
+        vs = chart_views(lag, pos, 1.0, f'D{f}'); tot = sum(v['weight'] for v in vs.values())
+        for v in vs.values(): v['weight'] /= tot
+        res[f'D{f}'] = {'status': 'sign_checked_degree_unverified' if f != 9 else 'exact', 'houses': house_sign_shares(vs, 0.01),
+                        'planet_house_shares': {PN[p]: {str(h): round(x, 3) for h, x in sorted(d_.items())} for p, d_ in planet_house_shares(vs).items()}}
+    return res
+PN = {0: 'Sun', 1: 'Moon', 2: 'Mars', 3: 'Mercury', 4: 'Jupiter', 5: 'Venus', 6: 'Saturn', 7: 'Rahu', 8: 'Ketu'}
 def bundle(jd_ut, lat, lon, positions, ayan='lahiri', weights=None):
     """positions: {planet_id 0..8: sidereal longitude (same ayanamsa as `ayan`)}."""
     w = dict(DEFAULT_WEIGHTS); w.update(weights or {})
@@ -28,14 +53,16 @@ def bundle(jd_ut, lat, lon, positions, ayan='lahiri', weights=None):
         else: pos = positions
         views[sy] = {'weight': w[sy], 'spans': {h['h']: h['spans'] for h in ch['houses']}, 'planet_house': {p: H.house_of(L, ch) for p, L in pos.items()}}
     if w['d9'] > 0:
-        asc = H.build(jd_ut, lat, lon, 'whole', ayan)['asc']; d9l = navamsha_sign(asc)
-        views['d9'] = {'weight': w['d9'], 'lagna_spans': [(int(asc // 30) % 12, 30.0)], 'spans': {h: [((d9l + h - 1) % 12, 30.0)] for h in range(1, 13)},
-                       'planet_house': {p: (navamsha_sign(L) - d9l) % 12 + 1 for p, L in positions.items()}}
+        # D9 obeys the same main/minor principle as D1: whole-sign view AND equal-from-D9-lagna-degree view (D9 longitude = 9 x longitude, exact for Navamsha). The total D9 weight is split in two.
+        asc = H.build(jd_ut, lat, lon, 'whole', ayan)['asc']; d1l = [(int(asc // 30) % 12, 30.0)]
+        for key, v in chart_views((asc * 9) % 360, {p: (L * 9) % 360 for p, L in positions.items()}, w['d9'], 'd9', ('whole', 'equal_asc')).items():
+            v['lagna_spans'] = d1l; views[key] = v
     tot = sum(v['weight'] for v in views.values())
     for v in views.values(): v['weight'] /= tot
     return views
 
-def house_sign_shares(views):
+def house_sign_shares(views, cutoff=None):
+    cutoff = MINOR_CUTOFF if cutoff is None else cutoff
     """{house: {sign_name: share}} sums to 1 per house; plus main/minor split."""
     out = {}
     for h in range(1, 13):
@@ -43,7 +70,7 @@ def house_sign_shares(views):
         for v in views.values():
             width = sum(d for _, d in v['spans'][h])
             for s, d in v['spans'][h]: sh[s] = sh.get(s, 0) + v['weight'] * d / width
-        keep = {s: x for s, x in sh.items() if x >= MINOR_CUTOFF}; z = sum(keep.values())
+        keep = {s: x for s, x in sh.items() if x >= cutoff}; z = sum(keep.values())
         order = sorted(keep, key=lambda s: -keep[s])
         out[h] = {'shares': {SIGNS[s]: round(keep[s] / z, 3) for s in order}, 'main': SIGNS[order[0]], 'minor': [SIGNS[s] for s in order[1:]]}
     return out
