@@ -1,6 +1,6 @@
 """Daily guidance (GR-D*, GR-G*, GR-A*): candidate items with weights; the user view keeps the top 3 do and 3 dont only."""
 import datetime
-import panchang as PCH, transit as TR, gochara as G
+import panchang as PCH, transit as TR, gochara as G, colour as COL
 from guidance_rules import *
 def hm(h): h = h % 24; m = int(round((h - int(h)) * 60)); h = int(h) + m // 60; return f'{h:02d}:{m % 60:02d}'
 def natal_of(rep):
@@ -76,6 +76,8 @@ def day_items(natal, date, tz, lat, lon, rules=None):
         if wname in blob and txt:
             first = txt.split(';')[0].strip().rstrip('.')
             if first: _add(items, 'do' if r['engine_role'] == 'remedy' else 'dont', f'On {WEEKDAYS[wd]}: {first}.', 4 * r.get('fit', 1), 'weekday rule ' + r['id'], 'GR-D10', r['source'])
+    # personal colour (GR-C1, C2): from own chart, all house views, transit, dasha, weekday
+    COL.colour_items(natal, date, gm, lambda k, t, w, why, r, src: _add(items, k, t, w, why, r, src), 'today')
     # conflict check: a strong "do not start" signal removes "start" advice (no self-contradicting lines)
     if any(i['kind'] == 'dont' and i['weight'] >= 4 and ('new' in i['text'] or 'begin' in i['text']) and 'between' not in i['text'] for i in items):
         items = [i for i in items if not (i['kind'] == 'do' and (i['text'].startswith('Start') or i['text'].startswith('Take up important') or i['text'].startswith('Good for lasting starts')))]

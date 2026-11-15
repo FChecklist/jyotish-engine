@@ -56,3 +56,6 @@ Everything is plain code (no AI). Each item carries a rule id and a source. Ever
 ## F. DIARY (the only way to get measured numbers)
 - One row per person per day: date, person, rating 1-5 (how the day went), optional note. A Drive sheet filled from the phone.
 - tune/diary_score.py compares the engine's day grade with the rating against a shuffled-days baseline. After about 90 days per person, report the measured result. Until then, no percentages.
+
+- GR-C1 Colour DO: candidate planets = weekday lord (daily panchang), running antar and maha lord, lagna lord, birth-nakshatra lord (birth panchang); for the Sun-sign period also the lord of the Sun's new sign. Score = lordship quality + placement quality over all house views (multi-sign shares; D1, equal, Sripati, Porphyry, KP, D9) + transit (gochara from natal Moon). House weights HYPOTHESIS: 1:+1, 2:+.3, 3:-.2, 4:+.5, 5:+1.5, 6:-1, 7:+.5, 8:-1, 9:+1.5, 10:+.5, 11:+.1, 12:-.8. Best score >= 1.0 gives "Wear or use <colour>". Colour from core/planet_colors.py (tradition claim).
+- GR-C2 Colour DONT: worst score <= -1.0 gives "Avoid wearing <colour>". Not built yet for colour: annual (Varshaphal) chart, other divisional charts beyond D9, Jaimini, Tajika. Code: core/colour.py, test tests/test_colour.py.

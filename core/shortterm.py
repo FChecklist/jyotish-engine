@@ -30,6 +30,9 @@ def month_items(natal, date, tz, lat, lon):
     gm = G.assess(natal['moon_sign0'], tr['sign'], natal['bav'], natal['sav']); items = []
     for p, scale in ((6, 4), (4, 4), (7, 3), (8, 3), (0, 3), (2, 2), (3, 1.5), (5, 1.5)):
         _quality_items(items, natal, p, gm[p], scale, 'month')
+    # personal colour for the Sun-sign period (GR-C1, C2): extra candidate = lord of the Sun's new sign
+    import colour as COL
+    COL.colour_items(natal, date, gm, lambda k, t, w, why, r, src: _add(items, k, t, w, why, r, src), 'this month', extra=[(COL.SIGN_LORD[tr['sign'][0]], "lord of the Sun's sign")])
     # Sun moorthi at window start (GR-G8)
     sun_t = _at(s_dt, tz, lat, lon); mh = G.house_from(natal['moon_sign0'], sun_t['sign'][1]); mo = G.moorthi(mh, 0)
     if mo['moorthi'] == 'iron': _add(items, 'dont', 'Avoid big new commitments in this month; keep plans flexible.', 3, f"Sun moorthi iron (Moon {mh}th at ingress)", 'GR-G8', 'DB BK13_0035')

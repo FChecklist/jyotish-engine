@@ -38,3 +38,5 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 2026-11-14 late: lagna_sign atom done, 1,330 rules added (atoms_ai_v3). Ledger 9,655/29,430. Next: blind audit of v3 sample, then aspect/malefic/benefic/lord/afflict atoms. Chain 06:00 IST alive.
 
 2026-11-14 night: group atoms + v4 done (9,849/29,430 = 33.5%). Next: shadbala/strength calc, other dashas, divisional atoms, D1 load. Drive backup redone. Chain 06:00 IST alive.
+
+2026-11-15: planet colours (core/planet_colors.py) + personal colour DO/DONT (core/colour.py) wired into daily and Sun-sign guidance. Annual chart, other divisional charts not in colour scoring yet.
