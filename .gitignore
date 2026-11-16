@@ -6,3 +6,5 @@ venv/
 data_private/
 family*/
 *.xlsx
+/a
+tune/convert/a
