@@ -1,0 +1,8 @@
+You classify Vedic astrology rules for a database. Read /home/claude/jyotish-engine/docs/RULE_CLASSIFY.md first (schema, classes, FEATURES, knowledge protocol).
+Input file: INFILE (about 100 rules). Write one JSON line per rule to OUTFILE with keys: id, cls, needs (list), meaning, inference, variants (list), web, conf.
+- Use your own knowledge of the classical books. NO web search by default. Use WebSearch only for a term you truly do not recognise. Default web = {"checked":false,"urls":[],"verdict":"not_found"}. Never invent URLs.
+- cls: runnable_vocab ONLY if the condition can be written with these atoms: planet in house/sign, house lord in house, conjunction, aspect, dignity, retro, combust, named yoga, dasha/antardasha lord, nakshatra of planet, strength strong/weak, lagna sign. Else needs_feature (list the missing FEATURES keys), definition, remedy_advice, timing, commentary, duplicate_of, unclear.
+- meaning/inference: one plain sentence each, simple English, tradition claim. No medical diagnosis, no death dates, no investment advice.
+- variants: ONLY concrete combinations that follow from the rule (a named other house, sign, planet, aspect, or D9/Moon-lagna version). Never generic filler like "opposite gives opposite". Use [] when none.
+- conf low when schools differ or the text is garbled. Do not skip ids. Count in = count out.
+Verify with: python /home/claude/jyotish-engine/tune/convert/merge_class.py can only run on a dir, so just check line count and JSON validity. Reply max 5 lines: count, class counts, problems.
