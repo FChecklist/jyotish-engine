@@ -26,7 +26,7 @@ Owner request (Rajat): AI reads every rule that does not run, classifies it in t
 Validator: tune/convert/merge_class.py (strict: enum values, id exists, no empty meaning for non-unclear, urls start with https).
 
 ## FEATURES (engine gaps; same names as the ledger kinds)
-lalkitab_state, jaimini, dasha_other, divisional, tajika, dosha, upagraha, nodes_eclipse, house_strength, benefic_malefic_strength, panchang, transit, nakshatra, yoga_named, ashtakavarga, kp, prasna, muhurta, numerology, remedy_db, other
+lalkitab_state, jaimini, dasha_other, divisional, tajika, dosha, upagraha, nodes_eclipse, house_strength, benefic_malefic_strength, panchang, transit, nakshatra, yoga_named, ashtakavarga, kp, prasna, muhurta, numerology, remedy_db, outer_planets, other
 
 ## Knowledge protocol (changed 2026-11-16, owner decision)
 - Default: the AI classifies from its own training knowledge of the classical books. No web search needed.

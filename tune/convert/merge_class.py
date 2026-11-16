@@ -2,7 +2,7 @@
 Each cNNNN.out.jsonl must cover exactly the ids in cNNNN.in.jsonl. Bad rows are dropped and listed (never silently kept)."""
 import sys, os, json, glob, collections
 CLS = {'needs_feature', 'runnable_vocab', 'definition', 'remedy_advice', 'timing', 'commentary', 'duplicate_of', 'unclear'}
-FEAT = {'lalkitab_state', 'jaimini', 'dasha_other', 'divisional', 'tajika', 'dosha', 'upagraha', 'nodes_eclipse', 'house_strength', 'benefic_malefic_strength', 'panchang', 'transit', 'nakshatra', 'yoga_named', 'ashtakavarga', 'kp', 'prasna', 'muhurta', 'numerology', 'remedy_db', 'other'}
+FEAT = {'lalkitab_state', 'jaimini', 'dasha_other', 'divisional', 'tajika', 'dosha', 'upagraha', 'nodes_eclipse', 'house_strength', 'benefic_malefic_strength', 'panchang', 'transit', 'nakshatra', 'yoga_named', 'ashtakavarga', 'kp', 'prasna', 'muhurta', 'numerology', 'remedy_db', 'outer_planets', 'other'}
 VERD = {'agrees', 'partly', 'differs', 'not_found'}
 def check(r, ids):
     if r.get('id') not in ids: return 'id not in batch'
