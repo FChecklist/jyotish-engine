@@ -84,3 +84,9 @@
 - Rajat's birth time is fixed at 05:39:00 IST (user instruction 2026-11-16: the only time). No alternative times are tested in guidance. Fact kept for engineers: the lagna is 0.4 deg into Leo, so it is sensitive to about 1.5 minutes; this is not shown in the daily output. The private data file was updated locally (it was 05:39:04); the Drive copy of the data file is not updated.
 - Daily conflict filter: a strong "risky trips" warning now removes "Good for travel" (tests/test_daily_conflict.py, 120 days, 0 contradictions).
 - Next build (spec from DB first): Lal Kitab states (sleeping/awake planets with wake ages, rin, masnui, dharmi, blind, opposite). 6,224 Lal Kitab rules in the DB; about 28 rules on sleeping planets, 74 on rin. Spec must come from the DB rule text, not memory.
+
+## 2026-11-16 - Birth times for all four are final (user)
+- Rajat, Pallavi, Eshani and Pehu: the times in the private family file are the only times used. User confirmed the full table (date, time, place, lagna sign and degree) in chat. Engine lagna degrees were checked against the table: all four match to 0.1 deg.
+- Birth data stays in the private file only (never in git).
+- Chart-first track approved by user: per-person fact sheet -> look up every fact in the rule DB incl. non-runnable classified rules -> independent topic reads -> contradiction check. Output is labelled "what the tradition says", no accuracy claim (n=4, no events for 3 people).
+- Fact sheets built by core/report.py with all rule files and atoms_ai_v*; stored in the private folder only.
