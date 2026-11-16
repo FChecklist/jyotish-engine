@@ -30,6 +30,7 @@ for fi in sorted(glob.glob(src + '/c*.in.jsonl')):
         e = check(r, ids)
         if e or r['id'] in seen: bad[e or 'duplicate'] += 1; continue
         seen.add(r['id']); good[r['id']] = {k: r[k] for k in ('id', 'cls', 'needs', 'meaning', 'inference', 'variants', 'web', 'conf')}
+        if r['cls'] == 'duplicate_of' and isinstance(r.get('dup'), str): good[r['id']]['dup'] = r['dup']
     missing += len(ids - seen)
 with open(out, 'w') as f:
     for r in good.values(): f.write(json.dumps(r) + '\n')
