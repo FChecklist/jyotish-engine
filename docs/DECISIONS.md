@@ -79,3 +79,8 @@
 
 ## 2026-11-15 strength atom and Lal Kitab web rules
 - strength atom added (validator, evaluation, report ctx, prompt vocab). Lal Kitab web rules (519) normalised into jyotish-code/rules/lalkitab_web_v1.jsonl; 518 parse natively. Add this file to the rules globs of the daily guide once reviewed.
+
+## 2026-11-16 Rajat birth time and travel conflict
+- Rajat's birth time is fixed at 05:39:00 IST (user instruction 2026-11-16: the only time). No alternative times are tested in guidance. Fact kept for engineers: the lagna is 0.4 deg into Leo, so it is sensitive to about 1.5 minutes; this is not shown in the daily output. The private data file was updated locally (it was 05:39:04); the Drive copy of the data file is not updated.
+- Daily conflict filter: a strong "risky trips" warning now removes "Good for travel" (tests/test_daily_conflict.py, 120 days, 0 contradictions).
+- Next build (spec from DB first): Lal Kitab states (sleeping/awake planets with wake ages, rin, masnui, dharmi, blind, opposite). 6,224 Lal Kitab rules in the DB; about 28 rules on sleeping planets, 74 on rin. Spec must come from the DB rule text, not memory.
