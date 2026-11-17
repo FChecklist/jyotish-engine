@@ -7,9 +7,9 @@ Read INFILE completely, in order, with the Read tool (in parts if needed). Go se
 
 ## Row types
 1. Statement rows (astrology content: rules, definitions, planet/house/sign facts, timing, remedies, vastu-link claims):
-{"id":"G1-<batch>-<nnn>","type":"stmt","ts":"1:23:03","hindi":"<the source sentence or two, copied, max 40 words>","says":"<plain English: what he is claiming. Understand it, do not translate word by word>","kind":"rule|definition|remedy|timing|karaka|principle|other","scope":["planet","house","sign","planet+house","planet+sign","planet+house+sign","aspect","dasha","transit","chart-wide","remedy","other"],"planets":["Mars"],"cells_stated":[["*","Aries"]],"cells_derived_method":"<how the meaning changes across the other house/sign cells, using classical house topics x sign nature x planet nature. Say 'none' if the sentence is not house/sign dependent.>","derived_examples":[{"cell":["10","Cancer"],"reading":"<one concrete derived reading, labelled as derived, not said by him>"}],"charts":["D1","D9","bhava-chalit","KP"],"ambiguity":"<what could mean two things, for example sign number vs house number, or garbled caption; else empty>","classical_check":"<does a classical text agree, differ, or is it silent? one line>","effect_valence":"good|bad|mixed|neutral","confidence":"high|medium|low","tradition_claim":true}
+{"id":"G<VID>-<batch>-<nnn>","type":"stmt","ts":"1:23:03","hindi":"<the source sentence or two, copied, max 40 words>","says":"<plain English: what he is claiming. Understand it, do not translate word by word>","kind":"rule|definition|remedy|timing|karaka|principle|other","scope":["planet","house","sign","planet+house","planet+sign","planet+house+sign","aspect","dasha","transit","chart-wide","remedy","other"],"planets":["Mars"],"cells_stated":[["*","Aries"]],"cells_derived_method":"<how the meaning changes across the other house/sign cells, using classical house topics x sign nature x planet nature. Say 'none' if the sentence is not house/sign dependent.>","derived_examples":[{"cell":["10","Cancer"],"reading":"<one concrete derived reading, labelled as derived, not said by him>"}],"charts":["D1","D9","bhava-chalit","KP"],"ambiguity":"<what could mean two things, for example sign number vs house number, or garbled caption; else empty>","classical_check":"<does a classical text agree, differ, or is it silent? one line>","effect_valence":"good|bad|mixed|neutral","confidence":"high|medium|low","tradition_claim":true}
 2. Skip rows (intro, jokes, stories, advertising, audience talk, repetition, music, unreadable caption):
-{"id":"G1-<batch>-<nnn>","type":"skip","ts":"1:23:03","reason":"intro|story|joke|ad|audience|repeat|unreadable|opinion-not-astrology|other","gist":"<one line of what was said>"}
+{"id":"G<VID>-<batch>-<nnn>","type":"skip","ts":"1:23:03","reason":"intro|story|joke|ad|audience|repeat|unreadable|opinion-not-astrology|other","gist":"<one line of what was said>"}
 
 ## The 12 x 12 grid (Rajat's method, important)
 Each (house, sign) pair is exactly one lagna; 12 x 12 = 144 cells. A planet sits in one of them.
@@ -18,6 +18,11 @@ Each (house, sign) pair is exactly one lagna; 12 x 12 = 144 cells. A planet sits
 - His sign numbers: when he says "number 1..12" for a sign, the numbering is Aries=1 ... Pisces=12 (confirmed in this series), but he sometimes says house numbers the same way. If unclear, say so in `ambiguity`.
 - He uses 12 planets: Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu, Uranus (Indra), Neptune (Varuna), Pluto (Yama). In his scheme the 12 signs each have a lord among these 12 (Aries Mars, Taurus Venus, Gemini Mercury, Cancer Moon, Leo Sun, Virgo Mercury or Rahu, Libra Venus or Neptune, Scorpio Mars or Uranus, Sagittarius Jupiter, Capricorn Saturn, Aquarius Saturn or Pluto, Pisces Jupiter or Ketu). Record what he actually says; do not assume.
 - Houses are multi-sign (each house is touched by 2 or 3 signs). If he says this, record it.
+
+## Arithmetic you must get right (past batches got these wrong)
+- Signs in order: Aries1 Taurus2 Gemini3 Cancer4 Leo5 Virgo6 Libra7 Scorpio8 Sagittarius9 Capricorn10 Aquarius11 Pisces12. A planet in sign S in house H means lagna = sign number (S - H + 1), wrapping at 12. Example: Cancer(4) in 10th -> 4-10+1=-5 -> 7 = Libra. Check each derived example this way, or leave the lagna out of the sentence.
+- Exaltation: Sun Aries, Moon Taurus, Mars Capricorn, Mercury Virgo, Jupiter Cancer, Venus Pisces, Saturn Libra. Debilitation is the opposite sign. Own signs: Sun Leo; Moon Cancer; Mars Aries+Scorpio; Mercury Gemini+Virgo; Jupiter Sagittarius+Pisces; Venus Taurus+Libra; Saturn Capricorn+Aquarius. Do not call a sign exalted/debilitated/own unless it is.
+- derived_examples must be genuinely different houses and signs, 2 to 4 per statement, only when the statement depends on house or sign.
 
 ## Hard rules
 - Understand each sentence and check it against house, sign and planet logic. Do not just copy his words as the meaning.
@@ -29,5 +34,5 @@ Each (house, sign) pair is exactly one lagna; 12 x 12 = 144 cells. A planet sits
 
 ## Verify
 Run: python3 /home/claude/jyotish-engine/tune/convert/check_gautam.py OUTFILE INFILE
-It must print OK and a coverage line. Fix every error it lists. Do not finish until it prints OK.
+It must print OK and a coverage line. Fix every error it lists. Do not finish until it prints OK. Then run: python3 /home/claude/jyotish-engine/tune/convert/fix_gautam.py OUTFILE OUTFILE.fixed and replace OUTFILE with the fixed file (cp).
 Final reply: one line with the counts (stmt rows, skip rows, low-confidence rows). No other text.
