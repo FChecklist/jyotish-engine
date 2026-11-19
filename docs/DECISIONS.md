@@ -90,3 +90,6 @@
 - Birth data stays in the private file only (never in git).
 - Chart-first track approved by user: per-person fact sheet -> look up every fact in the rule DB incl. non-runnable classified rules -> independent topic reads -> contradiction check. Output is labelled "what the tradition says", no accuracy claim (n=4, no events for 3 people).
 - Fact sheets built by core/report.py with all rule files and atoms_ai_v*; stored in the private folder only.
+
+## 2026-11-17 / 2026-11-19
+- Gautam 144-cell method (docs/GAUTAM_144_METHOD.md) and the 36-video run: "one row per sentence" from video 24 gave about 3x more rows, many low value. Review is flag-only, nothing deleted.

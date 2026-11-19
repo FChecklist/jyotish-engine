@@ -53,3 +53,11 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 - Ledger 10,957 / 31,830 runnable (34.4%). NOT complete.
 - Private (not in git): /home/claude/astro/private/ (agent reports, Rajat final report, events from email).
 - Open: birth-time rectification for Rajat; merge new rule files into daily globs; build Jaimini, Lal Kitab states, other dashas, divisional rules; history purge of birth data; R2.
+
+## 2026-11-19 (handover catch-up, no birth data here)
+- Gautam: videos 1-29 in git (42,571 rows). Videos 30-36 partly written on the cloud box only (about 80 batches left); stopped by the weekly usage limit.
+- Row review done by script (tune/convert/review_gautam.py): flags in data/gautam/review_flags.jsonl, counts in docs/GAUTAM_REVIEW_COUNTS.tsv. Nothing deleted. Totals: 12,242 skip rows, 717 short says, 1,924 short hindi, 10 duplicates, 8,182 low confidence, 294 with 2+ flags. Videos 24-28 hold most flags. The no_rule_content check found 0, so that field test may be too loose.
+- Cloudflare D1 jyotish-rules is empty; R2 off; nothing deployed.
+- 06:00 daily chain broken (18 and 19 Nov missed); the 17:42 plan task is still enabled. Owner to decide.
+- Open owner decisions: birth data in old public git history (make repo private, then rewrite); cloud box status.
+- Eshani and Pehu: one does BBA culinary arts, the other BBA law; which is which is unknown.
