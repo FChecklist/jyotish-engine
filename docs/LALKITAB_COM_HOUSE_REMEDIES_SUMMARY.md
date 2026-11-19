@@ -109,18 +109,18 @@ Source label per row = URL + snapshot date. Headline = first remedy/precaution, 
 
 | House | items | headline |
 |---|---|---|
-| 1 | 0 | not on page |
-| 2 | 0 | not on page |
-| 3 | 0 | not on page |
-| 4 | 0 | not on page |
-| 5 | 0 | not on page |
-| 6 | 0 | not on page |
-| 7 | 0 | not on page |
-| 8 | 0 | not on page |
-| 9 | 0 | not on page |
-| 10 | 0 | not on page |
-| 11 | 0 | not on page |
-| 12 | 0 | not on page |
+| 1 | 9 | Precautions/Remedies: |
+| 2 | 8 | Precautions/Remedies: |
+| 3 | 9 | Precautions/Remedies: |
+| 4 | 8 | Precautions/Remedies: |
+| 5 | 9 | Precautions/Remedies: |
+| 6 | 9 | Precautions/Remedies: |
+| 7 | 8 | Precautions/Remedies: |
+| 8 | 9 | Precautions/Remedies: |
+| 9 | 9 | Precautions/Remedies: |
+| 10 | 9 | Precautions/Remedies: |
+| 11 | 8 | Precautions/Remedies: |
+| 12 | 17 | Precautions/Remedies: |
 
 ## Rahu - https://lalkitab.com/rahu-lal-kitab/ - snapshot 20260611231029
 
@@ -163,6 +163,6 @@ Source label per row = URL + snapshot date. Headline = first remedy/precaution, 
 - mercury: houses [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 - jupiter: houses [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 - venus: houses [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-- saturn: houses []
+- saturn: houses [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 - rahu: houses [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 - ketu: houses [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
