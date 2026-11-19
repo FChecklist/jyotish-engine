@@ -1,0 +1,13 @@
+Sign,Direction,Zones,source_note
+Aries,East / ESE 6,"E4, E5, E6",
+Taurus,WNW / NW,"W7, W8, N1",
+Gemini,NNW,"N2, N3",
+Cancer,NNE,"N6, N7",
+Leo,ENE,"E2, E3",
+Virgo,North,"N4, N5",
+Libra,WSW,"S8, W1, W2",
+Scorpio,SSW,"S5, S6, S7",
+Sagittarius,NE,"N8, E1","Owner wrote 'Saggitarius'"
+Capricorn,SSE / S,"S2, S3, S4",
+Aquarius,W,"W4, W5",
+Pisces,ESE 7 / SE,"E7, E8, S1",
