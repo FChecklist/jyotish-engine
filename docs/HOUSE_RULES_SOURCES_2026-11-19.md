@@ -22,3 +22,8 @@ None can be compared: neither source gave readable house rules.
 
 ## Does this answer the Astro-Vastu table question?
 No. Neither source has a sign-to-zone table. See `docs/ASTRO_VASTU_SOURCE_COMPARISON_2026-11-19.md`.
+
+## Update (Wayback pass, 19 Nov 2026)
+- lalkitab.com: all 9 planet pages were read from Wayback snapshots (dates in `docs/LALKITAB_COM_HOUSE_REMEDIES_SUMMARY.md`; Sun uses a 2022 snapshot, the 2025-26 Sun captures were error pages). Each page has precautions/remedies for planet-in-house 1-12. Summary file has per-planet, per-house item counts plus a 12-word headline, source-labelled. Full text is not in git. These are remedies and precautions, not significations of the houses.
+- brajeshgautam.com: archived page list shows the "लग्न N के उपाय" pages are PNG images (Assets/Upload/Content/*.png), so there is no text to extract without OCR. Lagna 4 image is also listed. Not done; needs a decision (OCR of images from a public site).
+- Conflicts: no second source with the same house structure, so none compared yet.
