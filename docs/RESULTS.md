@@ -84,3 +84,6 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - 1,869 strength-text rules converted (38 batches, single pass): only 90 complete and valid (4.8%), 80 use the strength atom. Most such rules talk about house strength, benefic strength or "strong in own sign", which the atom does not cover. Not audited blind.
 - New rule files counted: nakshatra_books_v1 (1,835), lalkitab_web_v1 (519, 518 parse natively), outer_planets_v1 (46, not runnable).
 - Ledger: executable 10,957 of 31,830 = 34.4% (was 10,349 of 31,265 = 33.1%). Parser 5,175 parsed / 8,203 partial / 18,452 unparsed. NOT complete.
+
+## 024 (2026-11-21) owner planet sign negatives
+- tests/test_planet_negatives.py: 13 rules x 12 signs against an independent expectation, 60+ hand-computed cases covering every listed aspect number, no-false-positive chart, input and loader checks. Sabotage-tested (lost aspect, extra colour, off-by-one aspect, disabled placement all fail). Full tests/run_all.sh exit 0. No accuracy claim: this is an owner tradition table, unmeasured.

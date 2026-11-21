@@ -93,3 +93,8 @@
 
 ## 2026-11-17 / 2026-11-19
 - Gautam 144-cell method (docs/GAUTAM_144_METHOD.md) and the 36-video run: "one row per sentence" from video 24 gave about 3x more rows, many low value. Review is flag-only, nothing deleted.
+
+## 2026-11-21 Owner table: planet sign negatives + colour remedies
+- Owner is the authority for the table (no outside source). Stored verbatim in data/planet_sign_negatives.csv.
+- Owner rule: every change bumps the version and updates CHANGELOG.md, version.json and the knowledge doc in the same PR. First tracked version 0.1.0. Knowledge doc for this table: docs/PLANET_SIGN_NEGATIVES.md.
+- Literal readings (to confirm): zodiac area = the flagged sign; whole-sign forward aspect count with own sign = 1; Rahu/Ketu 7th only; single-colour rules have no combination.
