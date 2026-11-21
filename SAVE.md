@@ -61,3 +61,6 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 - 06:00 daily chain broken (18 and 19 Nov missed); the 17:42 plan task is still enabled. Owner to decide.
 - Open owner decisions: birth data in old public git history (make repo private, then rewrite); cloud box status.
 - Eshani and Pehu: one does BBA culinary arts, the other BBA law; which is which is unknown.
+
+## 2026-11-21 (parallel task: owner planet sign negatives)
+- Added owner table of planet-in-sign / planet-aspect negatives with colour remedies: data/planet_sign_negatives.csv, core/planet_negatives.py, tests/test_planet_negatives.py, docs/PLANET_SIGN_NEGATIVES.md. Version tracking started (CHANGELOG.md, version.json, 0.1.0). Stand-alone: not wired into daily guidance, not in D1, nothing deployed. Open questions in the doc.
