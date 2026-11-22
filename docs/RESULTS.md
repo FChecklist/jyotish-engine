@@ -84,3 +84,7 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - 1,869 strength-text rules converted (38 batches, single pass): only 90 complete and valid (4.8%), 80 use the strength atom. Most such rules talk about house strength, benefic strength or "strong in own sign", which the atom does not cover. Not audited blind.
 - New rule files counted: nakshatra_books_v1 (1,835), lalkitab_web_v1 (519, 518 parse natively), outer_planets_v1 (46, not runnable).
 - Ledger: executable 10,957 of 31,830 = 34.4% (was 10,349 of 31,265 = 33.1%). Parser 5,175 parsed / 8,203 partial / 18,452 unparsed. NOT complete.
+
+## 024 (2026-11-22) verified reference charts loaded
+- Loaded 4 people. Row counts per person: 233-261 screens, 59 key-info rows, 299 divisional rows, about 24-25k graha dasha periods, 20-26 screenshots. Spot check: lagna sign and degree in D1 match the site screen for each person.
+- No accuracy claim. These are the site's displayed values, not yet compared with our own engine.

@@ -93,3 +93,8 @@
 
 ## 2026-11-17 / 2026-11-19
 - Gautam 144-cell method (docs/GAUTAM_144_METHOD.md) and the 36-video run: "one row per sentence" from video 24 gave about 3x more rows, many low value. Review is flag-only, nothing deleted.
+
+## 2026-11-22 Verified charts: where they live and how they were captured
+- Order from the owner (via BOSS): save the four jagannathahora.com horoscopes in the Jyotish database. Stored in Cloudflare D1 `jyotish-rules`, tables vc_* (migrations/0001_verified_charts.sql). The repo is public, so birth data is NOT in git; raw files stay in git-ignored data_private/.
+- Finding: the site changes its active chart only when "Generate Horoscope" is pressed (a calculation, nothing is saved). It was pressed for PALLAVI, ESHANI and PEHU. Identity was checked on the Analysis screen after each press. A first PALLAVI capture was RAJAT's data (button not pressed); it was thrown away and redone.
+- Doubts about time, place and gender are NOT resolved by us; they are listed per person in vc_person.doubts_json for the owner to answer.
