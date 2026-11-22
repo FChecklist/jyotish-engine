@@ -98,3 +98,6 @@
 - Owner is the authority for the table (no outside source). Stored verbatim in data/planet_sign_negatives.csv.
 - Owner rule: every change bumps the version and updates CHANGELOG.md, version.json and the knowledge doc in the same PR. First tracked version 0.1.0. Knowledge doc for this table: docs/PLANET_SIGN_NEGATIVES.md.
 - Literal readings (to confirm): zodiac area = the flagged sign; whole-sign forward aspect count with own sign = 1; Rahu/Ketu 7th only; single-colour rules have no combination.
+
+## 2026-11-22 Body-part and avoid-colour tables (owner order P1 points 44-46)
+- No owner text for either table in the repo, so classical defaults were used and every row is marked `DEFAULT, owner to confirm` (10 items in docs/BODY_PARTS_AVOID_COLOURS.md). Migrations numbered 0002/0003 because PR #2 owns 0001. Version bumped to 0.2.0.

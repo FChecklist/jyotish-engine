@@ -64,3 +64,6 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 
 ## 2026-11-21 (parallel task: owner planet sign negatives)
 - Added owner table of planet-in-sign / planet-aspect negatives with colour remedies: data/planet_sign_negatives.csv, core/planet_negatives.py, tests/test_planet_negatives.py, docs/PLANET_SIGN_NEGATIVES.md. Version tracking started (CHANGELOG.md, version.json, 0.1.0). Stand-alone: not wired into daily guidance, not in D1, nothing deployed. Open questions in the doc.
+
+## 2026-11-22 body-part and avoid-colour tables (PR #1, v0.2.0)
+- Added house-to-body-part (Kalapurusha) and avoid-colours (per lagna, per planet) tables: CSVs in data/, engine in core/body_parts.py and core/avoid_colours.py, D1 migrations 0002/0003 (not applied), tests in tests/test_body_parts_avoid_colours.py. All rows `DEFAULT, owner to confirm` (list in docs/BODY_PARTS_AVOID_COLOURS.md). Engine is not deployed (no jyotish Worker in Cloudflare); D1 has no ref_* tables yet.

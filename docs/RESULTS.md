@@ -87,3 +87,6 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 
 ## 024 (2026-11-21) owner planet sign negatives
 - tests/test_planet_negatives.py: 13 rules x 12 signs against an independent expectation, 60 hand-computed cases covering every listed aspect number, no-false-positive chart, input and loader checks. Sabotage-tested (lost aspect, extra colour, off-by-one aspect, disabled placement all fail). Full tests/run_all.sh exit 0. No accuracy claim: this is an owner tradition table, unmeasured.
+
+## 025 (2026-11-22) body-part and avoid-colour tables
+- tests/test_body_parts_avoid_colours.py passes: 12 houses, 12 lagnas, 19 lagna rows, 11 planet rows, migrations applied to in-memory sqlite match the CSVs and the engine. Three deliberate table breakages (a colour, a body part, a seed value) were caught. No accuracy claim: tradition tables.

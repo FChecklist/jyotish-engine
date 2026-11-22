@@ -1,6 +1,6 @@
 # Planet sign negatives + colour remedies (owner table, 21 Nov 2026)
 
-Version: 0.1.0 (see CHANGELOG.md, version.json). Source: owner, 21 Nov 2026. This is a tradition claim, not a measured fact. No accuracy is claimed.
+Version: 0.1.0 table, repo now 0.2.0 (see CHANGELOG.md, version.json). Body-part and avoid-colour tables: docs/BODY_PARTS_AVOID_COLOURS.md. Source: owner, 21 Nov 2026. This is a tradition claim, not a measured fact. No accuracy is claimed.
 
 ## What it is
 - For each planet the owner lists signs where the planet is negative.
