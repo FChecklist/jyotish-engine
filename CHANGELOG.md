@@ -1,6 +1,11 @@
 # Changelog
 Owner rule: every change bumps the version and updates this file, version.json and the knowledge doc in the same PR. Versions: MAJOR.MINOR.PATCH.
 
+## 0.2.1 - 2026-11-22
+- Planet sign negatives (audit fixes): owner's 13 rules pasted verbatim into `docs/PLANET_SIGN_NEGATIVES.md`, with notes on the Mars aspects (taken as written) and on spelling.
+- `core/planet_negatives.py`: a CSV row with too few or too many cells now raises `ValueError` (was `TypeError`); sign indices may be numpy integers.
+- `tests/test_planet_negatives.py`: tests for both.
+
 ## 0.2.0 - 2026-11-22
 - Added house-to-body-part table (Kalapurusha, 12 houses/signs): `data/house_body_parts.csv`, `core/body_parts.py` (by house number and by sign, multi-sign houses with major/minor shares).
 - Added avoid-colours tables: `data/lagna_avoid_colours.csv` (all 12 lagnas, functional malefics) and `data/planet_avoid_colours.csv` (natural enemies), `core/avoid_colours.py`.

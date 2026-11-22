@@ -1,6 +1,6 @@
 # Planet sign negatives + colour remedies (owner table, 21 Nov 2026)
 
-Version: 0.1.0 table, repo now 0.2.0 (see CHANGELOG.md, version.json). Body-part and avoid-colour tables: docs/BODY_PARTS_AVOID_COLOURS.md. Source: owner, 21 Nov 2026. This is a tradition claim, not a measured fact. No accuracy is claimed.
+Version: 0.1.0 table, repo now 0.2.1 (see CHANGELOG.md, version.json). Body-part and avoid-colour tables: docs/BODY_PARTS_AVOID_COLOURS.md. Source: owner, 21 Nov 2026. This is a tradition claim, not a measured fact. No accuracy is claimed.
 
 ## What it is
 - For each planet the owner lists signs where the planet is negative.
@@ -52,6 +52,27 @@ In every rule: colour goes in that zodiac area on body, house and office.
 - Output also has `planets` (per planet: sign, negative yes/no, flags), `negative_planets`, `by_sign` (flags grouped by flagged sign) and `flags`.
 - Unknown planet names (e.g. Lagna) raise an error unless `ignore_unknown=True`. Nothing is silently dropped.
 - Example: Saturn in Libra -> 7th aspect hits Aries, 10th hits Cancer -> two flags, each with red / yellow / grey / (red + yellow + grey).
+
+## Owner's text, verbatim as received (21 Nov 2026)
+This is the source for the 13 rows. The owner is the authority; no outside source was used.
+1. Sun: in Taurus or Virgo, or aspecting from its 7th aspect, is negative. To cancel it use colour blue in this zodiac area on body, house, office.
+2. Moon: in Scorpio or Aries, or aspecting from its 7th aspect, is negative. Use colour yellow or red or combination (yellow + red).
+3. Mars: in Cancer, or aspecting Cancer from its 4th, 7th or 8th aspects, is negative. Use blue or yellow or (blue + yellow).
+4. Mercury: in Pisces or Cancer, or aspecting Pisces or Cancer from its 7th aspect, is negative. Use blue or yellow or grey or (blue + yellow + grey).
+5. Jupiter: in Capricorn or Aquarius, or aspecting Capricorn or Aquarius from its 5th, 7th or 9th aspects, is negative. Use black or red or (black + red).
+6. Venus: in Gemini, Virgo or Cancer, or aspecting Gemini, Virgo or Cancer from its 7th aspect, is negative. Use blue or green or (blue + green).
+7. Saturn: in Aries, Scorpio or Cancer, or aspecting Aries, Scorpio or Cancer from its 3rd, 7th or 10th aspects, is negative. Use red or yellow or grey or (red + yellow + grey).
+8. Rahu: in Sagittarius, or aspecting Sagittarius from its 7th aspect, is negative. Use yellow or green or black or (yellow + green + black).
+9. Ketu: in Gemini, or aspecting Gemini from its 7th aspect, is negative. Use green or purple or (green + purple).
+10. Uranus (Indra): in Cancer, Taurus or Libra, or aspecting them from its 7th aspect, is negative. Use yellow.
+11. Neptune (Varun): in Aries, Scorpio or Cancer, or aspecting them from its 7th aspect, is negative. Use red or yellow or (red + yellow).
+12. Neptune (Varun): in Gemini, or aspecting Gemini from its 7th aspect, is negative. Use green.
+13. Pluto (Yum): in Aries, Scorpio, Cancer or Leo, or aspecting them from its 7th aspect, is negative. Use red or yellow or (red + yellow).
+In every rule the colour is applied in that zodiac area on body, house and office.
+
+Notes on the text:
+- Mars: the owner lists 4th, 7th and 8th explicitly, so `[4,7,8]` is taken as written, not chosen by us. (It also equals the classical Mars aspects. The same holds for Jupiter 5/7/9 and Saturn 3/7/10.)
+- Spelling: the copy we received spells all signs correctly (Aquarius, Sagittarius, etc.), so no correction was made in the table. An audit comment on this PR mentions the spellings "acqurious" and "sagitarius" in its own brief. If the owner's original has those, they are read as Aquarius and Sagittarius. This is the only reading possible; the CSV uses the correct names.
 
 ## Readings chosen (most literal) - please confirm
 1. "Zodiac area" = the flagged sign itself. Not converted to a compass direction or body part. The engine returns the sign name. (The repo has an Astro-Vastu sign-to-direction table, data/astro_vastu_zodiac_directions.csv; it is NOT used here.)

@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "released": "2026-11-22",
-  "summary": "Added house-to-body-part table and avoid-colours tables (D1 migrations, seed, engine functions, tests) on top of the owner planet sign negatives table",
+  "summary": "Planet sign negatives: owner text added to the knowledge doc, loader and numpy-int fixes (on top of 0.2.0 body-part and avoid-colours tables)",
   "changelog": "CHANGELOG.md",
   "knowledge_doc": "docs/BODY_PARTS_AVOID_COLOURS.md",
   "knowledge_docs": [

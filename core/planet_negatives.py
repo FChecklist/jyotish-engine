@@ -10,6 +10,7 @@ Rule per (planet, rule_group):
 Input signs only (the calculator already gives the chart); nothing is recalculated here."""
 import csv
 import json
+import numbers
 import os
 from zodiac import SIGNS
 
@@ -32,6 +33,8 @@ def load_rules(path=None):
         rows = list(rd)
     out, seen = [], set()
     for i, r in enumerate(rows, start=2):  # line 1 is the header
+        if None in r or any(r.get(c) is None for c in COLUMNS):  # DictReader: missing cells are None, extra cells go under key None
+            raise ValueError('line %d: row must have exactly %d cells' % (i, len(COLUMNS)))
         for c in LIST_COLUMNS:
             r[c] = json.loads(r[c])
         key = (r['planet'], r['rule_group'])
@@ -63,12 +66,12 @@ def canonical_planet(name):
 
 
 def sign_index(sign):
-    """Sign name (any case) or index 0..11 (0 = Aries) -> index. Anything else raises ValueError."""
+    """Sign name (any case) or whole-number index 0..11 (0 = Aries) -> int index. Anything else raises ValueError."""
     if isinstance(sign, bool):
         raise ValueError('bad sign %r' % (sign,))
-    if isinstance(sign, int):
+    if isinstance(sign, numbers.Integral):  # plain int and numpy integers
         if 0 <= sign <= 11:
-            return sign
+            return int(sign)
         raise ValueError('sign index %r outside 0..11' % (sign,))
     if isinstance(sign, str):
         k = sign.strip().capitalize()

@@ -249,4 +249,13 @@ assert raises(lambda: load_text(mutated(0, ',[7],', ',[1],')))                  
 assert raises(lambda: load_text(mutated(1, '"[""yellow"",""red""]","[""yellow"",""red""]"', '"[""yellow"",""blue""]","[""yellow"",""red""]"')))  # combination not the listed colours
 assert raises(lambda: load_text(mutated(0, '"[""body"",""house"",""office""]"', '[]')))           # empty scopes
 assert raises(lambda: load_text(mutated(0, 'Sun,A', 'sun,A')))                                  # non-canonical planet name in the table
+assert raises(lambda: load_text(head + '\n' + 'Sun,A,"[""Taurus""]"\n'))                      # row with too few cells -> ValueError, not TypeError
+assert raises(lambda: load_text('\n'.join([head] + [rows[0] + ',extra'] + rows[1:]) + '\n'))     # row with too many cells
+# whole-number types other than int (numpy) are accepted as sign indices; floats and bools are not
+try:
+    import numpy as np
+    assert PN.evaluate({'Sun': np.int64(1)})['planets']['Sun']['sign'] == 'Taurus' and PN.evaluate({'Sun': np.int32(0)})['planets']['Sun']['sign'] == 'Aries'
+    assert raises(lambda: PN.evaluate({'Sun': np.int64(12)})) and raises(lambda: PN.evaluate({'Sun': np.float64(1.0)}))
+except ImportError:
+    pass
 print('test_planet_negatives ok')
