@@ -40,3 +40,7 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 - Ledger 34.4% runnable. Still not built: Jaimini engine (1,473 rules touching), Lal Kitab states/debts (2,764), dasha systems beyond Vimshottari (3,325 partial), divisional-chart rules (2,275), Tajika (358), doshas/Sade Sati helper (256), upagrahas (353), free text (10,052 rules, need reading).
 - New rule files are NOT yet in the daily guide globs (lalkitab_web_v1, nakshatra_books_v1, outer_planets_v1, atoms_ai_v6 loads automatically). Decide before adding: they change daily output.
 - Biggest accuracy risk: birth time unknown for Rajat (lagna 0 deg 25 min Leo). Rectification needed. No accuracy measured.
+
+## 2026-11-22 verified reference charts
+- DONE: 4 charts captured from jagannathahora.com into D1 (vc_person, vc_screen, vc_screen_chunk, vc_body_position, vc_body_varga, vc_dasha_period, vc_screenshot). Counts in docs/VERIFIED_CHARTS.md. test_verified_charts.py added to tests/run_all.sh.
+- NOT DONE: cross-check against PyJHora/Swiss Ephemeris; structured parse of rashi dashas (text only); owner answers on the time/place/gender doubts.

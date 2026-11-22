@@ -61,3 +61,8 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 - 06:00 daily chain broken (18 and 19 Nov missed); the 17:42 plan task is still enabled. Owner to decide.
 - Open owner decisions: birth data in old public git history (make repo private, then rewrite); cloud box status.
 - Eshani and Pehu: one does BBA culinary arts, the other BBA law; which is which is unknown.
+
+## 2026-11-22 verified charts captured (branch jy/verified-charts-2026-11-22)
+- The four family charts (RAJAT, PALLAVI, ESHANI, PEHU) were captured from the owner's logged-in jagannathahora.com and stored in D1 `jyotish-rules` tables `vc_*` (flag verified_source = jagannathahora.com). Schema: migrations/0001_verified_charts.sql. Loader: core/verified_charts.py. Method and counts: docs/VERIFIED_CHARTS.md.
+- Raw files and 86 screenshots are in data_private/jagannathahora/ (git-ignored). No birth data in git.
+- Open: doubts on time/place/gender are in vc_person.doubts_json and go to the owner via BOSS. Next: compare the site's lagna and planet longitudes with PyJHora/Swiss Ephemeris.
