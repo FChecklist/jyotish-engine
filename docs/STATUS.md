@@ -40,3 +40,10 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 - Ledger 34.4% runnable. Still not built: Jaimini engine (1,473 rules touching), Lal Kitab states/debts (2,764), dasha systems beyond Vimshottari (3,325 partial), divisional-chart rules (2,275), Tajika (358), doshas/Sade Sati helper (256), upagrahas (353), free text (10,052 rules, need reading).
 - New rule files are NOT yet in the daily guide globs (lalkitab_web_v1, nakshatra_books_v1, outer_planets_v1, atoms_ai_v6 loads automatically). Decide before adding: they change daily output.
 - Biggest accuracy risk: birth time unknown for Rajat (lagna 0 deg 25 min Leo). Rectification needed. No accuracy measured.
+
+## 2026-11-21: owner planet sign negatives (v0.1.0)
+- Built: 13-row owner table, engine (placement + listed aspects, remedy options for body/house/office), tests (13 rules x 12 signs, every aspect case, no-false-positive). Full tests/run_all.sh passes.
+- Not done: not wired into guide.py, not run on divisional charts, not loaded to D1, ledger not re-measured. Questions Q1-Q5 in docs/PLANET_SIGN_NEGATIVES.md.
+
+## 2026-11-22 body-part and avoid-colour tables (v0.2.0, PR #1)
+- DONE: tables, engine functions, migrations 0002/0003, tests. NOT DONE: apply migrations to D1, wire into guide.py/daily, run on divisional charts, owner confirmation of the 10 defaults.

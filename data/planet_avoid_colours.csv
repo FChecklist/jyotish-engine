@@ -1,0 +1,12 @@
+planet,enemy_planet,avoid_colour,reason,status
+Sun,Venus,Off white,Venus is a natural enemy of Sun (Parashari),"DEFAULT, owner to confirm"
+Sun,Saturn,Black,Saturn is a natural enemy of Sun (Parashari),"DEFAULT, owner to confirm"
+Mars,Mercury,Green,Mercury is a natural enemy of Mars (Parashari),"DEFAULT, owner to confirm"
+Mercury,Moon,White,Moon is a natural enemy of Mercury (Parashari),"DEFAULT, owner to confirm"
+Jupiter,Mercury,Green,Mercury is a natural enemy of Jupiter (Parashari),"DEFAULT, owner to confirm"
+Jupiter,Venus,Off white,Venus is a natural enemy of Jupiter (Parashari),"DEFAULT, owner to confirm"
+Venus,Sun,Orange,Sun is a natural enemy of Venus (Parashari),"DEFAULT, owner to confirm"
+Venus,Moon,White,Moon is a natural enemy of Venus (Parashari),"DEFAULT, owner to confirm"
+Saturn,Sun,Orange,Sun is a natural enemy of Saturn (Parashari),"DEFAULT, owner to confirm"
+Saturn,Moon,White,Moon is a natural enemy of Saturn (Parashari),"DEFAULT, owner to confirm"
+Saturn,Mars,Red,Mars is a natural enemy of Saturn (Parashari),"DEFAULT, owner to confirm"

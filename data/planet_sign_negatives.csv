@@ -1,0 +1,14 @@
+planet,rule_group,negative_signs,aspect_numbers,aspect_target_signs,remedy_colours,remedy_combination,remedy_scopes,source,notes
+Sun,A,"[""Taurus"",""Virgo""]",[7],"[""Taurus"",""Virgo""]","[""blue""]",[],"[""body"",""house"",""office""]",owner 21 Nov 2026,"Owner rule 1. Single colour given, so no combination."
+Moon,A,"[""Scorpio"",""Aries""]",[7],"[""Scorpio"",""Aries""]","[""yellow"",""red""]","[""yellow"",""red""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 2.
+Mars,A,"[""Cancer""]","[4,7,8]","[""Cancer""]","[""blue"",""yellow""]","[""blue"",""yellow""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 3.
+Mercury,A,"[""Pisces"",""Cancer""]",[7],"[""Pisces"",""Cancer""]","[""blue"",""yellow"",""grey""]","[""blue"",""yellow"",""grey""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 4.
+Jupiter,A,"[""Capricorn"",""Aquarius""]","[5,7,9]","[""Capricorn"",""Aquarius""]","[""black"",""red""]","[""black"",""red""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 5.
+Venus,A,"[""Gemini"",""Virgo"",""Cancer""]",[7],"[""Gemini"",""Virgo"",""Cancer""]","[""blue"",""green""]","[""blue"",""green""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 6.
+Saturn,A,"[""Aries"",""Scorpio"",""Cancer""]","[3,7,10]","[""Aries"",""Scorpio"",""Cancer""]","[""red"",""yellow"",""grey""]","[""red"",""yellow"",""grey""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 7.
+Rahu,A,"[""Sagittarius""]",[7],"[""Sagittarius""]","[""yellow"",""green"",""black""]","[""yellow"",""green"",""black""]","[""body"",""house"",""office""]",owner 21 Nov 2026,"Owner rule 8. Only the 7th aspect, as listed (the engine ledger elsewhere assumes 5/7/9 for nodes; owner table wins here)."
+Ketu,A,"[""Gemini""]",[7],"[""Gemini""]","[""green"",""purple""]","[""green"",""purple""]","[""body"",""house"",""office""]",owner 21 Nov 2026,"Owner rule 9. Only the 7th aspect, as listed."
+Uranus,A,"[""Cancer"",""Taurus"",""Libra""]",[7],"[""Cancer"",""Taurus"",""Libra""]","[""yellow""]",[],"[""body"",""house"",""office""]",owner 21 Nov 2026,"Owner rule 10 (Indra). Single colour given, so no combination."
+Neptune,A,"[""Aries"",""Scorpio"",""Cancer""]",[7],"[""Aries"",""Scorpio"",""Cancer""]","[""red"",""yellow""]","[""red"",""yellow""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 11 (Varun). First of two Neptune groups.
+Neptune,B,"[""Gemini""]",[7],"[""Gemini""]","[""green""]",[],"[""body"",""house"",""office""]",owner 21 Nov 2026,"Owner rule 12 (Varun). Second Neptune group. Single colour given, so no combination."
+Pluto,A,"[""Aries"",""Scorpio"",""Cancer"",""Leo""]",[7],"[""Aries"",""Scorpio"",""Cancer"",""Leo""]","[""red"",""yellow""]","[""red"",""yellow""]","[""body"",""house"",""office""]",owner 21 Nov 2026,Owner rule 13 (Yum).
