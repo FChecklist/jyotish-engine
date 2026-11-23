@@ -271,4 +271,276 @@ assert hd[0]["final"]["primary"] == "yellow" and "red" in hd[0]["d9_vetoed"] and
 ho = O.house_final_table(chart({"Moon": ["Vi", 15, 0, "Sc"]}, lagna=("Ar", 15, 0, "Sc")))
 assert ho[0]["d9_zodiac"] == "Scorpio" and ho[0]["d1_recommended"] is None and ho[0]["status"] == "d9_only" and ho[0]["final"]["primary"] in ("red", "yellow")
 
+# ================= fixes for the two AUDIT: FAIL comments of 23 Nov 2026 (18:47Z) =================
+import csv, copy, io
+DELHI = {"date": "2000-01-01", "time": "12:00", "tz": 5.5, "lat": 28.6, "lon": 77.2}
+
+
+def lagna_for(birth, ayan_target):
+    """Lagna [sign, deg, min, 'Ar'] whose calibrated ayanamsa is ayan_target (to one arc-minute) for this birth."""
+    tc = O.placidus_cusps(O._julian_day(birth["date"], birth["time"], birth["tz"]), birth["lat"], birth["lon"])
+    ll = (tc[1] - ayan_target) % 360
+    return [O.SIGNS[int(ll // 30)], int(ll % 30), int(round((ll % 30 % 1) * 60)) % 60, "Ar"]
+
+
+# ---- 28. Julian day known values (L1): date, UT/zone sign, Gregorian correction, Jan/Feb month shift ----
+assert O._julian_day("2000-01-01", "12:00", 0) == 2451545.0
+assert O._julian_day("1900-03-01", "00:00", 0) == 2415079.5
+assert O._julian_day("2000-02-29", "18:00", 0) == 2451604.25
+assert O._julian_day("2000-01-01", "17:30", 5.5) == 2451545.0        # 17:30 at UTC+5.5 is 12:00 UT (zone sign)
+assert O._julian_day("1999-12-31", "19:00", -5.0) == 2451544.5       # 19:00 at UTC-5 is 24:00 UT = 2000-01-01 00:00 UT
+assert O._julian_day("2000-03-01", "12:00", 0) - O._julian_day("2000-02-29", "12:00", 0) == 1.0     # leap day exists
+
+# ---- 29. validate_chart ranges (M1): every bad input raises ValueError in EVERY public entry point ----
+GOOD = {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": ["Ar", 1, 0, "Ar"]}, "birth": dict(DELHI)}
+
+
+def with_birth(**kw):
+    c = copy.deepcopy(GOOD); c["birth"].update(kw); return c
+
+
+bad_charts = [with_birth(tz=99), with_birth(tz=-15), with_birth(tz="5.5"), with_birth(tz=True), with_birth(date="2000-13-45"), with_birth(date="2000-02-30"),
+              with_birth(date="20000101"), with_birth(date="1200-01-01"), with_birth(date="2300-01-01"), with_birth(time="25:99"), with_birth(time="24:00"),
+              with_birth(time="12:60"), with_birth(time="1:5"), with_birth(lat=200), with_birth(lat=-200), with_birth(lat=90), with_birth(lat=-90),
+              with_birth(lat=float("nan")), with_birth(lon=500), with_birth(lon=-181), with_birth(lon=float("inf")), with_birth(lat="28.6"),
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Chiron": ["Ar", 1, 0, "Ar"]}},
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"sun": ["Ar", 1, 0, "Ar"]}},
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": ["Ar", "1", 0, "Ar"]}},
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": ["Sun"]},
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": ["Ar", 1, 0]}},
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": [["Ar"], 1, 0, "Ar"]}},
+              {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": ["Ar", 1, 0, "Ar"]}, "birth": "2000-01-01"}]
+for fn in (O.colour_advice, O.house_report, O.house_final_table, O.calculate, O.aspect_table):
+    for bc in bad_charts:
+        if fn is O.aspect_table and bc.get("planets") == {"Sun": ["Ar", 1, 0]}: continue      # aspect_table needs no D9 sign
+        try:
+            fn(bc)
+        except ValueError:
+            continue
+        raise SystemExit("%s accepted bad input: %r" % (fn.__name__, bc))
+for ok_birth in (dict(DELHI, tz=-14), dict(DELHI, tz=14), dict(DELHI, lat=89.9), dict(DELHI, lat=-89.9), dict(DELHI, lon=-180), dict(DELHI, lon=180),
+                 dict(DELHI, date="1583-01-01"), dict(DELHI, date="2200-12-31"), dict(DELHI, time="00:00"), dict(DELHI, time="23:59")):
+    c = copy.deepcopy(GOOD); c["birth"] = ok_birth
+    O.validate_chart(c)                                       # edge values are accepted
+try:
+    O.aspect_table({"planets": {"Chiron": ["Ar", 1, 0, "Ar"]}}); raise SystemExit("aspect_table accepted an unknown planet")
+except ValueError as e:
+    assert "Chiron" in str(e)
+
+# ---- 30. KP window edges 22-26 and latitude 66 (M1) ----
+assert not O.kp_warnings(22.0, 28.6) and not O.kp_warnings(26.0, 28.6) and not O.kp_warnings(24.0, 28.6)
+assert O.kp_warnings(21.999, 28.6) and O.kp_warnings(26.001, 28.6)
+assert "ayanamsa" in O.kp_warnings(21.0, 0)[0] and "ayanamsa" in O.kp_warnings(27.0, 0)[0]
+assert not O.kp_warnings(24.0, 66.0) and not O.kp_warnings(24.0, -66.0)
+assert O.kp_warnings(24.0, 66.001) and O.kp_warnings(24.0, -66.001) and "latitude" in O.kp_warnings(24.0, 80)[0]
+for target, kept in [(22.5, True), (25.5, True), (21.5, False), (26.5, False), (20.0, False), (28.0, False)]:
+    c = chart({"Sun": ["Sc", 15, 0, "Sc"]}, lagna=lagna_for(DELHI, target)); c["birth"] = dict(DELHI)
+    fr, _, info = O.frames(c)
+    assert ("KP" in fr) == kept, (target, info)
+    assert bool(info.get("warnings")) == (not kept) and info.get("kp_dropped", False) == (not kept), (target, info)
+    res = O.colour_advice(c)
+    assert (res["frames_missing"] == []) == kept and bool(res["warnings"]) == (not kept) and res["kp_dropped"] == (not kept)
+    if not kept: assert res["frame_weights"] == {"D1": 2 / 3, "BC": 1 / 3} or all(abs(res["frame_weights"][k] - v) < 1e-9 for k, v in {"D1": 2 / 3, "BC": 1 / 3}.items())
+
+# ---- 31. a warned KP frame is DROPPED and the warning is in EVERY output (M1) ----
+tc70 = O.placidus_cusps(O._julian_day("2000-01-01", "12:00", 5.5), 70.0, 20.0)
+lag70 = (tc70[1] - 23.85) % 360                                   # lagna calibrated for lat 70: only the latitude warning fires
+HIGH = {"lagna": [O.SIGNS[int(lag70 // 30)], int(lag70 % 30), int(round((lag70 % 30 % 1) * 60)), "Ar"],
+        "planets": {"Sun": ["Sg", 5, 0, "Ar"]}, "birth": dict(DELHI, lat=70.0, lon=20.0)}       # Sun 245 deg: KP (junk at lat 70) would put it in Scorpio
+NOBIRTH = {k: v for k, v in HIGH.items() if k != "birth"}
+assert O.frames(HIGH)[2]["warnings"] == O.colour_advice(HIGH)["warnings"] and "latitude" in O.colour_advice(HIGH)["warnings"][0]
+raw_kp = O.placidus_cusps(O._julian_day("2000-01-01", "12:00", 5.5), 70.0, 20.0)
+
+
+def strip(x):
+    """drop warning bookkeeping and the calibrated ayanamsa so a warned chart can be compared with the same chart without birth data"""
+    if isinstance(x, dict): return {k: strip(v) for k, v in x.items() if k not in ("warnings", "kp_dropped", "ayanamsa_calibrated", "frames_missing")}
+    if isinstance(x, list): return [strip(v) for v in x]
+    return x
+
+
+assert strip(O.colour_advice(HIGH)) == strip(O.colour_advice(NOBIRTH))
+assert strip(O.house_final_table(HIGH)) == strip(O.house_final_table(NOBIRTH))
+assert strip(O.house_report(HIGH)) == strip(O.house_report(NOBIRTH))
+assert strip(O.calculate(HIGH)["house_final"]) == strip(O.calculate(NOBIRTH)["house_final"])
+out = O.calculate(HIGH)
+assert out["warnings"] and out["kp_dropped"] and out["colour"]["warnings"] == out["warnings"] and out["frames_missing"] == ["KP"]
+assert all(r["warnings"] == out["warnings"] and r["kp_dropped"] for r in out["house_final"])
+assert all(r["warnings"] == out["warnings"] and r["kp_dropped"] for r in out["houses"])
+assert out["frame_weights"]["D1"] == 2 / 3 or abs(out["frame_weights"]["D1"] - 2 / 3) < 1e-9
+clean = O.calculate(dict(NOBIRTH))
+assert clean["warnings"] == [] and not clean["kp_dropped"] and all(r["warnings"] == [] for r in clean["house_final"] + clean["houses"])
+# an unwarned chart keeps KP (weights 0.5 / 0.25 / 0.25) and carries no warning
+ok = O.calculate(dict(chart({"Sun": ["Sc", 15, 0, "Sc"]}, lagna=lagna_for(DELHI, 23.85)), birth=dict(DELHI)))
+assert ok["warnings"] == [] and ok["frames_missing"] == [] and ok["frame_weights"] == {"D1": 0.5, "KP": 0.25, "BC": 0.25}
+
+# ---- 32. D1 Final = 50% D1 + 25% KP + 25% Bhav Chalit, numbers by hand (Medium 2: M1, M2) ----
+# no birth data: KP missing, weights D1 2/3 + BC 1/3. Lagna Aries 5 deg, Sun Aries 25 deg.
+#   D1: Sun in Aries; its 7th aspect lands on Libra (a Sun trigger)            -> (rule 1, Libra) 0.5 in D1
+#   Bhav Chalit: 25 deg is 20 deg after the lagna degree -> house 2 = Taurus   -> (rule 1, Taurus) 1.0 in BC
+#   final: Libra 0.5 * 2/3 = 0.333, Taurus 1.0 * 1/3 = 0.333
+hc = {"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": ["Ar", 25, 0, "Ar"]}}               # only the Sun, so only rule 1 can fire
+fz = {z["zodiac"]: z for z in O.colour_advice(hc)["zodiacs"]}
+assert set(fz) == {"Taurus", "Libra"}, set(fz)
+assert abs(fz["Taurus"]["total_weight"] - 1 / 3) < 1e-3 and abs(fz["Libra"]["total_weight"] - 1 / 3) < 1e-3, (fz["Taurus"]["total_weight"], fz["Libra"]["total_weight"])
+assert (fz["Taurus"]["rules"][0]["d1"], fz["Taurus"]["rules"][0]["bc"]) == (0, 1.0) and (fz["Libra"]["rules"][0]["d1"], fz["Libra"]["rules"][0]["bc"]) == (0.5, 0)
+# with KP present the same Sun at Scorpio 4 deg (D1 and BC Scorpio, KP Libra) for a lagna calibrated at 23.85: Taurus 0.5*.5+.25*.5 = 0.375, Libra 0.25
+kp_lag = ["Pi", 13, 11, "Ar"]
+kpc = {"lagna": kp_lag, "planets": {"Sun": ["Sc", 4, 0, "Sc"]}, "birth": dict(DELHI)}
+assert O.frames(kpc)[0]["KP"]["Sun"] == O.S["Li"]       # KP puts the Sun in Libra
+kc = O.colour_advice(kpc)
+assert kc["warnings"] == [] and kc["frame_weights"] == {"D1": 0.5, "KP": 0.25, "BC": 0.25}
+kz = {z["zodiac"]: z["total_weight"] for z in kc["zodiacs"]}
+assert kz == {"Taurus": 0.375, "Libra": 0.25}, kz
+
+# ---- 33. D9 never adds colours where D1 has a rule (Medium 2: M3) ----
+# D1: Sun in Libra = house 7 (rule 1: blue). D9 lagna Libra, so D9 house 7 = Aries; Saturn in D9 Aries (rule 7: red yellow grey) is a D9 rule there.
+ha = O.house_final_table(chart({"Sun": ["Li", 15, 0, "Ta"], "Saturn": ["Vi", 15, 0, "Ar"]}, lagna=("Ar", 15, 0, "Li")))[6]
+assert ha["d9_zodiac"] == "Aries" and {c for c, _ in ha["d9_recommended"]["ranked"]} == {"red", "yellow", "grey"}
+assert [c for c, _ in ha["final"]["ranked"]] == ["blue"] and ha["final"]["primary"] == "blue" and ha["status"] == "d1" and ha["d9_vetoed"] == []
+# D1 has no rule in the house, D9 has: labelled d9_only
+assert O.house_final_table(chart({"Saturn": ["Vi", 15, 0, "Ar"]}, lagna=("Ar", 15, 0, "Ar")))[0]["status"] == "d9_only"
+
+# ---- 34. clash_owner_decision (Medium 2: M6) and one answer per house (Medium 1) ----
+# Sun Libra (house 7, only colour blue); Rahu in D9 Sagittarius = D9 house 7 when the D9 lagna is Gemini; rule 9 avoids blue.
+CLASH = chart({"Sun": ["Li", 15, 0, "Ta"], "Rahu": ["Vi", 15, 0, "Sg"]}, lagna=("Ar", 15, 0, "Ge"))
+cl = O.calculate(CLASH)
+assert cl["house_final"][6]["status"] == "clash_owner_decision" and cl["house_final"][6]["final"]["primary"] is None and cl["house_final"][6]["d9_vetoed"] == ["blue"]
+assert cl["houses"][6]["colour_use"] == [] and cl["houses"][6]["colour_status"] == "clash_owner_decision" and cl["houses"][6]["colour_blends"] == []
+z7 = [z for z in cl["colour"]["zodiacs"] if z["zodiac"] == "Libra"][0]
+assert z7["approved"]["use"] == [] and "owner decision" in z7["note"] and z7["d9_conflict"] == ["blue"]
+# the ugly case of the old by-zodiac check: Neptune Aries (house 1) with Mars in D9 Cancer = D9 house 1 (rule 3 avoids red)
+NEP = chart({"Neptune": ["Ar", 15, 0, "Ar"], "Mars": ["Vi", 15, 0, "Cn"]}, lagna=("Ar", 15, 0, "Cn"))
+
+
+def one_answer(c):
+    out = O.calculate(c)
+    for h, (row, fin) in enumerate(zip(out["houses"], out["house_final"]), 1):
+        assert row["house"] == fin["house"] == h
+        want = [x for x, _ in fin["final"]["ranked"]] if fin["final"] else []
+        assert row["colour_use"] == want, (h, row["colour_use"], want)
+        assert row["remedy"] == fin["final"] and row["colour_status"] == fin["status"]
+        assert row["colour_blends"] == ([fin["final"]["blend"]] if fin["final"] and fin["final"]["blend"] else [])
+        assert set(row["colour_use"]).isdisjoint(row["colour_avoid"]) or fin["status"] == "no_rule"
+        if fin["status"] != "no_rule": assert set(row["colour_avoid"]) == set(fin["d1_avoid"]) | set(fin["d9_avoid"])
+    for z in out["colour"]["zodiacs"]:                           # the per-zodiac view uses the same method: same allowed colours as the house row
+        fin = out["house_final"][z["house_d1"] - 1]
+        assert z["zodiac"] == fin["d1_zodiac"] and sorted(z["approved"]["use"]) == sorted(x for x, _ in fin["final"]["ranked"]), (z["zodiac"], z["approved"], fin["final"])
+        assert z["d9_avoid"] == fin["d9_avoid"] and z["d9_conflict"] == fin["d9_vetoed"]
+    return out
+
+
+nep = one_answer(NEP)
+assert "red" not in nep["houses"][0]["colour_use"] and nep["houses"][0]["colour_use"] == ["yellow", "green"] and nep["colour"]["zodiacs"][0]["approved"]["use"] == ["green", "yellow"]
+one_answer(CLASH)
+for c in (chart({"Saturn": ["Cn", 15, 0, "Cn"], "Mercury": ["Cn", 15, 0, "Cn"]}, d9={"Mars": "Cn"}, lagna=("Ar", 15, 0, "Cn")),
+          chart({"Sun": ["Li", 15, 0, "Ta"], "Mars": ["Sc", 15, 0, "Cn"]}), chart({"Moon": ["Sc", 15, 0, "Sc"], "Pluto": ["Le", 15, 0, "Ar"]}, lagna=("Sc", 15, 0, "Ar")),
+          chart({}), HIGH, GOOD):
+    one_answer(c)
+
+# ---- 35. D9 mix to resolve the conflict (Low 3): where the MIX table allows; else a clear 'none' with the reason ----
+assert nep["house_final"][0]["final"]["blend"] == "yellow+green=lime" and nep["house_final"][0]["final"]["blend_note"] is None and nep["house_final"][0]["status"] == "d1_with_d9_veto"
+assert nep["houses"][0]["colour_blends"] == ["yellow+green=lime"]
+# Saturn Aries (rule 7: red yellow grey) vs Jupiter in D9 Capricorn = D9 house 1 (rule 5 avoids yellow): red + grey is not in the MIX table
+NOMIX = O.house_final_table(chart({"Saturn": ["Ar", 15, 0, "Ar"], "Jupiter": ["Ge", 15, 0, "Cp"]}, lagna=("Ar", 15, 0, "Cp")))[0]
+assert NOMIX["d9_vetoed"] == ["yellow"] and NOMIX["final"]["primary"] == "red" and NOMIX["final"]["secondary"] == "grey"
+assert NOMIX["final"]["blend"] is None and "no mix in the MIX table for red+grey" in NOMIX["final"]["blend_note"]
+r = O.recommend([(4, 1.0)], {"yellow", "grey"}, conflict=True)                               # only blue left
+assert r["blend"] is None and "only one colour left" in r["blend_note"]
+r = O.recommend([(3, 1.0)], {"green"}, conflict=True)                                        # blue + yellow = green, but green is avoided
+assert r["blend"] is None and "avoid list" in r["blend_note"]
+r = O.recommend([(3, 1.0)], {"blue", "yellow"}, conflict=True)
+assert r["primary"] is None and r["blend"] is None and "no mix" in r["blend_note"]
+r = O.recommend([(3, 1.0)], {"red"}, conflict=True)
+assert r["blend"] == "blue+yellow=green"                                                     # one rule, conflict -> a mix is offered
+assert O.recommend([(3, 1.0)], {"red"})["blend"] is None and O.recommend([(3, 1.0)], {"red"})["blend_note"] is None   # one rule, no conflict -> none needed
+
+# ---- 36. D9 aspect-only hit vetoes (Medium 2: M8) ----
+# D1: Jupiter Capricorn = house 1 (rule 5: black red; avoid yellow golden). D9 lagna Aries; Moon in D9 Libra only ASPECTS D9 Aries (7th) = Moon trigger (rule 2 avoids white, black)
+av = O.house_final_table(chart({"Jupiter": ["Cp", 15, 0, "Ge"], "Moon": ["Vi", 15, 0, "Li"]}, lagna=("Cp", 15, 0, "Ar")))[0]
+assert av["d9_zodiac"] == "Aries" and "black" in av["d9_avoid"] and av["d9_vetoed"] == ["black"]
+assert [c for c, _ in av["final"]["ranked"]] == ["red"] and av["status"] == "d1_with_d9_veto"
+assert O.d9_house_hits(chart({"Moon": ["Vi", 15, 0, "Li"]}, lagna=("Cp", 15, 0, "Ar")))[0][(2, O.S["Ar"])] == O.ASPECT_W
+
+# ---- 37. avoid list is the union of ALL rules in the house, D1 and D9 (Medium 2: M13) ----
+# D1 house 4 Cancer: Mars (rule 3, avoid red) + Mercury (rule 4, avoid green brown red). D9 house 4 Cancer (D9 lagna Aries... D9 Cancer = house 1 from D9 lagna Cancer).
+mm = chart({"Mars": ["Cn", 15, 0, "Cn"], "Mercury": ["Cn", 15, 0, "Cn"]}, lagna=("Ar", 15, 0, "Cn"))
+h4 = O.house_final_table(mm)[3]
+assert h4["d1_avoid"] == ["brown", "green", "red"], h4["d1_avoid"]
+h1 = O.house_final_table(mm)[0]
+assert h1["d9_zodiac"] == "Cancer" and h1["d9_avoid"] == ["brown", "green", "red"] and h1["status"] == "d9_only"      # both D9 rules count, not the first only
+assert O.colour_advice(mm)["zodiacs"][0]["d1_final"]["avoid"] == ["brown", "green", "red"]
+# a D1 colour on the avoid list of the SECOND rule is not recommended
+assert "green" not in [c for c, _ in h4["final"]["ranked"]] and "brown" not in [c for c, _ in h4["final"]["ranked"]]
+
+# ---- 38. ranking is by rule WEIGHT, not rule count (Medium 2: M14) ----
+# rule 10 (green purple) weight 1.0 vs rules 4 and 8 (both list yellow and grey) weight 0.25 each: yellow/grey count 2 but weigh 0.5
+rk = O.recommend([(10, 1.0), (4, 0.25), (8, 0.25)], set())
+assert rk["primary"] == "green" and rk["secondary"] == "purple" and dict(rk["ranked"])["yellow"] == 0.5 and dict(rk["ranked"])["green"] == 1.0
+assert [c for c, _ in rk["ranked"]][:2] == ["green", "purple"] and [c for c, _ in rk["ranked"]][-1] == "blue"
+
+# ---- 39. Lal Kitab direction: Jupiter house 3, Sun house 11 = 87.5% (Medium 2: M15) ----
+lk = chart({"Jupiter": ["Ge", 15, 0, "Ge"], "Sun": ["Aq", 15, 0, "Aq"]}, lagna=("Ar", 15, 0, "Ar"))
+t = [a for a in O.aspect_table(lk) if {a["from"], a["to"]} == {"Jupiter", "Sun"}][0]
+assert (t["from"], t["to"]) == ("Jupiter", "Sun") and (t["p1"], t["p2"], t["p3"], t["p4"]) == (100, 100, 100, 50) and t["final"] == 87.5
+assert O.lal_kitab_aspect("Jupiter", 3, 11) == 50 and O.lal_kitab_aspect("Sun", 11, 3) == 0
+
+# ---- 40. L2: the shipped CSV equals all_triples() cell by cell ----
+with open(os.path.join(os.path.dirname(__file__), "..", "data", "owner_house_zodiac_planet.csv"), newline="") as fh:
+    raw = fh.read()
+assert "\r" not in raw and raw.endswith("\n")
+rows = list(csv.reader(io.StringIO(raw)))
+trip = O.all_triples()
+assert rows[0] == ["house", "body_parts", "zodiac", "planet", "owner_rules", "dignity", "colour_use", "colour_avoid"] == list(trip[0])
+assert len(rows) == 1 + len(trip) == 1729
+for got, want in zip(rows[1:], trip):
+    assert got == [str(want[k]) for k in rows[0]], (got, want)
+buf = io.StringIO(newline="")
+wr = csv.writer(buf, lineterminator="\n"); wr.writerow(rows[0]); [wr.writerow([r[k] for k in rows[0]]) for r in trip]
+assert buf.getvalue() == raw                                      # byte for byte what the code would write
+
+# ---- 41. L4: verdict_band, house_final in calculate(), HOUSE_BODY exact, Lal Kitab planet parts ----
+# Sun in Leo (own sign, +0.5) in house 5 of an Aries lagna, no owner rule there: net +0.5
+sl = chart({"Sun": ["Le", 15, 0, "Le"]})
+assert O.house_report(sl)[4]["net"] == 0.5 and O.house_report(sl)[4]["verdict"] == "supportive"
+assert O.house_report(sl, verdict_band=0.49)[4]["verdict"] == "supportive" and O.house_report(sl, verdict_band=0.5)[4]["verdict"] == "mixed"
+assert O.house_report(sl, verdict_band=0.6)[4]["verdict"] == "mixed"
+# Saturn Cancer: load 1.0 -> strained at the default band, mixed when the band is 1.0, strained again at 0.99
+sc4 = chart({"Saturn": ["Cn", 15, 0, "Cn"]})
+assert O.house_report(sc4)[3]["net"] == -1.0 and O.house_report(sc4)[3]["verdict"] == "strained"
+assert O.house_report(sc4, verdict_band=0.99)[3]["verdict"] == "strained" and O.house_report(sc4, verdict_band=1.0)[3]["verdict"] == "mixed"
+assert O.house_report(chart({}))[0]["verdict"] == "mixed"
+cc = O.calculate(sc4)
+assert set(cc) == {"warnings", "kp_dropped", "frame_weights", "frames_missing", "colour", "aspects", "houses", "house_final"}
+assert len(cc["house_final"]) == 12 and [r["house"] for r in cc["house_final"]] == list(range(1, 13)) and cc["house_final"][3]["status"] == "d1"
+OWNER_BODY = {1: "head, forehead, upper head, upper face", 2: "right eye, right side of face, neckline, upper neck, lips, lower right face",
+              3: "right ear to right shoulder, upper right arm", 4: "lower right arm to wrist and hands, right chest and right breast",
+              5: "right abdomen, right pocket, right hip, right stomach, upper right thigh", 6: "low right thigh, knee to ankle and feet",
+              7: "waist and sexual part", 8: "low left thigh, knee to ankle and feet, inner anus",
+              9: "left abdomen, left pocket, left hip, left stomach, upper left thigh", 10: "lower left arm to wrist and hands, left chest and left breast",
+              11: "left ear to left shoulder, upper left arm", 12: "left eye, left side of face, lower left face, sexual activity"}
+assert O.HOUSE_BODY == OWNER_BODY and "right pocket" in O.HOUSE_BODY[5] and "left pocket" not in O.HOUSE_BODY[5] and "left pocket" in O.HOUSE_BODY[9]
+assert O.LK_PLANET_BODY == {"Mars": "liver", "Moon": "heart", "Ketu": "torso", "Mercury": "brain and tongue", "Saturn": "sight and assessment", "Rahu": "head", "Jupiter": "neck"}
+mh = O.house_report({"lagna": ["Ar", 15, 0, "Ar"], "planets": {"Mars": ["Cn", 15, 0, "Cn"], "Moon": ["Sc", 15, 0, "Sc"], "Ketu": ["Ge", 15, 0, "Ge"]}})
+assert mh[3]["lal_kitab_planet_parts"] == {"Mars": "liver"} and mh[7]["lal_kitab_planet_parts"] == {"Moon": "heart"} and mh[2]["lal_kitab_planet_parts"] == {"Ketu": "torso"}
+
+# ---- 42. L3: the exhaustive check reports how many distinct cases it really evaluates, and its scope ----
+st = O.enumerate_all()
+assert st["distinct_cases_evaluated"] == 176 and "placement-only" in st["scope"]
+assert sum(2 ** k - 1 for k in [len({r["planet"] for r in O.RULES if sg in r["signs"]}) for sg in O.SIGNS]) == 176
+# recommend() ignoring the avoid list must now be caught by the exhaustive check too (all ranked colours are checked, not only the top two)
+orig_rec = O.recommend
+O.recommend = lambda rw, avoid, conflict=False: orig_rec(rw, set(), conflict)
+try:
+    assert O.enumerate_all()["violations"] > 0
+finally:
+    O.recommend = orig_rec
+O.recommend = lambda rw, avoid, conflict=False: (lambda r: dict(r, ranked=r["ranked"] + [(c, 0.0) for c in sorted(avoid)]))(orig_rec(rw, avoid, conflict))
+try:
+    assert O.enumerate_all()["violations"] > 0                    # an avoided colour hiding BELOW the top two is also caught
+finally:
+    O.recommend = orig_rec
+assert O.enumerate_all()["violations"] == 0
+
+
 print("test_owner_calc ok")

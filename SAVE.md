@@ -63,3 +63,4 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 - Eshani and Pehu: one does BBA culinary arts, the other BBA law; which is which is unknown.
 
 - 2026-11-23: owner colour + aspect calculator built (core/owner_calc.py, tests/test_owner_calc.py, docs/OWNER_RULES_2026-11-23.md). P4 Lal Kitab pending. Branch calc/owner-rules-calculator-2026-11-23.
+- 2026-11-23 (later): PR #4 audit fixes: warned KP frame dropped, input range checks, one D9 method (house by house) everywhere, D9 conflict mix, 57 planted-bug checks (tests/mutation_owner_calc.py). Owner to confirm D9 house-by-house wording (OPEN_QUESTIONS 9-11).

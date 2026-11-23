@@ -20,9 +20,12 @@ ASSUMPTIONS (owner to confirm; each is one named constant or function):
                       (the book also says 8->2 is 100 in one passage: conflict, 25 used). Mercury, Rahu and Ketu have special rules in the book: NOT modelled.
                       Houses are counted from the lagna sign (whole sign). Provisional until the owner confirms the source.
   KP                  sidereal Placidus; ayanamsa is calibrated so the computed ascendant equals the site's lagna (the site gives only degrees).
+                      If the calibrated ayanamsa is outside 22-26 or the latitude is above 66 the KP frame is DROPPED (weights renormalise to D1 2/3 + BC 1/3)
+                      and the warning is put in every output.
+  D9 check            HOUSE BY HOUSE (D9 house h from the D9 lagna vs D1 house h), D9 only vetoes colours; D1-empty / D9-rule house = "d9_only" (owner to confirm).
   Bhav Chalit         equal house, each house spans cusp +/- 15 deg, cusp 1 = lagna longitude.
 """
-import itertools, math, json, sys
+import itertools, math, json, sys, re, datetime
 
 SIGNS = ["Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi"]
 S = {s: i for i, s in enumerate(SIGNS)}
@@ -143,17 +146,57 @@ def house_in(cusps, lon):
     return 1
 
 
-def validate_chart(chart):
-    """Reject malformed input with a clear message instead of a bare KeyError or a silently wrong answer."""
-    for key in ("lagna", "planets"):
+def _is_num(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+
+
+def validate_chart(chart, need_lagna=True, need_d9=True):
+    """Reject malformed input with a clear ValueError instead of a bare KeyError or a silently wrong answer.
+    Checks: lagna/planets present; every planet name is one of the 12 known planets; signs known; degree 0-29, minute 0-59;
+    birth (optional) has date YYYY-MM-DD (real calendar day, year 1583-2200: the Julian-day formula is Gregorian), time HH:MM (00:00-23:59),
+    tz -14..+14, lat strictly between -90 and 90, lon -180..180. The time zone is never guessed."""
+    if not isinstance(chart, dict): raise ValueError("chart must be a dict")
+    for key in (("lagna",) if need_lagna else ()) + ("planets",):
         if key not in chart: raise ValueError(f"chart needs '{key}'")
-    for name, e in [("lagna", chart["lagna"])] + list(chart["planets"].items()):
-        if len(e) < 4 or e[0] not in S or e[3] not in S: raise ValueError(f"{name}: need [sign, deg, min, d9 sign] with signs from {sorted(S)}")
-        if not (0 <= e[1] < 30 and 0 <= e[2] < 60): raise ValueError(f"{name}: degrees must be 0-29 and minutes 0-59, got {e[1]}, {e[2]}")
+    if not isinstance(chart["planets"], dict): raise ValueError("'planets' must be a dict {name: [sign, deg, min, d9 sign]}")
+    for name in chart["planets"]:
+        if name not in ASPECTS: raise ValueError(f"unknown planet name {name!r}; known: {sorted(ASPECTS)}")
+    entries = list(chart["planets"].items())
+    if chart.get("lagna") is not None or need_lagna: entries = [("lagna", chart.get("lagna"))] + entries
+    for name, e in entries:
+        need = 4 if need_d9 else 3
+        if not isinstance(e, (list, tuple)) or len(e) < need: raise ValueError(f"{name}: need [sign, deg, min{', d9 sign' if need_d9 else ''}], got {e!r}")
+        if not isinstance(e[0], str) or e[0] not in S or (need_d9 and (not isinstance(e[3], str) or e[3] not in S)):
+            raise ValueError(f"{name}: need [sign, deg, min, d9 sign] with signs from {sorted(S)}")
+        if not (_is_num(e[1]) and _is_num(e[2]) and 0 <= e[1] < 30 and 0 <= e[2] < 60):
+            raise ValueError(f"{name}: degrees must be 0-29 and minutes 0-59, got {e[1]!r}, {e[2]!r}")
     b = chart.get("birth")
     if b:
+        if not isinstance(b, dict): raise ValueError("'birth' must be a dict")
         for key in ("date", "time", "tz", "lat", "lon"):
             if key not in b: raise ValueError(f"birth needs '{key}' (time zone is never guessed)")
+        if not (isinstance(b["date"], str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", b["date"])): raise ValueError(f"birth date must be YYYY-MM-DD, got {b['date']!r}")
+        y, m, d = map(int, b["date"].split("-"))
+        try: datetime.date(y, m, d)
+        except ValueError: raise ValueError(f"birth date {b['date']!r} is not a real calendar day")
+        if not 1583 <= y <= 2200: raise ValueError(f"birth year {y} outside 1583-2200 (Gregorian Julian-day formula)")
+        if not (isinstance(b["time"], str) and re.fullmatch(r"\d{2}:\d{2}", b["time"])): raise ValueError(f"birth time must be HH:MM, got {b['time']!r}")
+        hh, mm = map(int, b["time"].split(":"))
+        if not (0 <= hh <= 23 and 0 <= mm <= 59): raise ValueError(f"birth time {b['time']!r} out of range 00:00-23:59")
+        if not (_is_num(b["tz"]) and -14 <= b["tz"] <= 14): raise ValueError(f"birth tz must be a number of hours from -14 to 14, got {b['tz']!r}")
+        if not (_is_num(b["lat"]) and -90 < b["lat"] < 90): raise ValueError(f"birth lat must be a number strictly between -90 and 90, got {b['lat']!r}")
+        if not (_is_num(b["lon"]) and -180 <= b["lon"] <= 180): raise ValueError(f"birth lon must be a number from -180 to 180, got {b['lon']!r}")
+
+
+AYAN_MIN, AYAN_MAX, KP_MAX_LAT = 22.0, 26.0, 66.0
+
+
+def kp_warnings(ayan, lat):
+    """Reasons the KP (Placidus) frame cannot be trusted. Any warning means KP is dropped from D1 Final (see frames)."""
+    warn = []
+    if not AYAN_MIN <= ayan <= AYAN_MAX: warn.append(f"calibrated ayanamsa {ayan:.1f} deg is outside {AYAN_MIN:g}-{AYAN_MAX:g}: lagna, place or time probably wrong, KP frame not trustworthy")
+    if abs(lat) > KP_MAX_LAT: warn.append(f"latitude above {KP_MAX_LAT:g}: Placidus houses are undefined, KP frame not trustworthy")
+    return warn
 
 
 def frames(chart):
@@ -168,12 +211,13 @@ def frames(chart):
         tc = placidus_cusps(_julian_day(b["date"], b["time"], b["tz"]), b["lat"], b["lon"])
         ayan = (tc[1] - lag) % 360
         sc = {h: (tc[h] - ayan) % 360 for h in tc}
-        out["KP"] = {p: (lag_s + house_in(sc, l) - 1) % 12 for p, l in pl.items()}
         info["ayanamsa_calibrated"] = round(ayan, 3)
-        warn = []
-        if not 22.0 <= ayan <= 26.0: warn.append(f"calibrated ayanamsa {ayan:.1f} deg is outside 22-26: lagna, place or time probably wrong, KP frame not trustworthy")
-        if abs(b["lat"]) > 66: warn.append("latitude above 66: Placidus houses are undefined, KP frame not trustworthy")
-        if warn: info["warnings"] = warn
+        warn = kp_warnings(ayan, b["lat"])
+        if warn:      # an untrustworthy KP frame is DROPPED (weights renormalise to D1 2/3 + Bhav Chalit 1/3), not blended in
+            info["warnings"] = warn
+            info["kp_dropped"] = True
+        else:
+            out["KP"] = {p: (lag_s + house_in(sc, l) - 1) % 12 for p, l in pl.items()}
     return out, lag_s, info
 
 
@@ -206,10 +250,12 @@ def advise(rule_nos, extra_avoid=()):
     return res
 
 
-def recommend(rule_weights, avoid):
+def recommend(rule_weights, avoid, conflict=False):
     """Decisive remedy for one zodiac: rank every allowed colour by the total rule weight whose use list contains it; ties go to the colour
     the owner listed first. primary = best; secondary = next; blend = primary+secondary ONLY when two or more rules meet in the zodiac
-    (owner: "if a zodiac has two or more negatives, use a combination") and the mix is not on an avoid list."""
+    (owner: "if a zodiac has two or more negatives, use a combination") and the mix is not on an avoid list.
+    conflict=True (D9 vetoed a colour of this house): the owner's "suggest a mix to resolve conflict" - a blend of primary+secondary is tried
+    even when only one rule is in the house. blend_note says why there is no blend (never silent)."""
     cov, pos = {}, {}
     for n, w in rule_weights:
         for i, c in enumerate(RULES[n - 1]["use"]):
@@ -218,22 +264,42 @@ def recommend(rule_weights, avoid):
                 pos[c] = min(pos.get(c, 99), i)
     ranked = sorted(cov.items(), key=lambda kv: (-kv[1], pos[kv[0]], kv[0]))
     out = {"ranked": [(c, round(v, 3)) for c, v in ranked], "primary": ranked[0][0] if ranked else None,
-           "secondary": ranked[1][0] if len(ranked) > 1 else None, "blend": None}
-    if out["secondary"] and len({n for n, _ in rule_weights}) > 1:
-        m = MIX.get(frozenset([out["primary"], out["secondary"]]))
-        if m and m not in avoid: out["blend"] = f"{out['primary']}+{out['secondary']}={m}"
+           "secondary": ranked[1][0] if len(ranked) > 1 else None, "blend": None, "blend_note": None}
+    if conflict or len({n for n, _ in rule_weights}) > 1:
+        if not out["primary"]: out["blend_note"] = "no colour left, so no mix"
+        elif not out["secondary"]: out["blend_note"] = "only one colour left, so no mix"
+        else:
+            m = MIX.get(frozenset([out["primary"], out["secondary"]]))
+            if not m: out["blend_note"] = f"no mix in the MIX table for {out['primary']}+{out['secondary']}: none"
+            elif m in avoid: out["blend_note"] = f"{out['primary']}+{out['secondary']}={m} is on an avoid list: none"
+            else: out["blend"] = f"{out['primary']}+{out['secondary']}={m}"
     return out
 
 
+def d9_house_hits(chart):
+    """D9 rule hits {(rule no, D9 sign index): weight} (placement 1.0, aspect-only ASPECT_W) and the D9 lagna sign index."""
+    return rule_hits({p: S[v[3]] for p, v in chart["planets"].items()}), S[chart["lagna"][3]]
+
+
+def d9_rules_in_house(d9h, d9lag, house):
+    """The D9 rules that touch D9 house `house` (counted from the D9 lagna), as [(rule no, weight)], and their avoid colours (union of ALL rules)."""
+    s9 = (d9lag + house - 1) % 12
+    rules = sorted((n, w) for (n, s), w in d9h.items() if s == s9)
+    avoid = set()
+    for n, _ in rules: avoid |= set(RULES[n - 1]["avoid"])
+    return s9, rules, avoid
+
+
 def colour_advice(chart):
+    """Per zodiac: D1 Final rules and colours, then the D9 veto. The D9 check is HOUSE BY HOUSE (same method as house_final_table): the zodiac
+    is D1 house h counted from the lagna, and it is compared with D9 house h counted from the D9 lagna."""
     validate_chart(chart)
     fr, lag_s, info = frames(chart)
     w = {k: v for k, v in FRAME_W.items() if k in fr}
     tot = sum(w.values()); w = {k: v / tot for k, v in w.items()}          # KP missing -> renormalise, and say so
     fh = {f: rule_hits(fr[f]) for f in fr}
     final = {k: sum(w[f] * fh[f].get(k, 0) for f in fr) for k in set().union(*fh.values())}
-    d9 = {p: S[v[3]] for p, v in chart["planets"].items()}
-    d9h = rule_hits(d9)
+    d9h, d9lag = d9_house_hits(chart)
     zod = []
     by = {}
     for (n, s), v in final.items():
@@ -241,21 +307,20 @@ def colour_advice(chart):
     for s, lst in sorted(by.items()):
         nos = sorted(n for n, _ in lst)
         adv = advise(nos)
-        d9_avoid = set()
-        for (n, ss) in d9h:
-            if ss == s: d9_avoid |= set(RULES[n - 1]["avoid"])
+        house = (s - lag_s) % 12 + 1
+        _, _, d9_avoid = d9_rules_in_house(d9h, d9lag, house)
         final_adv = advise(nos, d9_avoid)
-        z = {"zodiac": NAME[SIGNS[s]], "house_d1": (s - lag_s) % 12 + 1,
+        z = {"zodiac": NAME[SIGNS[s]], "house_d1": house,
              "total_weight": round(sum(v for _, v in lst), 3),
              "rules": [{"rule": n, "weight": round(v, 3), **{f.lower(): fh[f].get((n, s), 0) for f in fr}} for n, v in sorted(lst)],
              "d1_final": adv, "d9_avoid": sorted(d9_avoid), "approved": final_adv}
         z["d9_conflict"] = sorted(set(adv["use"]) & d9_avoid)
-        z["remedy"] = recommend([(r["rule"], r["weight"]) for r in z["rules"]], set(final_adv["avoid"]))
+        z["remedy"] = recommend([(r["rule"], r["weight"]) for r in z["rules"]], set(final_adv["avoid"]), conflict=bool(z["d9_conflict"]))
         if not final_adv["use"] and not final_adv.get("blends"):
             z["note"] = "no colour or blend satisfies D1 Final and D9 together - owner decision"
         zod.append(z)
     return {"lagna": NAME[SIGNS[lag_s]], "frame_weights": w, "frames_missing": [f for f in FRAME_W if f not in fr],
-            **info, "zodiacs": zod}
+            **info, "warnings": info.get("warnings", []), "kp_dropped": info.get("kp_dropped", False), "zodiacs": zod}
 
 
 # ---------------- aspect % ----------------
@@ -294,6 +359,7 @@ def lal_kitab_aspect(planet, house_a, house_b):
 
 
 def aspect_table(chart):
+    validate_chart(chart, need_lagna=False, need_d9=False)
     pl = {p: longitude(v) for p, v in chart["planets"].items()}
     sg = {p: int(l // 30) for p, l in pl.items()}
     lag_s = int(longitude(chart["lagna"]) // 30) if chart.get("lagna") else None
@@ -313,8 +379,11 @@ def aspect_table(chart):
 # ---------------- house report: constant houses, moving zodiacs ----------------
 def house_report(chart, verdict_band=0.25):
     """For each of the 12 houses: zodiac in it, planets in it, owner negative load (D1 Final weights of the 15 rules on that zodiac),
-    classical dignity of the planets sitting there (the + side, assumption), net, body parts (owner P1, Lal Kitab planet parts P2), colours."""
+    classical dignity of the planets sitting there (the + side, assumption), net, body parts (owner P1, Lal Kitab planet parts P2), colours.
+    Colours come from house_final_table (the house-by-house D9 method): one answer per house, the same as calculate()['house_final'].
+    Every row carries the KP warnings of the chart."""
     col = colour_advice(chart)
+    fin = house_final_table(chart, _col=col)
     by_zod = {z["zodiac"]: z for z in col["zodiacs"]}
     lag_s = int(longitude(chart["lagna"]) // 30)
     out = []
@@ -323,19 +392,23 @@ def house_report(chart, verdict_band=0.25):
         sg = SIGNS[s]
         here = [p for p, v in chart["planets"].items() if S[v[0]] == s]
         z = by_zod.get(NAME[sg])
+        f = fin[h - 1]
         neg = z["total_weight"] if z else 0.0
         plus = sum(max(dignity(p, sg), 0) for p in here)
         minus_dig = sum(min(dignity(p, sg), 0) for p in here)
         net = round(plus + minus_dig - neg, 3)
         verdict = "supportive" if net > verdict_band else "strained" if net < -verdict_band else "mixed"
         involved = sorted({RULES[r["rule"] - 1]["planet"] for r in z["rules"]}) if z else []
+        fr = f["final"]
         row = {"house": h, "zodiac": NAME[sg], "planets_here": here, "owner_negative_load": neg,
                "dignity_plus": plus, "dignity_minus": minus_dig, "net": net, "verdict": verdict,
                "body_parts": HOUSE_BODY[h],
                "lal_kitab_planet_parts": {p: LK_PLANET_BODY[p] for p in involved if p in LK_PLANET_BODY},
-               "colour_use": z["approved"]["use"] if z else [], "colour_avoid": z["approved"]["avoid"] if z else [],
-               "colour_blends": z["approved"].get("blends", []) if z else [],
-               "remedy": z["remedy"] if z else None}
+               "colour_use": [c for c, _ in fr["ranked"]] if fr else [],
+               "colour_avoid": sorted(set(f["d1_avoid"]) | set(f["d9_avoid"])) if f["status"] != "no_rule" else [],
+               "colour_blends": [fr["blend"]] if fr and fr["blend"] else [],
+               "colour_status": f["status"], "colour_source": "house_final_table (D9 checked house by house)",
+               "remedy": fr, "warnings": col["warnings"], "kp_dropped": col["kp_dropped"]}
         out.append(row)
     return out
 
@@ -357,10 +430,12 @@ def all_triples():
 
 # ---------------- exhaustive check of every combination ----------------
 def enumerate_all():
-    """Every zodiac x every subset of the 12 planets sitting in it (12 x 4096 = 49,152 cases; planets with no rule on a zodiac cannot change the
-    advice, so each zodiac is enumerated over its relevant planets and every such case stands for 2^(12-k) full cases).
+    """Every zodiac x every subset of the 12 planets sitting in it (12 x 4096 = 49,152 cases). Planets with no rule on a zodiac cannot change the
+    PLACEMENT-ONLY advice, so each zodiac is enumerated over its relevant planets: only the distinct cases are really evaluated (176, see
+    distinct_cases_evaluated) and each stands for 2^(12-k) full cases. Not covered: aspect-only hits, the KP / Bhav Chalit frames, D9.
     Checks the invariant that no advised colour is ever on an avoid list, and counts the cases with no pure colour / no blend left."""
-    stats = {"zodiacs": 12, "full_cases": 12 * 4096, "cases_with_a_rule": 0, "one_colour_good_for_every_planet": 0, "pure_ok": 0, "blend_only": 0, "unresolvable": 0,
+    stats = {"zodiacs": 12, "full_cases": 12 * 4096, "distinct_cases_evaluated": 0, "scope": "placement-only: no aspect-only hits, no KP/Bhav Chalit frames, no D9",
+             "cases_with_a_rule": 0, "one_colour_good_for_every_planet": 0, "pure_ok": 0, "blend_only": 0, "unresolvable": 0,
              "violations": 0, "worst": []}
     for sg in SIGNS:
         rel = sorted({r["planet"] for r in RULES if sg in r["signs"]})
@@ -369,12 +444,13 @@ def enumerate_all():
             for sub in itertools.combinations(rel, k):
                 nos = [r["no"] for r in RULES if r["planet"] in sub and sg in r["signs"]]
                 a = advise(nos)
+                stats["distinct_cases_evaluated"] += 1
                 stats["cases_with_a_rule"] += mult
                 # independent of advise(): recompute the avoid union straight from RULES, then check what recommend() actually advises
                 avoid_all = set().union(*[set(RULES[n - 1]["avoid"]) for n in nos])
                 rec = recommend([(n, 1.0) for n in nos], avoid_all)
                 advised = [c for c in (rec["primary"], rec["secondary"]) if c]
-                if not rec["primary"] or set(advised) & avoid_all or set(a["use"]) & avoid_all or (rec["blend"] and rec["blend"].split("=")[1] in avoid_all):
+                if not rec["primary"] or set(advised) & avoid_all or {c for c, _ in rec["ranked"]} & avoid_all or set(a["use"]) & avoid_all or (rec["blend"] and rec["blend"].split("=")[1] in avoid_all):
                     stats["violations"] += mult
                 common = set.intersection(*[set(RULES[n - 1]["use"]) for n in nos]) - set(a["avoid"])
                 if common: stats["one_colour_good_for_every_planet"] += mult
@@ -386,29 +462,29 @@ def enumerate_all():
     return stats
 
 
-def house_final_table(chart):
-    """Owner's house-by-house view (owner confirmed 2026-11-23: D9 is checked HOUSE BY HOUSE, D9 house h counted from the D9 lagna).
-    Per house: D1 zodiac + avoid, D9 zodiac + avoid, D1 recommended, D9 recommended, FINAL. D1 Final is the base; D9 can only veto colours,
-    it never adds colours to a house where D1 has a rule. If D1 has no rule but D9 has, the final is the D9 advice, labelled D9-only."""
-    col = colour_advice(chart)
+def house_final_table(chart, _col=None):
+    """House-by-house view. D9 house h is counted from the D9 lagna and compared with D1 house h (method relayed 2026-11-23; no verbatim owner
+    block yet, see docs/OPEN_QUESTIONS.md). Per house: D1 zodiac + avoid, D9 zodiac + avoid, D1 recommended, D9 recommended, FINAL.
+    D1 Final is the base; D9 can only veto colours, it never adds colours to a house where D1 has a rule. If D1 has no rule but D9 has,
+    the final is the D9 advice, labelled d9_only (ASSUMPTION, owner to confirm). When D9 vetoes a colour the owner's 'mix to resolve conflict'
+    is tried (final['blend']); final['blend_note'] says why when none is possible. Every row carries the KP warnings of the chart;
+    a warned KP frame is already dropped inside colour_advice."""
+    col = _col or colour_advice(chart)
     by = {z["zodiac"]: z for z in col["zodiacs"]}
     lag_s = int(longitude(chart["lagna"]) // 30)
-    d9lag = S[chart["lagna"][3]]
-    d9h = rule_hits({p: S[v[3]] for p, v in chart["planets"].items()})
+    d9h, d9lag = d9_house_hits(chart)
     rows = []
     for h in range(1, 13):
-        s1, s9 = (lag_s + h - 1) % 12, (d9lag + h - 1) % 12
+        s1 = (lag_s + h - 1) % 12
+        s9, r9, a9 = d9_rules_in_house(d9h, d9lag, h)
         z = by.get(NAME[SIGNS[s1]])
         r1 = [(r["rule"], r["weight"]) for r in z["rules"]] if z else []
         a1 = set(z["d1_final"]["avoid"]) if z else set()
-        r9 = [(n, w) for (n, s), w in d9h.items() if s == s9]
-        a9 = set()
-        for n, _ in r9: a9 |= set(RULES[n - 1]["avoid"])
         rec1 = recommend(r1, a1) if r1 else None
         rec9 = recommend(r9, a9) if r9 else None
         if r1:
-            fin = recommend(r1, a1 | a9)
             vetoed = sorted({c for c, _ in rec1["ranked"]} & a9)
+            fin = recommend(r1, a1 | a9, conflict=bool(vetoed))
             status = "d1_with_d9_veto" if vetoed else "d1"
             if not fin["primary"]: status = "clash_owner_decision"
         elif r9:
@@ -416,12 +492,17 @@ def house_final_table(chart):
         else:
             fin, vetoed, status = None, [], "no_rule"
         rows.append({"house": h, "d1_zodiac": NAME[SIGNS[s1]], "d1_avoid": sorted(a1), "d9_zodiac": NAME[SIGNS[s9]], "d9_avoid": sorted(a9),
-                     "d1_recommended": rec1, "d9_recommended": rec9, "final": fin, "d9_vetoed": vetoed, "status": status})
+                     "d1_recommended": rec1, "d9_recommended": rec9, "final": fin, "d9_vetoed": vetoed, "status": status,
+                     "warnings": col["warnings"], "kp_dropped": col["kp_dropped"]})
     return rows
 
 
 def calculate(chart):
-    return {"colour": colour_advice(chart), "aspects": aspect_table(chart), "houses": house_report(chart), "house_final": house_final_table(chart)}
+    """One answer per house: houses[].colour_* and house_final[] are built from the same house-by-house D9 method.
+    colour['zodiacs'] uses the same method (per zodiac = per D1 house). Top-level warnings repeat the KP warnings (also on every house row)."""
+    col = colour_advice(chart)
+    return {"warnings": col["warnings"], "kp_dropped": col["kp_dropped"], "frame_weights": col["frame_weights"], "frames_missing": col["frames_missing"],
+            "colour": col, "aspects": aspect_table(chart), "houses": house_report(chart), "house_final": house_final_table(chart, _col=col)}
 
 
 if __name__ == "__main__":
