@@ -1,0 +1,16 @@
+rule_no,planet,trigger_signs,use_colours,avoid_colours,source,note
+1,Sun,"[""Taurus"",""Libra""]","[""blue""]","[""orange""]",OWNER-2026-11-23-A,Sun triggers Taurus/Libra; the 21 Nov table said Taurus/Virgo. New text wins.
+2,Moon,"[""Scorpio"",""Aries""]","[""red"",""yellow""]","[""white"",""black""]",OWNER-2026-11-23-A,Owner wrote 'While'; read as White.
+3,Mars,"[""Cancer""]","[""blue"",""yellow""]","[""red""]",OWNER-2026-11-23-A,
+4,Mercury,"[""Pisces"",""Cancer""]","[""yellow"",""blue"",""grey""]","[""green"",""brown"",""red""]",OWNER-2026-11-23-A,
+5,Jupiter,"[""Capricorn"",""Aquarius""]","[""black"",""red""]","[""yellow"",""golden""]",OWNER-2026-11-23-A,Owner wrote 'Or do not use Yellow or golden'; read as 'And' (other rules say And). Open question.
+6,Venus,"[""Virgo"",""Gemini"",""Cancer""]","[""blue"",""green""]","[""white"",""silver""]",OWNER-2026-11-23-A,
+7,Saturn,"[""Aries"",""Scorpio""]","[""red"",""yellow"",""grey""]","[""white"",""black""]",OWNER-2026-11-23-A,
+8,Saturn,"[""Cancer""]","[""yellow"",""grey""]","[""red""]",OWNER-2026-11-23-A,
+9,Rahu,"[""Sagittarius""]","[""yellow"",""green"",""black""]","[""brown"",""blue""]",OWNER-2026-11-23-A,
+10,Ketu,"[""Gemini""]","[""green"",""purple""]","[""grey"",""silver""]",OWNER-2026-11-23-A,
+11,Uranus,"[""Cancer"",""Taurus"",""Libra""]","[""yellow""]","[""red"",""orange""]",OWNER-2026-11-23-A,
+12,Neptune,"[""Aries"",""Scorpio"",""Gemini""]","[""red"",""yellow"",""green""]","[""black"",""white"",""grey"",""silver""]",OWNER-2026-11-23-A,Owner wrote 'scropio'; read as Scorpio.
+13,Neptune,"[""Cancer""]","[""yellow""]","[""red""]",OWNER-2026-11-23-A,
+14,Pluto,"[""Aries"",""Scorpio"",""Leo""]","[""red"",""yellow""]","[""white"",""black""]",OWNER-2026-11-23-A,Owner wrote 'scropio'; read as Scorpio.
+15,Pluto,"[""Cancer""]","[""yellow""]","[""red""]",OWNER-2026-11-23-A,

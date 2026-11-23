@@ -1,6 +1,14 @@
 # Changelog
 Owner rule: every change bumps the version and updates this file, version.json and the knowledge doc in the same PR. Versions: MAJOR.MINOR.PATCH.
 
+## 0.3.0 - 2026-11-23
+- Owner colour rules of 23 Nov 2026 (authoritative; supersede the 21 Nov table where they differ): `data/owner_colour_rules.csv` (15 rules, source OWNER-2026-11-23-A), owner text kept verbatim in `docs/OWNER_RULES_2026-11-23.md`.
+- CHANGED vs the 21 Nov table: rule 1 Sun triggers are now Taurus and Libra (was Taurus and Virgo). Rahu is now rule 9, Ketu 10, Uranus 11, Neptune 12 and 13, Pluto 14 and 15 (Saturn is split into 7 and 8, Pluto into 14 and 15). Rules now give use colours AND avoid colours; rule 5 "Or do not use" read as "And" (open question).
+- New `core/colour_rules.py`: placement hit 1.0, aspect hit 0.5 (assumption, one constant), aspects by house number per planet; D1 Final = 0.5 D1 + 0.25 KP + 0.25 Bhav Chalit per (zodiac, rule); advice = union(use) minus union(avoid); blends (blue+yellow=green, red+yellow=orange, red+blue=purple, black+white=grey, red+green=brown) when two or more negatives or nothing pure is left, a blend landing on an avoid colour is rejected; D9 validation removes anti colours and proposes a resolving mix.
+- Bhav Chalit = equal houses, cusp 1 = lagna, each house cusp +/- 15. KP = sidereal Placidus via `core/houses.py` (ayanamsa is a parameter; refuses polar latitudes). KP/BC planet sign = lagna sign + (house - 1).
+- Added `tests/test_colour_rules.py` (wired into `tests/run_all.sh`): 15 rules x all signs, hand-computed cases, weights, fuzz for avoid colours, blends, D9 mix, KP/BC houses, independent Placidus cross-check. Sabotage-tested (12 deliberate breakages, all caught).
+- Old `core/planet_negatives.py` and `data/planet_sign_negatives.csv` are unchanged (superseded, kept for history). Not wired into guidance, not loaded to D1, nothing deployed.
+
 ## 0.2.1 - 2026-11-22
 - Planet sign negatives (audit fixes): owner's 13 rules pasted verbatim into `docs/PLANET_SIGN_NEGATIVES.md`, with notes on the Mars aspects (taken as written) and on spelling.
 - `core/planet_negatives.py`: a CSV row with too few or too many cells now raises `ValueError` (was `TypeError`); sign indices may be numpy integers.

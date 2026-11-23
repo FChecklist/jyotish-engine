@@ -1,4 +1,5 @@
 """Planet-in-sign and planet-aspect negatives with colour remedies (owner table, 21 Nov 2026).
+SUPERSEDED on 23 Nov 2026 by core/colour_rules.py (owner rules OWNER-2026-11-23-A) wherever they differ; this module is kept unchanged for history and for its helpers.
 Plain if/then code, no AI. Table: data/planet_sign_negatives.csv. Spec: docs/PLANET_SIGN_NEGATIVES.md. Tradition claim, not a measured fact.
 
 Rule per (planet, rule_group):
