@@ -93,3 +93,6 @@
 
 ## 2026-11-17 / 2026-11-19
 - Gautam 144-cell method (docs/GAUTAM_144_METHOD.md) and the 36-video run: "one row per sentence" from video 24 gave about 3x more rows, many low value. Review is flag-only, nothing deleted.
+
+## 2026-11-23 Owner colour + aspect rules (Rajat)
+- 15 colour rules, aspect lists, D1 Final = 50% D1 + 25% KP + 25% Bhav Chalit, D9 validation with conflict-resolving mix; aspect strength = four principles x 25% (owner degree ladder, western, Vedic, Lal Kitab). Verbatim: docs/OWNER_RULES_2026-11-23.md. Code: core/owner_calc.py. Owner confirmed: rule 5 is "And do not use Yellow or Golden"; Sun = Taurus/Libra; the owner's birth time was confirmed (kept in the private data file).
