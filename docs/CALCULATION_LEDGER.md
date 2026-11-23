@@ -15,7 +15,7 @@ Rajat's rule: "don't leave any calculation minor or major." Meaning in practice:
   - Rahu and Ketu: schools disagree on their exaltation and own signs, so no dignity atom is made for them. Such rules stay partial.
   - NOT built: moolatrikona degree ranges, temporary friendship, compound (panchadha) relation, deep exaltation degree.
 - ASPECT atoms: ('aspects_house', planet, houses) and ('aspects_planet', planet, planet). Whole-house graha drishti counted in each house VIEW (so multi-sign influence applies): every planet aspects the 7th from itself; Mars also 4th and 8th; Jupiter also 5th and 9th; Saturn also 3rd and 10th; Rahu and Ketu 5th, 7th, 9th (hypothesis: schools differ). "A aspected by B" = B aspects A. Lal Kitab frame uses sign numbers from Aries.
-  - NOT built: aspect orbs and strength, Jaimini rashi drishti, KP aspects.
+  - Aspect strength (orbs, % per owner 2026-11-23) is built in core/aspects.py, see docs/ASPECTS.md; P4 Lal Kitab pending. NOT built: Jaimini rashi drishti, KP aspects.
 - NOT built in this step (listed in the ledger): retrograde and combust at birth (needs speed in the natal chart), named yogas, Jaimini, shadbala/avastha, Lal Kitab states, annual (Tajika), doshas, upagrahas.
 
 ## Ledger (measured 2026-11-14 after dignity and aspect atoms)

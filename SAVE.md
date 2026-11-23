@@ -61,3 +61,6 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 - 06:00 daily chain broken (18 and 19 Nov missed); the 17:42 plan task is still enabled. Owner to decide.
 - Open owner decisions: birth data in old public git history (make repo private, then rewrite); cloud box status.
 - Eshani and Pehu: one does BBA culinary arts, the other BBA law; which is which is unknown.
+
+## 2026-11-23 aspect strength (branch jy/aspects-2026-11-23)
+- core/aspects.py: final aspect % = (P1 owner ladder + P2 western + P3 Vedic + P4 Lal Kitab)/4. P4 has no source, so results are lower bounds. Test tests/test_aspects.py includes falsifiability checks. Spec docs/ASPECTS.md. Not wired into the daily guide or report yet.
