@@ -61,3 +61,5 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 - 06:00 daily chain broken (18 and 19 Nov missed); the 17:42 plan task is still enabled. Owner to decide.
 - Open owner decisions: birth data in old public git history (make repo private, then rewrite); cloud box status.
 - Eshani and Pehu: one does BBA culinary arts, the other BBA law; which is which is unknown.
+
+- 2026-11-23: owner colour + aspect calculator built (core/owner_calc.py, tests/test_owner_calc.py, docs/OWNER_RULES_2026-11-23.md). P4 Lal Kitab pending. Branch calc/owner-rules-calculator-2026-11-23.
