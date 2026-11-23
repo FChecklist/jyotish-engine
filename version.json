@@ -1,10 +1,12 @@
 {
-  "version": "0.2.1",
-  "released": "2026-11-22",
-  "summary": "Planet sign negatives: owner text added to the knowledge doc, loader and numpy-int fixes (on top of 0.2.0 body-part and avoid-colours tables)",
+  "version": "0.3.0",
+  "released": "2026-11-23",
+  "summary": "Owner colour rules of 23 Nov 2026 (15 rules, use/avoid colours, aspects, D1 Final = D1+KP+Bhav Chalit, D9 validation, blends); supersedes the 21 Nov table where they differ",
   "changelog": "CHANGELOG.md",
-  "knowledge_doc": "docs/BODY_PARTS_AVOID_COLOURS.md",
+  "knowledge_doc": "docs/OWNER_COLOUR_RULES.md",
   "knowledge_docs": [
+    "docs/OWNER_COLOUR_RULES.md",
+    "docs/OWNER_RULES_2026-11-23.md",
     "docs/PLANET_SIGN_NEGATIVES.md",
     "docs/BODY_PARTS_AVOID_COLOURS.md"
   ]

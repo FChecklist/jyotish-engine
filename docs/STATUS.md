@@ -47,3 +47,7 @@ Not done: other dasha systems (Narayana etc.), KP cusps, panchang end-times, ing
 
 ## 2026-11-22 body-part and avoid-colour tables (v0.2.0, PR #1)
 - DONE: tables, engine functions, migrations 0002/0003, tests. NOT DONE: apply migrations to D1, wire into guide.py/daily, run on divisional charts, owner confirmation of the 10 defaults.
+
+## 2026-11-23 owner colour rules (v0.3.0)
+- DONE: 15 owner rules (use/avoid), placement 1.0 / aspect 0.5 hits, D1 Final (D1 + KP + Bhav Chalit 50/25/25), colour advice, blends, D9 validation and mix, equal-house Bhav Chalit, KP via Placidus (ayanamsa parameter), tests with sabotage checks.
+- NOT DONE: wire into guide.py/daily, load to D1, run on a real chart, owner answers to the open questions, multi-sign house shares for KP/BC.

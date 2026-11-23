@@ -101,3 +101,8 @@
 
 ## 2026-11-22 Body-part and avoid-colour tables (owner order P1 points 44-46)
 - No owner text for either table in the repo, so classical defaults were used and every row is marked `DEFAULT, owner to confirm` (10 items in docs/BODY_PARTS_AVOID_COLOURS.md). Migrations numbered 0002/0003 because PR #2 owns 0001. Version bumped to 0.2.0.
+
+## 2026-11-23 Owner colour rules (authoritative, supersede 21 Nov table where different)
+- Owner text kept verbatim in docs/OWNER_RULES_2026-11-23.md. Rule 1 Sun = Taurus/Libra (was Taurus/Virgo). Rule 5 "Or do not use" read as "And".
+- D1 Final = 0.5 D1 + 0.25 KP + 0.25 Bhav Chalit (owner). Aspect hit weight 0.5 is OUR ASSUMPTION (one constant). KP = sidereal Placidus (reused core/houses.py), Bhav Chalit = equal house cusp +/- 15, KP/BC planet sign = lagna sign + (house - 1) (brief).
+- For KP/BC this follows the brief (whole sign from house number) and does not apply the multi-sign house shares of core/influence.py: flagged as an open decision.

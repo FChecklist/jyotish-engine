@@ -90,3 +90,8 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 
 ## 025 (2026-11-22) body-part and avoid-colour tables
 - tests/test_body_parts_avoid_colours.py passes: 12 houses, 12 lagnas, 19 lagna rows, 11 planet rows, migrations applied to in-memory sqlite match the CSVs and the engine. Three deliberate table breakages (a colour, a body part, a seed value) were caught. No accuracy claim: tradition tables.
+
+## 026 (2026-11-23) owner colour rules
+- tests/test_colour_rules.py passes: 15 rules x all signs vs hand-typed expectation, about 50 hand-computed cases, D1 Final weights, 3,000-chart fuzz (no avoid colour ever returned), blends, D9 mix, KP/BC houses, independent Placidus cross-check (max difference 1.6e-9 deg across 5 synthetic charts, 2 ayanamsas). 12 deliberate breakages (weights, avoid subtraction, blend forcing, D9 removal, Rahu aspects, Bhav Chalit offset, blend rejection, off-by-one signs and aspects, two CSV edits) were each caught, file restored each time.
+- Behaviour on the real table (20,000 random charts, not people): no-pure-colour never occurs, D9 unresolved never occurs, D9 mix in 1.7% of zodiacs, 19% of multi-negative zodiacs have no valid blend. No accuracy claim: owner tradition rules.
+- Full tests/run_all.sh NOT run here: PyJHora does not build in this container (h3 dependency). The tests that do not need PyJHora pass; CI runs the full suite.

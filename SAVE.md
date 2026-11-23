@@ -67,3 +67,8 @@ Done: full AI conversion (140 batches), audit, merge (`tune/convert/merge_ai.py`
 
 ## 2026-11-22 body-part and avoid-colour tables (PR #1, v0.2.0)
 - Added house-to-body-part (Kalapurusha) and avoid-colours (per lagna, per planet) tables: CSVs in data/, engine in core/body_parts.py and core/avoid_colours.py, D1 migrations 0002/0003 (not applied), tests in tests/test_body_parts_avoid_colours.py. All rows `DEFAULT, owner to confirm` (list in docs/BODY_PARTS_AVOID_COLOURS.md). Engine is not deployed (no jyotish Worker in Cloudflare); D1 has no ref_* tables yet.
+
+## 2026-11-23 owner colour rules (v0.3.0, branch off PR #1)
+- Added the owner's 23 Nov 2026 rules (15, use + avoid colours): data/owner_colour_rules.csv, core/colour_rules.py, tests/test_colour_rules.py, docs/OWNER_RULES_2026-11-23.md (verbatim), docs/OWNER_COLOUR_RULES.md. D1 Final = 0.5 D1 + 0.25 KP + 0.25 Bhav Chalit; D9 validation; blends. Supersedes the 21 Nov table (Sun is now Taurus/Libra). Rows match D1 owner_colour_rules.
+- Open owner questions: aspect weight 0.5, rule 5 Or/And, Sun Taurus/Libra, KP and Bhav Chalit computed not captured, avoided colour as blend ingredient, minimum weight, multi-sign houses (see docs/OWNER_COLOUR_RULES.md).
+- Not done: not in guide.py/daily, not in D1, nothing deployed, ledger not re-measured, Drive backup of docs not done this session.
