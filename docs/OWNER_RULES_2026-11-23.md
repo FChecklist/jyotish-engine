@@ -24,7 +24,7 @@ Implemented in `core/owner_calc.py`, tested in `tests/test_owner_calc.py`. No bi
 ============================ the 100% main effect is when that planet is sitting in that zodiac; the effect reduces if its not directly in that zodiac
 ============================ use combination of colours to reach a specific colour. if a zodiac have two or more negative planets or aspects - than use combination of colour to over come
 =========================== D1 is main - validate it from there; than kp is also used to validate - if zodiac or planet has moved to another house in KP v/s D1 than the impact of both to be taken for proper analysis; Bhav Chalit is also used; In case of Doubt - 50% is D1, 25% is KP nad 25% is Bhav Chalit for analysis; "D1 Final" - 50% is D1, 25% is KP nad 25% is Bhav Chalit for analysis. The colour and therapy, remedy is suggested based on "D1 Final"; than we validate the colour and therapy, remedy suggested with D1 Final and see the D9. If the D9 house, zodiac, planet is not anti to the colour and therapy, remedy than its approved. If any colour and therapy, remedy is getting anti in D9 than suggest a mix to resolve conflict, so that it satisfies the D1 FINAL and D9 both
-========================= save this information, check last 10 posts sent to jyotish session, review them; save it in database and also evalute; than evaluate for RAJAT, PALLAVI, ESHANI, PEHU
+========================= save this information, check last 10 posts sent to jyotish session, review them; save it in database and also evalute; than evaluate for the four family members (names and birth data kept in the private family file)
 
 ## OWNER-2026-11-23-B  (aspect strength, four principles)
 
@@ -84,6 +84,51 @@ accordingly calculate the aspect %
 3. [owner's own birth time, kept in the private family file]
 
 Meaning: rule 5 reads "And do not use Yellow or Golden"; Sun triggers are Taurus/Libra (replaces the 21 Nov Taurus/Virgo); the owner's birth time was confirmed (private file).
+
+## OWNER-2026-11-23-D  (houses and body parts, evaluation principle)
+
+PRINCIPLE 1
+
+1ST HOUSE IS HEAD, FOREHEAD, UPPER PORTION OF HEAD, UPPER FACE
+
+2ND HOUSE IS RIGHT EYE, RIGHT SIDE OF FACE, NECKLINE , UPPER NECK AREA, LIPS, LOWER RIGHT FACE AREA
+
+3RD HOUSE IS RIGHT EAR TO RIGHT SHOULDER AREA, UPPER RIGHT ARM
+
+4TH HOUSE IS LOWER RIGHT ARM TO WRIST AND HANDS, RIGHT CHEST AND RIGHT BREAST AREA
+
+5TH HOUSE IS RIGHT ABDOMEN, RIGHT POCKET, RIGHT HIP, RIGHT SIDE STOMACH AREA, UPPER RIGHT THIGH
+
+6H HOUSE IS LOW RIGHT THIGH, KNEE TO ANKLE AND FEED
+
+7TH HOUSE IS WAIST AND SEXUAL PART AREA
+
+8TH HOUSE IS LOW LEFT THIGH, KNEE TO ANKLE AND FEED AND INNER ANNUS
+
+9TH HOUSE IS LEFT ABDOMEN, LEFT POCKET, LEFT HIP, LEFT SIDE STOMACH AREA, UPPER LEFT THIGH
+
+10TH HOUSE IS LOWER LEFT ARM TO WRIST AND HANDS, LEFT CHEST AND LEFT BREAST AREA
+
+11TH HOUSE IS LEFT EAR TO LEFT SHOULDER AREA, UPPER LEFT ARM
+
+12TH HOUSE IS LEFT EYE, LEFT SIDE OF FACE,  LOWER LEFT FACE AREA AND SEXUAL ACTIVITY (SEX)
+
+THESE ARE HOUSES AND BODY PARTS
+
+PRINCIPLE 2 - CHECK LAL KITAB BODY PARTS HOUSE WISE
+
+PRINCIPLE 1 AND PRINCIPLE 2 COMBINED ARE SEEN.
+
+EVALUATION PRINCIPLE
+
+HOUSE ARE CONSTANT, ZODIAC MOVE
+HOUSE HAVE ATTRIBUTE, BUT WILL THAT ATTRIBUTE WILL BE + OR - THAT DEPENDS ON zodiac IN THAT HOUSE and the planet or aspect of the planet in that zodiac
+
+all 12 houses, all 12 zodiac and all 12 planets are taken for analysis
+
+than only correct remedy, analysis, can be given
+
+(Owner spelling kept: FEED = feet, ANNUS = anus. Source of the Lal Kitab part: see OPEN_QUESTIONS.)
 
 ## How the calculator reads the rules (assumptions still to confirm)
 

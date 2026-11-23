@@ -143,6 +143,19 @@ def house_in(cusps, lon):
     return 1
 
 
+def validate_chart(chart):
+    """Reject malformed input with a clear message instead of a bare KeyError or a silently wrong answer."""
+    for key in ("lagna", "planets"):
+        if key not in chart: raise ValueError(f"chart needs '{key}'")
+    for name, e in [("lagna", chart["lagna"])] + list(chart["planets"].items()):
+        if len(e) < 4 or e[0] not in S or e[3] not in S: raise ValueError(f"{name}: need [sign, deg, min, d9 sign] with signs from {sorted(S)}")
+        if not (0 <= e[1] < 30 and 0 <= e[2] < 60): raise ValueError(f"{name}: degrees must be 0-29 and minutes 0-59, got {e[1]}, {e[2]}")
+    b = chart.get("birth")
+    if b:
+        for key in ("date", "time", "tz", "lat", "lon"):
+            if key not in b: raise ValueError(f"birth needs '{key}' (time zone is never guessed)")
+
+
 def frames(chart):
     """Effective sign of every planet in D1, KP and Bhav Chalit (sign of the house it falls in, counted from the lagna sign)."""
     lag = longitude(chart["lagna"]); lag_s = int(lag // 30)
@@ -152,11 +165,15 @@ def frames(chart):
     out = {"D1": d1, "BC": bc}; info = {}
     b = chart.get("birth")
     if b:
-        tc = placidus_cusps(_julian_day(b["date"], b["time"], b.get("tz", 5.5)), b["lat"], b["lon"])
+        tc = placidus_cusps(_julian_day(b["date"], b["time"], b["tz"]), b["lat"], b["lon"])
         ayan = (tc[1] - lag) % 360
         sc = {h: (tc[h] - ayan) % 360 for h in tc}
         out["KP"] = {p: (lag_s + house_in(sc, l) - 1) % 12 for p, l in pl.items()}
         info["ayanamsa_calibrated"] = round(ayan, 3)
+        warn = []
+        if not 22.0 <= ayan <= 26.0: warn.append(f"calibrated ayanamsa {ayan:.1f} deg is outside 22-26: lagna, place or time probably wrong, KP frame not trustworthy")
+        if abs(b["lat"]) > 66: warn.append("latitude above 66: Placidus houses are undefined, KP frame not trustworthy")
+        if warn: info["warnings"] = warn
     return out, lag_s, info
 
 
@@ -209,6 +226,7 @@ def recommend(rule_weights, avoid):
 
 
 def colour_advice(chart):
+    validate_chart(chart)
     fr, lag_s, info = frames(chart)
     w = {k: v for k, v in FRAME_W.items() if k in fr}
     tot = sum(w.values()); w = {k: v / tot for k, v in w.items()}          # KP missing -> renormalise, and say so
@@ -286,7 +304,8 @@ def aspect_table(chart):
         v1 = p1_owner_degree(a, pl[a], pl[b]); v2, nm = p2_western(pl[a], pl[b]); v3 = p3_vedic(a, sg[a], sg[b])
         v4 = lal_kitab_aspect(a, hs.get(a), hs.get(b))
         r = {"from": a, "to": b, "separation": round((pl[b] - pl[a]) % 360, 1), "p1": v1, "p2": round(v2), "western": nm,
-             "p3": v3, "p4": v4, "final": round((v1 + v2 + v3 + (v4 or 0)) / 4, 1), "p4_pending": v4 is None}
+             "p3": v3, "p4": v4, "final": round((v1 + v2 + v3 + (v4 or 0)) / 4, 1), "p4_pending": v4 is None,
+             "final_is_lower_bound": v4 is None}      # no lagna -> P4 unknown, counted as 0, so the figure can only be too low
         k = frozenset([a, b])
         if k not in best or r["final"] > best[k]["final"]: best[k] = r
     return sorted((r for r in best.values() if r["final"] > 0), key=lambda r: -r["final"])
@@ -351,7 +370,12 @@ def enumerate_all():
                 nos = [r["no"] for r in RULES if r["planet"] in sub and sg in r["signs"]]
                 a = advise(nos)
                 stats["cases_with_a_rule"] += mult
-                if set(a["use"]) & set(a["avoid"]): stats["violations"] += mult
+                # independent of advise(): recompute the avoid union straight from RULES, then check what recommend() actually advises
+                avoid_all = set().union(*[set(RULES[n - 1]["avoid"]) for n in nos])
+                rec = recommend([(n, 1.0) for n in nos], avoid_all)
+                advised = [c for c in (rec["primary"], rec["secondary"]) if c]
+                if not rec["primary"] or set(advised) & avoid_all or set(a["use"]) & avoid_all or (rec["blend"] and rec["blend"].split("=")[1] in avoid_all):
+                    stats["violations"] += mult
                 common = set.intersection(*[set(RULES[n - 1]["use"]) for n in nos]) - set(a["avoid"])
                 if common: stats["one_colour_good_for_every_planet"] += mult
                 if a["use"]: stats["pure_ok"] += mult

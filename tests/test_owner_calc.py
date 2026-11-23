@@ -121,4 +121,136 @@ sun_ta = [r for r in tr if r["house"] == 5 and r["zodiac"] == "Taurus" and r["pl
 assert sun_ta["owner_rules"] == "1" and sun_ta["colour_use"] == "blue" and "orange" in sun_ta["colour_avoid"] and sun_ta["dignity"] == 0.0
 assert [r for r in tr if r["house"] == 1 and r["zodiac"] == "Aries" and r["planet"] == "Sun"][0]["dignity"] == 1.0
 assert sum(1 for r in tr if r["owner_rules"]) == 12 * len({(x["planet"], sg) for x in O.RULES for sg in x["signs"]})
+# ================= audit additions (independent auditor findings, 23 Nov 2026) =================
+import math
+
+# ---- 15. RULES against a hard-coded copy of the owner's sentences (full names, written differently from the code) ----
+OWNER_TEXT = {1: ("Sun", "Taurus Libra", "blue", "orange"), 2: ("Moon", "Scorpio Aries", "red yellow", "white black"),
+              3: ("Mars", "Cancer", "blue yellow", "red"), 4: ("Mercury", "Pisces Cancer", "yellow blue grey", "green brown red"),
+              5: ("Jupiter", "Capricorn Aquarius", "black red", "yellow golden"), 6: ("Venus", "Virgo Gemini Cancer", "blue green", "white silver"),
+              7: ("Saturn", "Aries Scorpio", "red yellow grey", "white black"), 8: ("Saturn", "Cancer", "yellow grey", "red"),
+              9: ("Rahu", "Sagittarius", "yellow green black", "brown blue"), 10: ("Ketu", "Gemini", "green purple", "grey silver"),
+              11: ("Uranus", "Cancer Taurus Libra", "yellow", "red orange"), 12: ("Neptune", "Aries Scorpio Gemini", "red yellow green", "black white grey silver"),
+              13: ("Neptune", "Cancer", "yellow", "red"), 14: ("Pluto", "Aries Scorpio Leo", "red yellow", "white black"), 15: ("Pluto", "Cancer", "yellow", "red")}
+assert len(O.RULES) == 15
+for r in O.RULES:
+    pl, sg, use, avoid = OWNER_TEXT[r["no"]]
+    assert r["planet"] == pl and sorted(O.NAME[x] for x in r["signs"]) == sorted(sg.split()), r["no"]
+    assert r["use"] == use.split() and sorted(r["avoid"]) == sorted(avoid.split()), r["no"]
+assert O.ASPECTS == {"Sun": [7], "Mercury": [7], "Venus": [7], "Moon": [7], "Mars": [4, 7, 8], "Jupiter": [5, 7, 9], "Saturn": [3, 7, 10],
+                     "Rahu": [7], "Ketu": [7], "Uranus": [7], "Neptune": [7], "Pluto": [7]}
+
+# ---- 16. aspects count FORWARD from the planet's sign, never backward ----
+assert any(k[1] == O.S["Cn"] for k in O.rule_hits({"Mars": O.S["Ar"]}))       # Mars in Aries, 4th forward = Cancer -> rule 3 aspect hit
+assert not any(k[1] == O.S["Cn"] for k in O.rule_hits({"Mars": O.S["Li"]}))   # Mars in Libra: Cancer is 4th BACKWARD -> no hit
+# ---- 17. Vedic partials for the classical seven, none for the others ----
+for n, v in {3: 25, 10: 25, 5: 50, 9: 50, 4: 75, 8: 75}.items():
+    assert O.p3_vedic("Moon", 0, n - 1) == v, n                 # Moon has no special aspect list: partial applies
+    assert O.p3_vedic("Rahu", 0, n - 1) == 0, n
+assert O.p3_vedic("Mars", 0, 3) == 100 and O.p3_vedic("Sun", 0, 6) == 100 and O.p3_vedic("Sun", 0, 0) == 100
+# ---- 18. western orbs: sextile 6, others 8, linear fall-off ----
+assert abs(O.p2_western(0, 64)[0] - 100 * (1 - 4 / 6)) < 1e-9 and O.p2_western(0, 67)[0] == 0
+assert abs(O.p2_western(0, 96)[0] - 100 * (1 - 6 / 8)) < 1e-9 and O.p2_western(0, 99)[0] == 0
+assert O.p2_western(0, 180)[1] == "opposition" and O.p2_western(0, 120)[1] == "trine"
+# ---- 19. Bhav Chalit edges (+/-15 deg around the lagna degree) and wrap at 360 ----
+assert O.bhav_chalit_house(100, 114.9) == 1 and O.bhav_chalit_house(100, 115.1) == 2
+assert O.bhav_chalit_house(100, 85.1) == 1 and O.bhav_chalit_house(100, 84.9) == 12
+assert O.bhav_chalit_house(358, 5) == 1 and O.bhav_chalit_house(5, 358) == 1 and O.bhav_chalit_house(0, 359) == 1
+# ---- 20. dignity tables (hard-coded classical values) ----
+assert O.EXALT == {"Sun": "Ar", "Moon": "Ta", "Mars": "Cp", "Mercury": "Vi", "Jupiter": "Cn", "Venus": "Pi", "Saturn": "Li"}
+assert O.DEBIL == {"Sun": "Li", "Moon": "Sc", "Mars": "Cn", "Mercury": "Pi", "Jupiter": "Cp", "Venus": "Vi", "Saturn": "Ar"}
+assert O.OWN["Moon"] == ["Cn"] and sorted(O.OWN["Mars"]) == ["Ar", "Sc"] and sorted(O.OWN["Venus"]) == ["Li", "Ta"]
+# ---- 21. owner's house/body-part list: every house carries its key words ----
+KEY = {1: ["head", "forehead"], 2: ["right eye", "upper neck", "lips"], 3: ["right ear", "upper right arm"], 4: ["right chest", "wrist"],
+       5: ["right abdomen", "upper right thigh"], 6: ["low right thigh", "ankle"], 7: ["waist"], 8: ["low left thigh", "anus"],
+       9: ["left abdomen", "upper left thigh"], 10: ["left chest", "wrist"], 11: ["left ear", "upper left arm"], 12: ["left eye", "sexual"]}
+for h, ks in KEY.items():
+    for k in ks: assert k in O.HOUSE_BODY[h], (h, k)
+
+
+# ---- 22. Placidus known-answer test against an independent solver (hour-angle / semi-arc bisection) ----
+def independent_cusps(jd, lat, lon):
+    t = (jd - 2451545.0) / 36525.0
+    e = math.radians(23.4392911 - 0.0130042 * t)
+    ramc = ((280.46061837 + 360.98564736629 * (jd - 2451545.0)) + lon) % 360
+    ph = math.radians(lat)
+
+    def ha_dsa(lam):
+        l = math.radians(lam)
+        ra = math.degrees(math.atan2(math.sin(l) * math.cos(e), math.cos(l))) % 360
+        dec = math.asin(math.sin(e) * math.sin(l))
+        dsa = 90 + math.degrees(math.asin(max(-1, min(1, math.tan(ph) * math.tan(dec)))))
+        return ((ramc - ra + 180) % 360) - 180, dsa
+
+    def solve(target):             # target(dsa) -> wanted hour angle; find lam with ha == target
+        def f(lam):
+            ha, dsa = ha_dsa(lam)
+            return (((ha - target(dsa)) + 180) % 360) - 180
+        prev, a = f(0.0), 0.0
+        for i in range(1, 721):
+            b = i * 0.5
+            cur = f(b)
+            if prev * cur <= 0 and abs(prev - cur) < 90:
+                lo, hi = a, b
+                for _ in range(80):
+                    mid = (lo + hi) / 2
+                    if f(lo) * f(mid) <= 0: hi = mid
+                    else: lo = mid
+                return lo % 360
+            prev, a = cur, b
+        raise AssertionError("no root")
+    return {1: solve(lambda d: -d), 10: solve(lambda d: 0.0), 11: solve(lambda d: -d / 3), 12: solve(lambda d: -2 * d / 3),
+            3: solve(lambda d: -180 + (180 - d) / 3), 2: solve(lambda d: -180 + 2 * (180 - d) / 3)}
+
+
+for date, tm, tz, lat, lon in [("2000-01-01", "12:00", 5.5, 28.6, 77.2), ("1990-06-15", "03:30", 5.5, 25.2, 75.8),
+                               ("1985-11-02", "21:10", 10.0, -33.9, 151.2), ("2010-03-21", "00:05", 0.0, 51.5, -0.1)]:
+    jd = O._julian_day(date, tm, tz)
+    mine = O.placidus_cusps(jd, lat, lon)
+    ind = independent_cusps(jd, lat, lon)
+    for h, v in ind.items():
+        assert abs(((mine[h] - v + 180) % 360) - 180) < 0.01, (date, h, mine[h], v)
+
+# ---- 23. KP mapping and house_in boundary ----
+cu = O.placidus_cusps(O._julian_day("2000-01-01", "12:00", 5.5), 28.6, 77.2)
+assert O.house_in(cu, cu[5]) == 5 and O.house_in(cu, (cu[5] - 0.001) % 360) == 4
+lag_lon = (cu[1] - 23.85) % 360
+ayan = (cu[1] - lag_lon) % 360
+sc = {h: (cu[h] - ayan) % 360 for h in cu}
+mid3 = (sc[3] + ((sc[4] - sc[3]) % 360) / 2) % 360
+lag_sign = int(lag_lon // 30)
+kc = {"lagna": [O.SIGNS[lag_sign], int(lag_lon % 30), 0, "Ar"], "birth": {"date": "2000-01-01", "time": "12:00", "tz": 5.5, "lat": 28.6, "lon": 77.2},
+      "planets": {"Sun": [O.SIGNS[int(mid3 // 30)], int(mid3 % 30), int(round((mid3 % 1) * 60)) % 60, "Ar"]}}
+fr, ls, info = O.frames(kc)
+assert fr["KP"]["Sun"] == (ls + 2) % 12 and "warnings" not in info
+
+# ---- 24. input checks and warnings ----
+for bad in [{"planets": {}}, {"lagna": ["Ar", 30, 0, "Ar"], "planets": {}}, {"lagna": ["Xx", 1, 0, "Ar"], "planets": {}},
+            {"lagna": ["Ar", 1, 60, "Ar"], "planets": {}},
+            {"lagna": ["Ar", 1, 0, "Ar"], "planets": {}, "birth": {"date": "2000-01-01", "time": "12:00", "lat": 28, "lon": 77}}]:
+    try:
+        O.colour_advice(bad)
+    except ValueError:
+        continue
+    raise SystemExit("accepted bad input: %r" % (bad,))
+w = O.colour_advice({"lagna": ["Sc", 5, 0, "Ar"], "planets": {"Sun": ["Ar", 1, 0, "Ar"]},
+                     "birth": {"date": "2000-01-01", "time": "12:00", "tz": 5.5, "lat": 28.6, "lon": 77.2}})
+assert w.get("warnings") and "ayanamsa" in w["warnings"][0]
+w = O.colour_advice({"lagna": ["Ar", 5, 0, "Ar"], "planets": {"Sun": ["Ar", 1, 0, "Ar"]},
+                     "birth": {"date": "2000-01-01", "time": "12:00", "tz": 5.5, "lat": 70.0, "lon": 20.0}})
+assert any("latitude" in x for x in w["warnings"])
+# ---- 25. P4 unknown (no lagna) is flagged as a lower bound ----
+no_lag = {"planets": {"Sun": ["Ar", 1, 0, "Ar"], "Moon": ["Li", 2, 0, "Ar"]}}
+assert all(r["final_is_lower_bound"] for r in O.aspect_table(no_lag))
+assert not any(r["final_is_lower_bound"] for r in O.aspect_table(chart({"Sun": ["Ar", 1, 0, "Ar"], "Moon": ["Li", 2, 0, "Ar"]})))
+# ---- 26. the exhaustive check recomputes avoid lists from RULES itself: a deliberately broken rule must be caught ----
+saved = O.RULES[0]["avoid"]
+O.RULES[0]["avoid"] = ["blue"]            # rule 1 now avoids its own use colour
+try:
+    assert O.enumerate_all()["violations"] > 0
+finally:
+    O.RULES[0]["avoid"] = saved
+assert O.enumerate_all()["violations"] == 0
+
+
 print("test_owner_calc ok")
