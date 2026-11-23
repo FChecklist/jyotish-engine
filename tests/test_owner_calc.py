@@ -73,13 +73,52 @@ assert O.p2_western(10, 130)[1] == "trine" and O.p2_western(0, 61)[1] == "sextil
 assert O.p3_vedic("Jupiter", 0, 4) == 100 and O.p3_vedic("Sun", 0, 4) == 50 and O.p3_vedic("Sun", 0, 6) == 100
 assert O.p3_vedic("Sun", 0, 0) == 100 and O.p3_vedic("Pluto", 0, 4) == 0 and O.p3_vedic("Mars", 0, 3) == 100 and O.p3_vedic("Mars", 0, 2) == 25
 
-# ---- 9. final aspect = (P1+P2+P3+P4)/4 with P4 pending -> lower bound, flagged ----
-c = chart({"Sun": ["Ar", 10, 0, "Ar"], "Moon": ["Li", 10, 0, "Li"]})
+# ---- 9. final aspect = (P1+P2+P3+P4)/4; P4 = Lal Kitab house table (Goswami pp.118-124) ----
+c = chart({"Sun": ["Ar", 10, 0, "Ar"], "Moon": ["Li", 10, 0, "Li"]})                 # lagna Aries: Sun house 1, Moon house 7
 t = [a for a in O.aspect_table(c) if {a["from"], a["to"]} == {"Sun", "Moon"}][0]
-assert (t["p1"], t["p2"], t["p3"]) == (100, 100, 100) and t["p4"] is None and t["p4_pending"] and t["final"] == 75.0
-assert O.lal_kitab_aspect("Sun", 1, 7) is None
+assert (t["p1"], t["p2"], t["p3"], t["p4"]) == (100, 100, 100, 100) and not t["p4_pending"] and t["final"] == 100.0
+assert O.lal_kitab_aspect("Sun", 1, 7) == 100 and O.lal_kitab_aspect("Sun", 4, 10) == 100 and O.lal_kitab_aspect("Sun", 3, 11) == 50
+assert O.lal_kitab_aspect("Sun", 3, 9) == 50 and O.lal_kitab_aspect("Sun", 5, 9) == 50 and O.lal_kitab_aspect("Sun", 2, 6) == 25
+assert O.lal_kitab_aspect("Sun", 6, 12) == 25 and O.lal_kitab_aspect("Sun", 8, 2) == 25 and O.lal_kitab_aspect("Sun", 7, 1) == 0
+assert O.lal_kitab_aspect("Sun", None, 7) is None
+c = chart({"Sun": ["Ar", 10, 0, "Ar"], "Moon": ["Cn", 10, 0, "Cn"]})                 # Sun house 1, Moon house 4: no LK aspect 1->4
+t = [a for a in O.aspect_table(c) if {a["from"], a["to"]} == {"Sun", "Moon"}]
+assert not t or t[0]["p4"] == 0
 assert not any({a["from"], a["to"]} == {"Rahu", "Ketu"} for a in O.aspect_table(c))        # the node axis is not reported as an aspect
 
 # ---- 10. rule table integrity: 15 rules, owner text confirmations ----
 assert len(O.RULES) == 15 and O.RULES[0]["signs"] == ["Ta", "Li"] and O.RULES[4]["avoid"] == ["yellow", "golden"]
+# ---- 11. house report: 12 houses, owner body parts, negative load -> strained house ----
+assert len(O.HOUSE_BODY) == 12 and O.HOUSE_BODY[8].endswith("inner anus") and O.HOUSE_BODY[12].endswith("sexual activity")
+rep = O.house_report(chart({"Saturn": ["Cn", 15, 0, "Cn"]}))           # lagna Aries: Cancer is house 4; Saturn rule 8 hits it fully
+h4 = rep[3]
+assert [r["house"] for r in rep] == list(range(1, 13)) and h4["zodiac"] == "Cancer" and h4["owner_negative_load"] >= 1.0
+assert h4["verdict"] == "strained" and "right chest" in h4["body_parts"] and h4["lal_kitab_planet_parts"] == {"Saturn": "sight and assessment"}
+assert "red" in h4["colour_avoid"] and "red" not in h4["colour_use"]
+good = O.house_report(chart({"Jupiter": ["Cn", 15, 0, "Cn"]}))[3]        # Jupiter exalted in Cancer, no owner rule fires there
+assert good["dignity_plus"] == 1.0 and good["verdict"] == "supportive"
+assert O.dignity("Sun", "Ar") == 1.0 and O.dignity("Sun", "Li") == -1.0 and O.dignity("Sun", "Le") == 0.5 and O.dignity("Rahu", "Ta") == 0.0
+
+# ---- 12. exhaustive check: 12 zodiacs x every subset of 12 planets ----
+st = O.enumerate_all()
+assert st["full_cases"] == 49152 and st["violations"] == 0 and st["unresolvable"] == 0
+assert st["pure_ok"] == st["cases_with_a_rule"] == 33760 and 0 < st["one_colour_good_for_every_planet"] < st["cases_with_a_rule"]
+# ---- 13. decisive remedy: the colour covering the most rule weight wins; blend only if its mix is not avoided ----
+res = O.colour_advice(chart({"Mars": ["Cn", 15, 0, "Cn"], "Saturn": ["Cn", 15, 0, "Cn"]}))      # rules 3 (blue yellow) + 8 (yellow grey), avoid red
+cn = [z for z in res["zodiacs"] if z["zodiac"] == "Cancer"][0]["remedy"]
+assert cn["primary"] == "yellow" and cn["ranked"][0][0] == "yellow" and "red" not in [c for c, _ in cn["ranked"]]
+assert O.recommend([(1, 1.0)], set())["primary"] == "blue" and O.recommend([(1, 1.0)], {"blue"})["primary"] is None
+r = O.recommend([(3, 1.0), (8, 0.0)], set())                         # two rules meet: blue/yellow lead, blue + yellow = green allowed
+assert r["blend"] in ("blue+yellow=green", "yellow+blue=green")
+assert O.recommend([(3, 1.0), (8, 0.0)], {"green"})["blend"] is None   # green avoided: blend rejected
+assert O.recommend([(3, 1.0)], set())["blend"] is None                 # one rule only: no blend needed
+assert O.recommend([(12, 1.0)], set())["primary"] == "red"             # tie -> owner's listed order (red yellow green)
+
+# ---- 14. all 12 houses x 12 zodiacs x 12 planets ----
+tr = O.all_triples()
+assert len(tr) == 1728 and len({(r["house"], r["zodiac"], r["planet"]) for r in tr}) == 1728
+sun_ta = [r for r in tr if r["house"] == 5 and r["zodiac"] == "Taurus" and r["planet"] == "Sun"][0]
+assert sun_ta["owner_rules"] == "1" and sun_ta["colour_use"] == "blue" and "orange" in sun_ta["colour_avoid"] and sun_ta["dignity"] == 0.0
+assert [r for r in tr if r["house"] == 1 and r["zodiac"] == "Aries" and r["planet"] == "Sun"][0]["dignity"] == 1.0
+assert sum(1 for r in tr if r["owner_rules"]) == 12 * len({(x["planet"], sg) for x in O.RULES for sg in x["signs"]})
 print("test_owner_calc ok")

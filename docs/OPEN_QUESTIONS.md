@@ -10,7 +10,10 @@
 9. Multi-sign houses (core/house_signs.py): Gautam says each house is touched by 2-3 signs. We list signs per house under six systems with votes and average degrees; a sign under 2 degrees is ignored (MIN_DEG, a heuristic). Open: (a) how to weight systems, (b) how the D9 layer should combine with D1 and KP (currently only the navamsha sign of each KP cusp and its house from the D9 lagna), (c) the exact Gautam statement and method to be read from the transcripts.
 
 ## 2026-11-23 Owner colour + aspect rules - waiting on Rajat
-1. Lal Kitab aspect table (Principle 4): no verified table found; owner to name the source or table. Until then the aspect % is a lower bound (P4 = 0).
+1. Lal Kitab aspect table (Principle 4): now taken from B.M. Goswami, Lal Kitab (English, 1952 edition), pp.118-124 (archive.org/details/jyotishlalkitabb.m.gosvami): 1->7 100, 4->10 100, 3->9/11 50, 5->9 50, 2->6 25, 6->12 25, 8->2 25 (book also says 100 in one passage). Mercury, Rahu, Ketu special rules not modelled. Owner to confirm or give another table.
 2. Aspect ladder "+/- 5/10/15 %": read as percent of the aspect angle (5% of 180 = 9 deg). Confirm, or give absolute degrees.
 3. Colour-rule aspect weight: assumed 0.5 of a placement hit. Confirm, or say how the aspect % should feed the colour rules.
 4. Western orbs (8/6/8/8/8, linear) are my choice - confirm or give his orbs.
+5. Lal Kitab body parts HOUSE-wise (Principle 2): the book gives body parts per PLANET only (liver Mars, heart Moon, torso Ketu, brain/tongue Mercury, sight Saturn, head Rahu, neck Jupiter) plus house 1 = body, 8 = eyes, 11 = legs. No house-wise list found; owner Principle 1 list is used for houses.
+6. Plus side of a house: classical dignity (exalted +1, own +0.5, debilitated -1) is my assumption; owner has not given a table.
+7. Bhav Chalit and KP houses are computed (the site has no such view); my ascendant calibration differs from the Lahiri ayanamsa by ~0.2 deg for the 1975 and 1980 charts, so planets within ~0.2 deg of a house edge may flip.

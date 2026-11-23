@@ -15,7 +15,10 @@ ASSUMPTIONS (owner to confirm; each is one named constant or function):
   P1 orbs             owner wrote "+/- 5%, 10%, 15%": read as percent OF the aspect angle (5% of 180 = 9 deg). Absolute degrees would be a one-line change.
   P2 orbs             western conjunction/square/trine/opposition 8 deg, sextile 6 deg, strength falls linearly to 0 at the orb edge.
   P3 partial aspects  Parashara 3rd/10th = 25, 5th/9th = 50, 4th/8th = 75 for the 7 classical planets; full on the owner's list and on conjunction.
-  P4 Lal Kitab        NO verified table found. lal_kitab_aspect() returns None (pending); final % is then a LOWER BOUND with P4 = 0.
+  P4 Lal Kitab        house-to-house table from B.M. Goswami, "Lal Kitab" (English, based on the 1952 edition), chapter Planetary Aspect, pp.118-124
+                      (archive.org/details/jyotishlalkitabb.m.gosvami): 1->7 100, 4->10 100, 3->9 and 3->11 50, 5->9 50, 2->6 25, 6->12 25, 8->2 25
+                      (the book also says 8->2 is 100 in one passage: conflict, 25 used). Mercury, Rahu and Ketu have special rules in the book: NOT modelled.
+                      Houses are counted from the lagna sign (whole sign). Provisional until the owner confirms the source.
   KP                  sidereal Placidus; ayanamsa is calibrated so the computed ascendant equals the site's lagna (the site gives only degrees).
   Bhav Chalit         equal house, each house spans cusp +/- 15 deg, cusp 1 = lagna longitude.
 """
@@ -52,6 +55,39 @@ MIX = {frozenset(["blue", "yellow"]): "green", frozenset(["red", "yellow"]): "or
        frozenset(["red", "blue"]): "purple", frozenset(["black", "white"]): "grey",
        frozenset(["red", "green"]): "brown", frozenset(["red", "white"]): "pink",
        frozenset(["blue", "white"]): "light blue", frozenset(["yellow", "green"]): "lime"}
+
+
+# Owner Principle 1 (text OWNER-2026-11-23-D): houses and body parts
+HOUSE_BODY = {
+    1: "head, forehead, upper head, upper face",
+    2: "right eye, right side of face, neckline, upper neck, lips, lower right face",
+    3: "right ear to right shoulder, upper right arm",
+    4: "lower right arm to wrist and hands, right chest and right breast",
+    5: "right abdomen, right pocket, right hip, right stomach, upper right thigh",
+    6: "low right thigh, knee to ankle and feet",
+    7: "waist and sexual part",
+    8: "low left thigh, knee to ankle and feet, inner anus",
+    9: "left abdomen, left pocket, left hip, left stomach, upper left thigh",
+    10: "lower left arm to wrist and hands, left chest and left breast",
+    11: "left ear to left shoulder, upper left arm",
+    12: "left eye, left side of face, lower left face, sexual activity"}
+# Owner Principle 2 (Lal Kitab, Goswami p.? "Different Parts of Body are Controlled as Under"): body parts per PLANET. Sun and Venus are not in the excerpt read.
+LK_PLANET_BODY = {"Mars": "liver", "Moon": "heart", "Ketu": "torso", "Mercury": "brain and tongue",
+                  "Saturn": "sight and assessment", "Rahu": "head", "Jupiter": "neck"}
+# Lal Kitab house-to-house aspect (Goswami pp.118-124): from house -> {to house: strength %}
+LK_ASPECT = {1: {7: 100}, 2: {6: 25}, 3: {9: 50, 11: 50}, 4: {10: 100}, 5: {9: 50}, 6: {12: 25}, 8: {2: 25}}
+# Classical dignity (assumption: used only for the + side of a house; owner has not given a + table)
+EXALT = {"Sun": "Ar", "Moon": "Ta", "Mars": "Cp", "Mercury": "Vi", "Jupiter": "Cn", "Venus": "Pi", "Saturn": "Li"}
+DEBIL = {"Sun": "Li", "Moon": "Sc", "Mars": "Cn", "Mercury": "Pi", "Jupiter": "Cp", "Venus": "Vi", "Saturn": "Ar"}
+OWN = {"Sun": ["Le"], "Moon": ["Cn"], "Mars": ["Ar", "Sc"], "Mercury": ["Ge", "Vi"], "Jupiter": ["Sg", "Pi"],
+       "Venus": ["Ta", "Li"], "Saturn": ["Cp", "Aq"]}
+
+
+def dignity(planet, sign):
+    if EXALT.get(planet) == sign: return 1.0
+    if sign in OWN.get(planet, []): return 0.5
+    if DEBIL.get(planet) == sign: return -1.0
+    return 0.0
 
 
 def longitude(entry):
@@ -153,6 +189,25 @@ def advise(rule_nos, extra_avoid=()):
     return res
 
 
+def recommend(rule_weights, avoid):
+    """Decisive remedy for one zodiac: rank every allowed colour by the total rule weight whose use list contains it; ties go to the colour
+    the owner listed first. primary = best; secondary = next; blend = primary+secondary ONLY when two or more rules meet in the zodiac
+    (owner: "if a zodiac has two or more negatives, use a combination") and the mix is not on an avoid list."""
+    cov, pos = {}, {}
+    for n, w in rule_weights:
+        for i, c in enumerate(RULES[n - 1]["use"]):
+            if c not in avoid:
+                cov[c] = cov.get(c, 0) + w
+                pos[c] = min(pos.get(c, 99), i)
+    ranked = sorted(cov.items(), key=lambda kv: (-kv[1], pos[kv[0]], kv[0]))
+    out = {"ranked": [(c, round(v, 3)) for c, v in ranked], "primary": ranked[0][0] if ranked else None,
+           "secondary": ranked[1][0] if len(ranked) > 1 else None, "blend": None}
+    if out["secondary"] and len({n for n, _ in rule_weights}) > 1:
+        m = MIX.get(frozenset([out["primary"], out["secondary"]]))
+        if m and m not in avoid: out["blend"] = f"{out['primary']}+{out['secondary']}={m}"
+    return out
+
+
 def colour_advice(chart):
     fr, lag_s, info = frames(chart)
     w = {k: v for k, v in FRAME_W.items() if k in fr}
@@ -177,6 +232,7 @@ def colour_advice(chart):
              "rules": [{"rule": n, "weight": round(v, 3), **{f.lower(): fh[f].get((n, s), 0) for f in fr}} for n, v in sorted(lst)],
              "d1_final": adv, "d9_avoid": sorted(d9_avoid), "approved": final_adv}
         z["d9_conflict"] = sorted(set(adv["use"]) & d9_avoid)
+        z["remedy"] = recommend([(r["rule"], r["weight"]) for r in z["rules"]], set(final_adv["avoid"]))
         if not final_adv["use"] and not final_adv.get("blends"):
             z["note"] = "no colour or blend satisfies D1 Final and D9 together - owner decision"
         zod.append(z)
@@ -214,27 +270,100 @@ def p3_vedic(planet, sa, sb):
 
 
 def lal_kitab_aspect(planet, house_a, house_b):
-    """PENDING: no verified Lal Kitab aspect table. Returns None; the final % is then a lower bound (P4 = 0)."""
-    return None
+    """P4: Lal Kitab house-to-house aspect strength % (from house_a to house_b), 0 when none. None if houses are unknown."""
+    if house_a is None or house_b is None: return None
+    return LK_ASPECT.get(house_a, {}).get(house_b, 0)
 
 
 def aspect_table(chart):
     pl = {p: longitude(v) for p, v in chart["planets"].items()}
     sg = {p: int(l // 30) for p, l in pl.items()}
+    lag_s = int(longitude(chart["lagna"]) // 30) if chart.get("lagna") else None
+    hs = {p: (sg[p] - lag_s) % 12 + 1 for p in sg} if lag_s is not None else {}
     best = {}
     for a, b in itertools.permutations(pl, 2):
         if {a, b} == {"Rahu", "Ketu"}: continue
         v1 = p1_owner_degree(a, pl[a], pl[b]); v2, nm = p2_western(pl[a], pl[b]); v3 = p3_vedic(a, sg[a], sg[b])
-        v4 = lal_kitab_aspect(a, None, None)
+        v4 = lal_kitab_aspect(a, hs.get(a), hs.get(b))
         r = {"from": a, "to": b, "separation": round((pl[b] - pl[a]) % 360, 1), "p1": v1, "p2": round(v2), "western": nm,
              "p3": v3, "p4": v4, "final": round((v1 + v2 + v3 + (v4 or 0)) / 4, 1), "p4_pending": v4 is None}
         k = frozenset([a, b])
         if k not in best or r["final"] > best[k]["final"]: best[k] = r
     return sorted((r for r in best.values() if r["final"] > 0), key=lambda r: -r["final"])
 
+# ---------------- house report: constant houses, moving zodiacs ----------------
+def house_report(chart, verdict_band=0.25):
+    """For each of the 12 houses: zodiac in it, planets in it, owner negative load (D1 Final weights of the 15 rules on that zodiac),
+    classical dignity of the planets sitting there (the + side, assumption), net, body parts (owner P1, Lal Kitab planet parts P2), colours."""
+    col = colour_advice(chart)
+    by_zod = {z["zodiac"]: z for z in col["zodiacs"]}
+    lag_s = int(longitude(chart["lagna"]) // 30)
+    out = []
+    for h in range(1, 13):
+        s = (lag_s + h - 1) % 12
+        sg = SIGNS[s]
+        here = [p for p, v in chart["planets"].items() if S[v[0]] == s]
+        z = by_zod.get(NAME[sg])
+        neg = z["total_weight"] if z else 0.0
+        plus = sum(max(dignity(p, sg), 0) for p in here)
+        minus_dig = sum(min(dignity(p, sg), 0) for p in here)
+        net = round(plus + minus_dig - neg, 3)
+        verdict = "supportive" if net > verdict_band else "strained" if net < -verdict_band else "mixed"
+        involved = sorted({RULES[r["rule"] - 1]["planet"] for r in z["rules"]}) if z else []
+        row = {"house": h, "zodiac": NAME[sg], "planets_here": here, "owner_negative_load": neg,
+               "dignity_plus": plus, "dignity_minus": minus_dig, "net": net, "verdict": verdict,
+               "body_parts": HOUSE_BODY[h],
+               "lal_kitab_planet_parts": {p: LK_PLANET_BODY[p] for p in involved if p in LK_PLANET_BODY},
+               "colour_use": z["approved"]["use"] if z else [], "colour_avoid": z["approved"]["avoid"] if z else [],
+               "colour_blends": z["approved"].get("blends", []) if z else [],
+               "remedy": z["remedy"] if z else None}
+        out.append(row)
+    return out
+
+
+def all_triples():
+    """Every house (1-12) x every zodiac (12) x every planet (12) = 1,728 rows: what that planet does if it sits in that zodiac in that house,
+    on its own. Columns: house, body parts, zodiac, planet, owner rules fired (placement), classical dignity, colours to use, colours to avoid."""
+    rows = []
+    for h in range(1, 13):
+        for sg in SIGNS:
+            for p in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu", "Uranus", "Neptune", "Pluto"]:
+                nos = [r["no"] for r in RULES if r["planet"] == p and sg in r["signs"]]
+                a = advise(nos) if nos else {"use": [], "avoid": []}
+                rows.append({"house": h, "body_parts": HOUSE_BODY[h], "zodiac": NAME[sg], "planet": p,
+                             "owner_rules": " ".join(map(str, nos)), "dignity": dignity(p, sg),
+                             "colour_use": " ".join(a["use"]), "colour_avoid": " ".join(a["avoid"])})
+    return rows
+
+
+# ---------------- exhaustive check of every combination ----------------
+def enumerate_all():
+    """Every zodiac x every subset of the 12 planets sitting in it (12 x 4096 = 49,152 cases; planets with no rule on a zodiac cannot change the
+    advice, so each zodiac is enumerated over its relevant planets and every such case stands for 2^(12-k) full cases).
+    Checks the invariant that no advised colour is ever on an avoid list, and counts the cases with no pure colour / no blend left."""
+    stats = {"zodiacs": 12, "full_cases": 12 * 4096, "cases_with_a_rule": 0, "one_colour_good_for_every_planet": 0, "pure_ok": 0, "blend_only": 0, "unresolvable": 0,
+             "violations": 0, "worst": []}
+    for sg in SIGNS:
+        rel = sorted({r["planet"] for r in RULES if sg in r["signs"]})
+        mult = 2 ** (12 - len(rel))
+        for k in range(1, len(rel) + 1):
+            for sub in itertools.combinations(rel, k):
+                nos = [r["no"] for r in RULES if r["planet"] in sub and sg in r["signs"]]
+                a = advise(nos)
+                stats["cases_with_a_rule"] += mult
+                if set(a["use"]) & set(a["avoid"]): stats["violations"] += mult
+                common = set.intersection(*[set(RULES[n - 1]["use"]) for n in nos]) - set(a["avoid"])
+                if common: stats["one_colour_good_for_every_planet"] += mult
+                if a["use"]: stats["pure_ok"] += mult
+                elif a.get("blends"): stats["blend_only"] += mult
+                else:
+                    stats["unresolvable"] += mult
+                    if len(stats["worst"]) < 12: stats["worst"].append({"zodiac": NAME[sg], "planets": list(sub), "rules": nos})
+    return stats
+
 
 def calculate(chart):
-    return {"colour": colour_advice(chart), "aspects": aspect_table(chart)}
+    return {"colour": colour_advice(chart), "aspects": aspect_table(chart), "houses": house_report(chart)}
 
 
 if __name__ == "__main__":
