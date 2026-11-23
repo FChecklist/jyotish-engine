@@ -84,3 +84,8 @@ Conclusion: no demonstrated predictive skill yet. Next: bigger exact-date datase
 - 1,869 strength-text rules converted (38 batches, single pass): only 90 complete and valid (4.8%), 80 use the strength atom. Most such rules talk about house strength, benefic strength or "strong in own sign", which the atom does not cover. Not audited blind.
 - New rule files counted: nakshatra_books_v1 (1,835), lalkitab_web_v1 (519, 518 parse natively), outer_planets_v1 (46, not runnable).
 - Ledger: executable 10,957 of 31,830 = 34.4% (was 10,349 of 31,265 = 33.1%). Parser 5,175 parsed / 8,203 partial / 18,452 unparsed. NOT complete.
+
+## 025 (2026-11-23) aspect strength module
+- core/aspects.py + tests/test_aspects.py. Test passes; 16 deliberate code breaks (ladder limits, partial values, orbs, aspect lists, direction, P2 off, P4 invented, final divisor) are all caught, then the code is restored and passes again.
+- Cross-check against the BOSS scratch reference on the 4 verified charts (private data, nothing stored in git): 200 pairs, 0 mismatches in P1, P3, P2 and final.
+- NOT measured: any link between aspect % and real events. These are the owner's numbers, not validated predictions. P4 is missing, so every final value is a lower bound.

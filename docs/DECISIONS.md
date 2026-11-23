@@ -93,3 +93,9 @@
 
 ## 2026-11-17 / 2026-11-19
 - Gautam 144-cell method (docs/GAUTAM_144_METHOD.md) and the 36-video run: "one row per sentence" from video 24 gave about 3x more rows, many low value. Review is flag-only, nothing deleted.
+
+## 2026-11-23 aspect strength (owner message OWNER-2026-11-23-B, D1 owner_method_text)
+- Final aspect % = (P1 + P2 + P3 + P4) / 4, each principle 0..100. Code: core/aspects.py, test: tests/test_aspects.py, spec: docs/ASPECTS.md.
+- P1 owner degree ladder (100/75/50 at 5/10/15 percent of the aspect angle; else 0). P2 western (orbs 8/6/8/8/8, linear to 0). P3 Vedic sign-based graha drishti (owner list full; Parashara partials 25/50/75 for the 7 classical planets). P4 Lal Kitab: no verified table, so it returns None and every result is a LOWER BOUND (P4 counted as 0) and says so.
+- Reading chosen for the owner's "+/-5%": percent OF THE ASPECT ANGLE (7th: 9/18/27 deg). Absolute degrees (5/10/15) is also coded (mode='absolute_degrees'). Not decided: needs the owner.
+- Rahu/Ketu aspects follow the owner list (1st and 7th) in this module. The older atoms in core/rules_norm.py give them 5/7/9; the two are not reconciled.
