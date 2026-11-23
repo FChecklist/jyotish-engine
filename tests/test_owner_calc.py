@@ -253,4 +253,22 @@ finally:
 assert O.enumerate_all()["violations"] == 0
 
 
+# ---- 27. house-by-house D1 + D9 table (owner confirmed: D9 house counted from the D9 lagna, D9 only vetoes) ----
+# Sun in Libra (D1 house 7 from Aries lagna) triggers rule 1: use blue, avoid orange. Moon placed in D9 Aries at D9 house 7 (D9 lagna Libra) triggers rule 2: avoid white/black.
+hf = O.house_final_table(chart({"Sun": ["Li", 15, 0, "Ta"]}, lagna=("Ar", 15, 0, "Ar")))
+assert [r["house"] for r in hf] == list(range(1, 13))
+r7 = hf[6]
+assert r7["d1_zodiac"] == "Libra" and r7["d1_avoid"] == ["orange"] and r7["final"]["primary"] == "blue" and r7["status"] == "d1"
+# D9 veto: Sun's D9 sign Taurus is house 2 from D9 lagna Taurus? make D9 lagna Libra so D9 house 7 = Aries, put Moon there in D9
+hv = O.house_final_table(chart({"Sun": ["Li", 15, 0, "Ta"], "Moon": ["Ge", 15, 0, "Ar"]}, lagna=("Ar", 15, 0, "Li")))
+assert hv[6]["d9_zodiac"] == "Aries" and set(hv[6]["d9_avoid"]) == {"black", "white"}      # D9 house 7 is judged against D1 house 7
+assert hv[6]["final"]["primary"] == "blue" and hv[6]["status"] == "d1"                       # blue is not anti in D9: approved unchanged
+# a D1 colour that D9 forbids must be dropped: Neptune in Aries (D1, rule 12: use red/yellow/green) vs Mars in D9 Cancer = D9 house 1 (rule 3: avoid red)
+hd = O.house_final_table(chart({"Neptune": ["Ar", 15, 0, "Ar"], "Mars": ["Vi", 15, 0, "Cn"]}, lagna=("Ar", 15, 0, "Cn")))
+assert hd[0]["d1_recommended"]["primary"] == "red" and "red" in hd[0]["d9_avoid"]
+assert hd[0]["final"]["primary"] == "yellow" and "red" in hd[0]["d9_vetoed"] and hd[0]["status"] == "d1_with_d9_veto"
+# D9-only house: no D1 rule in house 1 but a D9 rule there
+ho = O.house_final_table(chart({"Moon": ["Vi", 15, 0, "Sc"]}, lagna=("Ar", 15, 0, "Sc")))
+assert ho[0]["d9_zodiac"] == "Scorpio" and ho[0]["d1_recommended"] is None and ho[0]["status"] == "d9_only" and ho[0]["final"]["primary"] in ("red", "yellow")
+
 print("test_owner_calc ok")

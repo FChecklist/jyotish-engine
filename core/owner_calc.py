@@ -386,8 +386,42 @@ def enumerate_all():
     return stats
 
 
+def house_final_table(chart):
+    """Owner's house-by-house view (owner confirmed 2026-11-23: D9 is checked HOUSE BY HOUSE, D9 house h counted from the D9 lagna).
+    Per house: D1 zodiac + avoid, D9 zodiac + avoid, D1 recommended, D9 recommended, FINAL. D1 Final is the base; D9 can only veto colours,
+    it never adds colours to a house where D1 has a rule. If D1 has no rule but D9 has, the final is the D9 advice, labelled D9-only."""
+    col = colour_advice(chart)
+    by = {z["zodiac"]: z for z in col["zodiacs"]}
+    lag_s = int(longitude(chart["lagna"]) // 30)
+    d9lag = S[chart["lagna"][3]]
+    d9h = rule_hits({p: S[v[3]] for p, v in chart["planets"].items()})
+    rows = []
+    for h in range(1, 13):
+        s1, s9 = (lag_s + h - 1) % 12, (d9lag + h - 1) % 12
+        z = by.get(NAME[SIGNS[s1]])
+        r1 = [(r["rule"], r["weight"]) for r in z["rules"]] if z else []
+        a1 = set(z["d1_final"]["avoid"]) if z else set()
+        r9 = [(n, w) for (n, s), w in d9h.items() if s == s9]
+        a9 = set()
+        for n, _ in r9: a9 |= set(RULES[n - 1]["avoid"])
+        rec1 = recommend(r1, a1) if r1 else None
+        rec9 = recommend(r9, a9) if r9 else None
+        if r1:
+            fin = recommend(r1, a1 | a9)
+            vetoed = sorted({c for c, _ in rec1["ranked"]} & a9)
+            status = "d1_with_d9_veto" if vetoed else "d1"
+            if not fin["primary"]: status = "clash_owner_decision"
+        elif r9:
+            fin, vetoed, status = rec9, [], "d9_only"
+        else:
+            fin, vetoed, status = None, [], "no_rule"
+        rows.append({"house": h, "d1_zodiac": NAME[SIGNS[s1]], "d1_avoid": sorted(a1), "d9_zodiac": NAME[SIGNS[s9]], "d9_avoid": sorted(a9),
+                     "d1_recommended": rec1, "d9_recommended": rec9, "final": fin, "d9_vetoed": vetoed, "status": status})
+    return rows
+
+
 def calculate(chart):
-    return {"colour": colour_advice(chart), "aspects": aspect_table(chart), "houses": house_report(chart)}
+    return {"colour": colour_advice(chart), "aspects": aspect_table(chart), "houses": house_report(chart), "house_final": house_final_table(chart)}
 
 
 if __name__ == "__main__":
